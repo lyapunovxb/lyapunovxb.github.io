@@ -103,7 +103,7 @@ theme: butterfly
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/lyapunovxb/lyapunovxb.github.io.git
+  repo: git@github.com:lyapunovxb/lyapunovxb.github.io.git
   branch: main
 
 search:
