@@ -104,7 +104,7 @@ theme: butterfly
 deploy:
   type: git
   repo: git@github.com:lyapunovxb/lyapunovxb.github.io.git
-  branch: master
+  branch: main
 
 search:
   path: search.xml
