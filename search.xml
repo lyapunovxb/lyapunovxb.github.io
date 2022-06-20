@@ -4,7 +4,7 @@
   
     
     <entry>
-      <title>js测试</title>
+      <title>js的小不同</title>
       <link href="/2022/06/20/js%E7%9A%84%E5%B0%8F%E4%B8%8D%E5%90%8C/"/>
       <url>/2022/06/20/js%E7%9A%84%E5%B0%8F%E4%B8%8D%E5%90%8C/</url>
       
@@ -12,81 +12,22 @@
       
       
       
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
+      
     </entry>
     
     
     
     <entry>
       <title>test8</title>
-      <link href="/2022/06/17/test8/"/>
-      <url>/2022/06/17/test8/</url>
-      
-        <content type="html"><![CDATA[<p><img src="/2022/06/17/test8/touxiang.jpg"></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>测试7</title>
-      <link href="/2022/06/17/test7/"/>
-      <url>/2022/06/17/test7/</url>
-      
-        <content type="html"><![CDATA[<p><img src="https://img2.baidu.com/it/u=1820426694,3444617145&fm=253&fmt=auto&app=138&f=JPEG?w=456&h=500" alt="小黑柴"></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>测试6</title>
-      <link href="/2022/06/17/test6/"/>
-      <url>/2022/06/17/test6/</url>
-      
-        <content type="html"><![CDATA[<p><img src="https://img2.baidu.com/it/u=1820426694,3444617145&fm=253&fmt=auto&app=138&f=JPEG?w=456&h=500" alt="小黑柴"></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>测试5</title>
-      <link href="/2022/06/17/test5/"/>
-      <url>/2022/06/17/test5/</url>
-      
-        <content type="html"><![CDATA[<p><img src="https://img2.baidu.com/it/u=1820426694,3444617145&fm=253&fmt=auto&app=138&f=JPEG?w=456&h=500" alt="小黑柴"></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>测试4</title>
-      <link href="/2022/06/17/test4/"/>
-      <url>/2022/06/17/test4/</url>
-      
-        <content type="html"><![CDATA[<p><img src="https://img2.baidu.com/it/u=1820426694,3444617145&fm=253&fmt=auto&app=138&f=JPEG?w=456&h=500" alt="小黑柴"></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>测试3</title>
       <link href="/2022/06/17/test3/"/>
       <url>/2022/06/17/test3/</url>
       
-        <content type="html"><![CDATA[<p><img src="https://img2.baidu.com/it/u=1820426694,3444617145&fm=253&fmt=auto&app=138&f=JPEG?w=456&h=500" alt="小黑柴"></p>]]></content>
+        <content type="html"><![CDATA[<p><img src="/2022/06/17/test3/touxiang.jpg"></p>]]></content>
       
       
       
@@ -111,6 +52,8 @@
       
         <tags>
             
+            <tag> JavaScript </tag>
+            
             <tag> Vue </tag>
             
             <tag> 计算机网络 </tag>
@@ -119,8 +62,6 @@
             
             <tag> CSS </tag>
             
-            <tag> JavaScript </tag>
-            
         </tags>
       
     </entry>
@@ -128,7 +69,7 @@
     
     
     <entry>
-      <title>Vue笔记</title>
+      <title>Vue2知识点</title>
       <link href="/2022/06/16/Vue%E7%AC%94%E8%AE%B0/"/>
       <url>/2022/06/16/Vue%E7%AC%94%E8%AE%B0/</url>
       
@@ -173,6 +114,12 @@
         <content type="html"><![CDATA[<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//模拟获取  用户数据  订单数据  商品数据 </span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getUsers</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> data = <span class="string">&#x27;用户数据&#x27;</span>;<span class="keyword">let</span> data1 = <span class="string">&#x27;用户数据&#x27;</span>;<span class="keyword">let</span> data2 = <span class="string">&#x27;用户数据&#x27;</span>;<span class="keyword">let</span> data3 = <span class="string">&#x27;用户数据&#x27;</span>;<span class="keyword">let</span> data4 = <span class="string">&#x27;用户数据&#x27;</span>;<span class="keyword">let</span> data5 = <span class="string">&#x27;用户数据&#x27;</span>;<span class="keyword">let</span> data7 = <span class="string">&#x27;用户数据&#x27;</span>;</span><br><span class="line">        <span class="comment">//调用 next 方法, 并且将数据传入</span></span><br><span class="line">        iterator.<span class="title function_">next</span>(data);<span class="comment">//这里开始第二次next，并将这个实参data传递给上一个yield返回值</span></span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getOrders</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> data = <span class="string">&#x27;订单数据&#x27;</span>;</span><br><span class="line">        iterator.<span class="title function_">next</span>(data);<span class="comment">//第三次next</span></span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getGoods</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> data = <span class="string">&#x27;商品数据&#x27;</span>;</span><br><span class="line">        iterator.<span class="title function_">next</span>(data);<span class="comment">//第四次next</span></span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span>* <span class="title function_">gen</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> users = <span class="keyword">yield</span> <span class="title function_">getUsers</span>();<span class="comment">//第一次调用next结束，同时执行getUsers()函数</span></span><br><span class="line">    <span class="comment">//函数中第二次调用了next，并传入了实参，这时的实参将返回给上一次yield</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(users);</span><br><span class="line">    <span class="keyword">let</span> orders = <span class="keyword">yield</span> <span class="title function_">getOrders</span>();<span class="comment">//第二次next结束</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(orders);</span><br><span class="line">    <span class="keyword">let</span> goods = <span class="keyword">yield</span> <span class="title function_">getGoods</span>();<span class="comment">//第三次next结束</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(goods);</span><br><span class="line">    <span class="comment">//第四次next结束</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用生成器函数</span></span><br><span class="line"><span class="keyword">let</span> iterator = <span class="title function_">gen</span>();</span><br><span class="line">iterator.<span class="title function_">next</span>();</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
       
     </entry>
     
