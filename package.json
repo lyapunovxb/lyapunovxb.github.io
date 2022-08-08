@@ -30,7 +30,7 @@
     "hexo-wordcount": "^6.0.1"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@fortawesome/fontawesome-free": "^6.1.2",
     "vue-jd-table": "^1.1.3"
   }
 }
