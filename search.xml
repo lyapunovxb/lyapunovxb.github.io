@@ -410,6 +410,31 @@
     </entry>
     
     
+    
+    <entry>
+      <title>神经网络的稳定性理论</title>
+      <link href="/2021/04/07/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E7%A8%B3%E5%AE%9A%E6%80%A7%E7%90%86%E8%AE%BA/"/>
+      <url>/2021/04/07/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E7%A8%B3%E5%AE%9A%E6%80%A7%E7%90%86%E8%AE%BA/</url>
+      
+        <content type="html"><![CDATA[<p>1为什么要研究稳定性？稳定性研究的是什么？</p><p>首先，一个控制系统自身的结构性质一共有三个：即稳定性，能控性，能观性。</p><p>稳定性是保证控制系统正常工作的先决条件。一个稳定的控制系统，其被控量偏离期望值时的初始偏差应随时间的增长逐渐减小并趋于零。具体来说，对于稳定的恒值控制系统，被控量因扰动而偏离期望值后，经过一个过渡过程时间，被控量应该恢复到原来的期望值状态；对于稳定的随动系统，被控量应能始终跟踪参据量的变化。反之，不稳定的控制系统，其被控量偏离期望值的初始偏差将随时间的增长而发散，因此，不稳定的控制系统无法实现预定的控制任务。《自动控制原理》</p><p>稳定性理论是研究动态系统的过程（包括平衡位置）相对干扰是否具有自我保持能力的理论。《稳定性理论》</p><p>自适应控制系统的稳定性是指系统的状态、输入、输出和参数等变量，在干扰的影响下，应当总是有界的，稳定性是对所有控制系统的基本要求。《自适应控制》</p><p>系统运动的稳定性实质上归结为系统平衡状态的稳定性。直观上，系统平衡状态的稳定性问题就是，偏离平衡状态的受扰运动能否只依靠系统内部的结构因素，或者使之限制在平衡状态的有限邻域内，或者使之最终返回到平衡状态。</p><p>控制系统的稳定性是由系统的结构所决定的，与外界因素无关，因此，系统的稳定性研究的是自治系统的稳定性，自治系统可写为：</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image002.gif" alt="img">，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image004.gif" alt="img">，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image006.gif" alt="img"></p><p>其中<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image008.gif" alt="img">为<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image010.gif" alt="img">维状态向量。</p><p>对于连续非线性时变系统，为显含时间变量<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image012.gif" alt="img">的<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image010.gif" alt="img">维向量函数</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image014.gif" alt="img"></p><p>对于连续非线性时不变系统，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image016.gif" alt="img">中不再显含时间变量<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image012.gif" alt="img">，即可写成<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image018.gif" alt="img">的形式</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image020.gif" alt="img"></p><p>对于连续线性时变系统，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image016.gif" alt="img">可进一步表示为状态<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image008.gif" alt="img">的线性向量形式，并且显含时间<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image012.gif" alt="img"></p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image024.gif" alt="img"></p><p>对于连续线性时不变系统，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image016.gif" alt="img">表示为不显含时间<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image012.gif" alt="img">状态<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image008.gif" alt="img">的线性向量形式</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image027.gif" alt="img"></p><p>2稳定性理论在控制系统设计中是如何应用的？</p><p>3各种稳定与吸引之间的关系是怎样的？</p><p>系统特解稳定性是解在有限时间区间上对初值的连续依赖性在无穷区间上的扩展，把系统的解与特解作差，那么就把系统特解的稳定性转化为零解的稳定性，即系统状态对零状态的连续依赖性在无穷区间上的扩展。</p><p>3.1稳定与一致稳定</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image029.gif" alt="img"></p><p>图1系统稳定示意图</p><p>给定条件：<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image031.gif" alt="img">，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image033.gif" alt="img">；诱导条件：<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image035.gif" alt="img"></p><p>说明：稳定与一致稳定的区别在于边界<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image035.gif" alt="img">的决定因素，对于稳定，边界是由初始条件<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image031.gif" alt="img">和<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image033.gif" alt="img">共同决定的，而一致稳定的边界<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image035.gif" alt="img">只由<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image033.gif" alt="img">决定而与<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image031.gif" alt="img">无关。</p><p>3.2吸引，同等吸引，一致吸引，全局吸引</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image040.gif" alt="img"></p><p>图2 系统吸引示意图</p><p>初始条件：<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image031.gif" alt="img">，<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image033.gif" alt="img">；诱导条件：<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image035.gif" alt="img">（吸引域的边界），<img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image044.gif" alt="img">。</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image046.gif" alt="img"></p><p>图3 各种吸引关系示意图</p><p>渐进稳定指系统是稳定的又是吸引的；</p><p>一致渐进稳定指系统是一致稳定又是一致吸引的；</p><p>全局渐进稳定，指系统是稳定的又是全局吸引的；</p><p>一致全局渐进稳定，是指一致稳定又是全局一致吸引的。</p><p><img src="file:///C:/Users/24825/AppData/Local/Temp/msohtmlclip1/01/clip_image048.gif" alt="img"></p><p>图4 渐进稳定示意图</p><p>4内部稳定和外部稳定的关系是怎样的?</p><p>内部稳定指的是系统的渐进稳定，外部稳定指的是系统的BIBO稳定。</p><p>以连续线性时变系统为例来研究两者的关系。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 研究生论文 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Neural Networks stability theory </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
   
   
 </search>
