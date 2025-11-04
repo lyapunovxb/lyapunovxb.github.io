@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Linux命令 | lyapunovxb blog</title><meta name="author" content="wangxiangbo"><meta name="copyright" content="wangxiangbo"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程  查询正在运行的进程并gerp finetune_lora_single_gpu.sh ps aux | grep finetune_lora_single_gpu.sh ps aux | grep finetune_lora_ds.sh kill -9 372813 根据上一步查出来的进程号，用kill -9强制删">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux命令">
+<meta property="og:url" content="https://lyapunovxb.github.io/2025/11/04/linux%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="lyapunovxb blog">
+<meta property="og:description" content="当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程  查询正在运行的进程并gerp finetune_lora_single_gpu.sh ps aux | grep finetune_lora_single_gpu.sh ps aux | grep finetune_lora_ds.sh kill -9 372813 根据上一步查出来的进程号，用kill -9强制删">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lyapunovxb.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2025-11-04T01:00:00.000Z">
+<meta property="article:modified_time" content="2025-11-04T02:59:52.669Z">
+<meta property="article:author" content="wangxiangbo">
+<meta property="article:tag" content="运维">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lyapunovxb.github.io/img/avatar.jpg"><link rel="shortcut icon" href="/img/touxiang.jpg"><link rel="canonical" href="https://lyapunovxb.github.io/2025/11/04/linux%E5%91%BD%E4%BB%A4/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux命令',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2025-11-04 10:59:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><style>#footer { background-color: transparent !important; } [data-theme="dark"] #footer:before { background-color: transparent !important; }</style><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="lyapunovxb blog"><span class="site-name">lyapunovxb blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux命令</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-04T01:00:00.000Z" title="发表于 2025-11-04 09:00:00">2025-11-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-04T02:59:52.669Z" title="更新于 2025-11-04 10:59:52">2025-11-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux/">Linux</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux命令"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><ol>
+<li>当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程</li>
+</ol>
+<p>查询正在运行的进程并gerp finetune_lora_single_gpu.sh</p>
+<p><code>ps aux | grep finetune_lora_single_gpu.sh</code></p>
+<p><code>ps aux | grep finetune_lora_ds.sh</code></p>
+<p><code>kill -9 372813</code> 根据上一步查出来的进程号，用kill -9强制删除</p>
+<p><code>nvidia-smi </code>查看是否gpu显存已经清空</p>
+<ol start="2">
+<li>查看某个文件的前20行</li>
+</ol>
+<p><code>head -n 20 train_data_law.json</code></p>
+<ol start="3">
+<li>查看当前文件夹的大小</li>
+</ol>
+<p><code>du -sh .</code></p>
+<ol start="4">
+<li>查看当前文件夹挂载的是哪一个盘</li>
+</ol>
+<p><code>df -h .</code></p>
+<p>从大到小查看当前文件夹的下的文件大小</p>
+<p><code>du -sh * | sort -rh</code></p>
+<ol start="4">
+<li>查看当前文件下所有文件的大小</li>
+</ol>
+<p><code>ls -lh</code></p>
+<ol start="5">
+<li><font style="color:#000000;">把一个名为Yuan2的文件夹的所有内容（包括该文件夹名），cp到&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model目录下，使最后的目录为 &#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model&#x2F;Yuan2</font></li>
+</ol>
+<p><code>cp -a Yuan2 /mnt/users/wangxiangbo/nemo/model/</code></p>
+<ol start="6">
+<li>通过pid查看某个进程的详细信息</li>
+</ol>
+<p><code>&lt;font style=&quot;color:rgb(56, 58, 66);background-color:rgb(250, 250, 250);&quot;&gt;ps -fp 167891&lt;/font&gt;</code></p>
+<ol start="7">
+<li>查看当前目录下所有文件的磁盘占用情况</li>
+</ol>
+<p><code>du -ah | sort -hr | head -n 20</code></p>
+<ol start="8">
+<li><p>使用以下命令将<code>megatron-core</code>文件夹压缩成一个名为<code>megatron-core.zip</code>的zip文件</p>
+<p> <code>zip -r megatron-core.zip megatron-core </code></p>
+</li>
+<li><p>使用以下命令将<code>megatron-core.zip</code>解压缩</p>
+</li>
+</ol>
+<p><code>unzip megatron-core.zip </code></p>
+<ol start="11">
+<li>hg上面下载模型</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">pip install -U huggingface_hub</span><br><span class="line">huggingface-cli download bigscience/bloom-560m --local-dir bloom-560m</span><br><span class="line">huggingface-cli download Qwen/Qwen2-7B-Instruct --local-dir Qwen2-7B-Instruct</span><br><span class="line">huggingface-cli download Qwen/Qwen2.5-7B-Instruct --local-dir Qwen2.5-7B-Instruct</span><br><span class="line">huggingface-cli download BAAI/IndustryCorpus_computer --repo-type dataset --local-dir IndustryCorpus_computer</span><br><span class="line"></span><br><span class="line">huggingface-cli download BAAI/IndustryCorpus2_current_affairs_government_administration --repo-type dataset --local-dir government_administration</span><br><span class="line"></span><br><span class="line">huggingface-cli download ShengbinYue/DISC-Law-SFT --repo-type dataset --local-dir DISC-Law-SFT</span><br><span class="line"></span><br><span class="line">huggingface-cli download TigerResearch/sft_zh</span><br></pre></td></tr></table></figure>
+
+<ol start="12">
+<li>归档压缩文件</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-c：创建一个新的压缩文件。</span></span><br><span class="line"><span class="comment">#-z：通过 gzip 压缩文件。</span></span><br><span class="line"><span class="comment">#-v：显示详细的压缩过程。</span></span><br><span class="line"><span class="comment">#-f：指定压缩后的文件名，这里是 colossalai.tar.gz</span></span><br><span class="line">tar -czvf colossalai.tar.gz colossalai/  </span><br><span class="line"></span><br><span class="line"><span class="comment">#-x：表示解压。</span></span><br><span class="line"><span class="comment">#-z：表示解压 .gz 格式的文件。</span></span><br><span class="line"><span class="comment">#-v：显示解压过程。</span></span><br><span class="line"><span class="comment">#-f：指定解压的文件</span></span><br><span class="line">tar -xzvf file.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2025/11/04/linux%E5%91%BD%E4%BB%A4/">https://lyapunovxb.github.io/2025/11/04/linux%E5%91%BD%E4%BB%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://lyapunovxb.github.io" target="_blank">lyapunovxb blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%BF%90%E7%BB%B4/">运维</a><a class="post-meta__tags" href="/tags/Linux/">Linux</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/11/04/kimi%E9%97%AE%E9%A2%98/" title="kimi问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">kimi问题</div></div></a></div><div class="next-post pull-right"><a href="/2025/11/04/vscode%E5%85%8D%E5%AF%86/" title="vscode免密"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">vscode免密</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/11/04/kimi%E9%97%AE%E9%A2%98/" title="kimi问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="title">kimi问题</div></div></a></div><div><a href="/2025/11/04/docker%E5%91%BD%E4%BB%A4/" title="docker命令"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="title">docker命令</div></div></a></div><div><a href="/2025/11/04/k8s%E5%91%BD%E4%BB%A4/" title="k8s命令"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="title">k8s命令</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">wangxiangbo</div><div class="author-info__description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lyapunovxb" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/heiyu97227@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/04/gerrit%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/" title="gerrit仓库代码提交流程">gerrit仓库代码提交流程</a><time datetime="2025-11-04T01:00:00.000Z" title="发表于 2025-11-04 09:00:00">2025-11-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/04/docker%E5%91%BD%E4%BB%A4/" title="docker命令">docker命令</a><time datetime="2025-11-04T01:00:00.000Z" title="发表于 2025-11-04 09:00:00">2025-11-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/04/git%20%E5%91%BD%E4%BB%A4/" title="git命令">git命令</a><time datetime="2025-11-04T01:00:00.000Z" title="发表于 2025-11-04 09:00:00">2025-11-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/04/k8s%E5%91%BD%E4%BB%A4/" title="k8s命令">k8s命令</a><time datetime="2025-11-04T01:00:00.000Z" title="发表于 2025-11-04 09:00:00">2025-11-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/04/gitlab%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/" title="gitlab仓库代码提交流程">gitlab仓库代码提交流程</a><time datetime="2025-11-04T01:00:00.000Z" title="发表于 2025-11-04 09:00:00">2025-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By wangxiangbo</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my blog!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="1" zIndex="-1" count="150" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
