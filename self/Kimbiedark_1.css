@@ -1,0 +1,79 @@
+:root {
+  --hl-color: #2d3748;            /* 主字体：深灰蓝，比纯黑更柔和 */
+  --hl-bg: #f9fbf9;               /* 背景：带一点点青调的浅灰白 */
+  --hltools-bg: #eef7f2;          /* 顶部工具栏背景 */
+  --hltools-color: #3a5f40;       /* 工具栏文字 */
+  --hlnumber-bg: #f0f6f2;         /* 行号背景 */
+  --hlnumber-color: #7a9b83;      /* 行号文字 */
+  --hlscrollbar-bg: #88c9a1;      /* 滚动条：清新的青绿色 */
+  --hlexpand-bg: #88c9a1;         /* 展开按钮背景 */
+}
+
+/* 注释 / 引用 —— 柔和橄榄灰绿 */
+#article-container figure.highlight .hljs-comment,
+#article-container figure.highlight .hljs-quote {
+  color: #7a8b7a;
+}
+
+/* 变量 / 标签 / 选择器 —— 暖陶红（醒目但不刺眼） */
+#article-container figure.highlight .hljs-variable,
+#article-container figure.highlight .hljs-template-variable,
+#article-container figure.highlight .hljs-tag,
+#article-container figure.highlight .hljs-name,
+#article-container figure.highlight .hljs-selector-id,
+#article-container figure.highlight .hljs-selector-class,
+#article-container figure.highlight .hljs-regexp,
+#article-container figure.highlight .hljs-meta {
+  color: #d3545d;
+}
+
+/* 数字 / 内置 / 字面量 —— 活力橙 */
+#article-container figure.highlight .hljs-number,
+#article-container figure.highlight .hljs-built_in,
+#article-container figure.highlight .hljs-builtin-name,
+#article-container figure.highlight .hljs-literal,
+#article-container figure.highlight .hljs-type,
+#article-container figure.highlight .hljs-params,
+#article-container figure.highlight .hljs-deletion,
+#article-container figure.highlight .hljs-link {
+  color: #e67e22;
+}
+
+/* 标题 / 区段 / 属性 —— 金琥珀色 */
+#article-container figure.highlight .hljs-title,
+#article-container figure.highlight .hljs-section,
+#article-container figure.highlight .hljs-attribute {
+  color: #b8860b;
+}
+
+/* 字符串 / 符号 / 新增内容 —— 清新青蓝 */
+#article-container figure.highlight .hljs-string,
+#article-container figure.highlight .hljs-symbol,
+#article-container figure.highlight .hljs-bullet,
+#article-container figure.highlight .hljs-addition {
+  color: #2a9d8f;
+}
+
+/* 关键字 / 函数 / 选择器标签 —— 柔雾紫 */
+#article-container figure.highlight .hljs-keyword,
+#article-container figure.highlight .hljs-selector-tag,
+#article-container figure.highlight .hljs-function {
+  color: #7b68ee;
+}
+
+/* 通用样式 */
+#article-container figure.highlight .hljs {
+  display: block;
+  overflow-x: auto;
+  background: var(--hl-bg);
+  color: var(--hl-color);
+  padding: 0.5em;
+}
+
+#article-container figure.highlight .hljs-emphasis {
+  font-style: italic;
+}
+
+#article-container figure.highlight .hljs-strong {
+  font-weight: bold;
+}
