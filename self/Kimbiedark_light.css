@@ -1,0 +1,99 @@
+/*
+    Name:     Kimbie (dark)
+    Author:   Jan T. Sott
+    License:  Creative Commons Attribution-ShareAlike 4.0 Unported License
+    URL:      https://github.com/idleberg/Kimbie-highlight.js
+*/
+
+/* 新添加的内容
+  ------------------------------------- 
+  --hl-color                  代码框字体顔色 【必须】 (把下面.hljs的 color复制到这里来)
+  --hl-bg                     代码框背景色 【必须】 (把下面.hljs的 background复制到这里来)
+  --hltools-bg: #321a0f       代码框顶部工具栏背景色 【可选】(如果你关掉了 copy、lang 和 shrink,可不用配置这个）
+  --hltools-color: #fff       代码框顶部工具栏字体顔色 【可选】(如果你关掉了 copy、lang 和 shrink,可不用配置这个）
+  --hlnumber-bg: #221a0f      代码框行数背景色 【可选】(如果已经关掉 line_number,可以不用配置这个)
+  --hlnumber-color: #fff      代码框行数字体顔色 【可选】 (如果已经关掉 line_number,可以不用配置这个)
+  --hlscrollbar-bg: #d3af86   代码框滚动条顔色 【可选】（默认为主题主顔色）
+  --hlexpand-bg: #d3af86      代码框底部展开背景色 【可选】(如果已经关掉 highlight_height_limit,可以不用配置这个)
+*/
+
+:root {
+  --hl-color: #000000;
+  --hl-bg: #f8f8f8;
+  --hltools-bg: #e9e9e9;
+  --hltools-color: #000000;
+  --hlnumber-bg: #f6f8fa;
+  --hlnumber-color: #6a737d;
+  --hlscrollbar-bg: #c8cacc;
+  --hlexpand-bg: #c8cacc;
+}
+
+/* Kimbie Comment */
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+}
+
+/* Kimbie Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-meta {
+  color: #a71d5d;
+}
+
+/* Kimbie Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-deletion,
+.hljs-link {
+  color: #e36209;
+}
+
+/* Kimbie Yellow */
+.hljs-title,
+.hljs-section,
+.hljs-attribute {
+  color: #b08900;
+}
+
+/* Kimbie Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: #22863a;
+}
+
+/* Kimbie Purple */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-function {
+  color: #6f42c1;
+}
+
+/* 更改的内容 把.hljs改为 #article-container figure.highlight .hljs *、
+/* ------------------------------------- */
+#article-container figure.highlight .hljs {
+  display: block;
+  overflow-x: auto;
+  background: var(--hl-bg);
+  color: var(--hl-color);
+  padding: 0.5em;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
