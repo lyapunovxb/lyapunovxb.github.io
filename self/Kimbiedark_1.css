@@ -1,4 +1,4 @@
-:root {
+<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script>:root {
   --hl-color: #2d3748;            /* 主字体：深灰蓝，比纯黑更柔和 */
   --hl-bg: #f9fbf9;               /* 背景：带一点点青调的浅灰白 */
   --hltools-bg: #eef7f2;          /* 顶部工具栏背景 */
