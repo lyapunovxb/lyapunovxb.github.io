@@ -107,6 +107,32 @@ gitlab中找的到自己仓库下CM_OPTIMUS
       </tags>
   </entry>
   <entry>
+    <title>Linux2_Linux命令</title>
+    <url>/2025/11/04/Linux/Linux2_linux%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[
+当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程查询正在运行的进程并gerp finetune_lora_single_gpu.shps aux | grep finetune_lora_single_gpu.shps aux | grep finetune_lora_ds.shkill -9 372813 根据上一步查出来的进程号，用kill -9强制删除nvidia-smi 查看是否gpu显存已经清空
+查看某个文件的前20行head -n 20 train_data_law.json
+查看当前文件夹的大小du -sh .
+查看当前文件夹挂载的是哪一个盘df -h .从大到小查看当前文件夹的下的文件大小du -sh * | sort -rh
+查看当前文件下所有文件的大小ls -lh
+把一个名为Yuan2的文件夹的所有内容（包括该文件夹名），cp到&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model目录下，使最后的目录为 &#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model&#x2F;Yuan2cp -a Yuan2 /mnt/users/wangxiangbo/nemo/model/
+通过pid查看某个进程的详细信息&lt;font style=&quot;color:rgb(56, 58, 66);background-color:rgb(250, 250, 250);&quot;&gt;ps -fp 167891&lt;/font&gt;
+查看当前目录下所有文件的磁盘占用情况du -ah | sort -hr | head -n 20
+使用以下命令将megatron-core文件夹压缩成一个名为megatron-core.zip的zip文件 zip -r megatron-core.zip megatron-core 
+使用以下命令将megatron-core.zip解压缩unzip megatron-core.zip 
+hg上面下载模型pip install -U huggingface_hubhuggingface-cli download bigscience/bloom-560m --local-dir bloom-560mhuggingface-cli download Qwen/Qwen2-7B-Instruct --local-dir Qwen2-7B-Instructhuggingface-cli download Qwen/Qwen2.5-7B-Instruct --local-dir Qwen2.5-7B-Instructhuggingface-cli download BAAI/IndustryCorpus_computer --repo-type dataset --local-dir IndustryCorpus_computerhuggingface-cli download BAAI/IndustryCorpus2_current_affairs_government_administration --repo-type dataset --local-dir government_administrationhuggingface-cli download ShengbinYue/DISC-Law-SFT --repo-type dataset --local-dir DISC-Law-SFThuggingface-cli download TigerResearch/sft_zh
+归档压缩文件#-c：创建一个新的压缩文件。#-z：通过 gzip 压缩文件。#-v：显示详细的压缩过程。#-f：指定压缩后的文件名，这里是 colossalai.tar.gztar -czvf colossalai.tar.gz colossalai/  #-x：表示解压。#-z：表示解压 .gz 格式的文件。#-v：显示解压过程。#-f：指定解压的文件tar -xzvf file.tar.gz
+
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>运维</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux1_kimi问题</title>
     <url>/2025/11/04/Linux/Linux1_kimi%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[
@@ -131,29 +157,40 @@ gitlab中找的到自己仓库下CM_OPTIMUS
       </tags>
   </entry>
   <entry>
-    <title>Linux2_Linux命令</title>
-    <url>/2025/11/04/Linux/Linux2_linux%E5%91%BD%E4%BB%A4/</url>
+    <title>运维1_docker命令</title>
+    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[
-当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程查询正在运行的进程并gerp finetune_lora_single_gpu.shps aux | grep finetune_lora_single_gpu.shps aux | grep finetune_lora_ds.shkill -9 372813 根据上一步查出来的进程号，用kill -9强制删除nvidia-smi 查看是否gpu显存已经清空
-查看某个文件的前20行head -n 20 train_data_law.json
-查看当前文件夹的大小du -sh .
-查看当前文件夹挂载的是哪一个盘df -h .从大到小查看当前文件夹的下的文件大小du -sh * | sort -rh
-查看当前文件下所有文件的大小ls -lh
-把一个名为Yuan2的文件夹的所有内容（包括该文件夹名），cp到&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model目录下，使最后的目录为 &#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model&#x2F;Yuan2cp -a Yuan2 /mnt/users/wangxiangbo/nemo/model/
-通过pid查看某个进程的详细信息&lt;font style=&quot;color:rgb(56, 58, 66);background-color:rgb(250, 250, 250);&quot;&gt;ps -fp 167891&lt;/font&gt;
-查看当前目录下所有文件的磁盘占用情况du -ah | sort -hr | head -n 20
-使用以下命令将megatron-core文件夹压缩成一个名为megatron-core.zip的zip文件 zip -r megatron-core.zip megatron-core 
-使用以下命令将megatron-core.zip解压缩unzip megatron-core.zip 
-hg上面下载模型pip install -U huggingface_hubhuggingface-cli download bigscience/bloom-560m --local-dir bloom-560mhuggingface-cli download Qwen/Qwen2-7B-Instruct --local-dir Qwen2-7B-Instructhuggingface-cli download Qwen/Qwen2.5-7B-Instruct --local-dir Qwen2.5-7B-Instructhuggingface-cli download BAAI/IndustryCorpus_computer --repo-type dataset --local-dir IndustryCorpus_computerhuggingface-cli download BAAI/IndustryCorpus2_current_affairs_government_administration --repo-type dataset --local-dir government_administrationhuggingface-cli download ShengbinYue/DISC-Law-SFT --repo-type dataset --local-dir DISC-Law-SFThuggingface-cli download TigerResearch/sft_zh
-归档压缩文件#-c：创建一个新的压缩文件。#-z：通过 gzip 压缩文件。#-v：显示详细的压缩过程。#-f：指定压缩后的文件名，这里是 colossalai.tar.gztar -czvf colossalai.tar.gz colossalai/  #-x：表示解压。#-z：表示解压 .gz 格式的文件。#-v：显示解压过程。#-f：指定解压的文件tar -xzvf file.tar.gz
+启动一个容器
+sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？
+docker ps -adocker start qwendocker exec -it 容器id bash
+
+拉取一个新镜像后，通过这个镜像创建一个容器。
+docker run -it --name qwen --gpus all 镜像名:镜像tags bash
+
+将此时qwen容器打成镜像
+docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
 
 ]]></content>
       <categories>
-        <category>Linux</category>
+        <category>运维</category>
       </categories>
       <tags>
         <tag>运维</tag>
-        <tag>Linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试 Hexo 标签分类2</title>
+    <url>/2025/10/31/%E9%A1%B5%E9%9D%A2%E6%B5%8B%E8%AF%95/test%20copy/</url>
+    <content><![CDATA[这是文章正文。
+]]></content>
+      <categories>
+        <category>测试</category>
+      </categories>
+      <tags>
+        <tag>测试2</tag>
+        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -207,102 +244,6 @@ export const sortVideos: SyncRequestFuncType&lt;string[], void&gt; = (params) =&
       </tags>
   </entry>
   <entry>
-    <title>运维2_k8s命令</title>
-    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B42_k8s%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[
-获取特定命名空间的详细信息kubectl get ns namespace-name -o wide
-kubectl通过ns获取所有的pods的详细信息kubectl get pods -n &lt;ns_name&gt; -o wide
-删除启动失败的pod，可以直接删除启动时的yaml，否则pod会自动重启kubectl delete -f qwentest.yaml
-查看所有的node的lable标签信息kubectl get node --show-labelskubectl get node xxx --show-labelskubectl get node --show-labels | grep model
-打标签kubectl label nodes ecs-jhjs-1234-003 key=vaule
-删除某节点的lable标签kubectl label nodes cce100-64-29-79.cce-stack.com model-
-创建一个命名空间namespacekubectl create namespace xxx
-查看所有节点的标签kubectl get nodes --show-labelskubectl get nodes --show-labels | grep model=llama2-70b
-
-]]></content>
-      <categories>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>运维</tag>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试 Hexo 标签分类2</title>
-    <url>/2025/10/31/%E9%A1%B5%E9%9D%A2%E6%B5%8B%E8%AF%95/test%20copy/</url>
-    <content><![CDATA[这是文章正文。
-]]></content>
-      <categories>
-        <category>测试</category>
-      </categories>
-      <tags>
-        <tag>测试2</tag>
-        <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>运维1_docker命令</title>
-    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[
-启动一个容器
-sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？
-docker ps -adocker start qwendocker exec -it 容器id bash
-
-拉取一个新镜像后，通过这个镜像创建一个容器。
-docker run -it --name qwen --gpus all 镜像名:镜像tags bash
-
-将此时qwen容器打成镜像
-docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
-
-]]></content>
-      <categories>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>运维</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2-Qwen模型镜像制作</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</url>
-    <content><![CDATA[由于新机器挂载文件存储速度非常慢，通过dockerfile文件来直接生成镜像非常慢，所以本镜像在自己的V100云主机中进行打包。
-1. 首先docker pull拉取一个ubuntu基础环境https://hub.docker.com/r/nvidia/cuda/tags?page=11&page_size&#x3D;&amp;name&#x3D;&amp;ordering&#x3D;docker pull nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-2. 安装nvidia-container-toolkit，使docker可以调用宿主机gpu资源2.1 下载nvidia-container-toolkit distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &amp;&amp; \ curl -s -L [https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list](https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list) | sed &#39;s#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g&#39; | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-2.2 安装nvidia-container-toolkit  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit
-2.3 添加nvidia-docker源  curl -s -L [https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list](https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list) |   sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-2.4 更新并重新执行安装  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit如果执行过程中报W: GPG error: https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/amd64  InRelease: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY DDCAE044F796ECB0，则需要确认你的系统是否信任NVIDIA的GPG密钥。如果没有，你需要导入它。可以通过以下命令导入GPG密钥：curl -s [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo apt-key add -
-2.5 完成 nvidia-container-toolkit 的安装之后，我们继续执行 nvidia-ctk runtime configure 命令，为 Docker 添加 nvidia 这个运行时。完成后，我们的应用就能在容器中使用显卡资源了  sudo nvidia-ctk runtime configure --runtime=docker
-  
-2.6 重启docker  sudo systemctl restart docker
-2.7 查看是否安装成功  dpkg -l | grep nvidia-container-toolkit
-  
-3. 拉取基础镜像成功后，创建一个docker容器docker imagessudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04exit
-4. 退出容器后，将本地跑同的qwen模型代码&#x2F;权重&#x2F;数据集&#x2F;环境cp到创建的qwen镜像中docker cp /opt/tmp/Qwen/ 02649afd9710:/qwen
-5. 重启docker，exec执行docker ps -adocker start qwendocker exec -it 02649afd9710 bash
-6. 因为想在容器中执行自身的python环境，不借用宿主机的环境，所以需要单独再安装conda、pytorch等环境。7. 安装完基础环境后，需要安装qwen模型的依赖pip install -r requirements.txt
-8. 没有vim编辑器还需安装vimapt-get updateapt-get install -y vim
-9. deepspeed安装pip install &quot;peft&lt;0.8.0&quot; deepspeed
-10. 此时在qwen容器中执行训练脚本，拉起训练。bash finetune/finetune_lora_single_gpu.sh
-11. 将此时qwen容器打成镜像docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
-12. 将打好的镜像转成tar包，供新机器解压使用docker save -o qwen-7b.tar qwen-7b:v1.0
-13. 加载tar镜像, 使用load进行从tar文件导出镜像docker load -i qwen-7b.tar
-14. 由于新机器挂载文件存储的原因，镜像解压速度太慢，于是打算将打好的qwen镜像push到阿里云个人仓库中，在新机器中直接pull该镜像。15. 将镜像推送到Registrydocker login --username=aliyun9599911612 registry.cn-shanghai.aliyuncs.comdocker tag 37c7b97b67f6 registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0docker push registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
-16. 在3号机器中，拉取该镜像docker pull registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
-17. 通过该镜像，run一个容器docker run -it --name qwen --gpus all registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0 bash
-]]></content>
-      <categories>
-        <category>模型训练调优 -NVIDIA</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>Nvidia</tag>
-        <tag>Qwen</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>1-Qwen模型本地部署与单机单卡/多卡训练</title>
     <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/</url>
     <content><![CDATA[一、V100环境部署
@@ -333,6 +274,65 @@ import json# 读取以.jsonl结尾的文件json_data = []with open(&#x27;/opt/tm
 单机多卡训练（在分配的3号机器上执行）gpu显存利用情况
 
 
+]]></content>
+      <categories>
+        <category>模型训练调优 -NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>Nvidia</tag>
+        <tag>Qwen</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>运维2_k8s命令</title>
+    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B42_k8s%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[
+获取特定命名空间的详细信息kubectl get ns namespace-name -o wide
+kubectl通过ns获取所有的pods的详细信息kubectl get pods -n &lt;ns_name&gt; -o wide
+删除启动失败的pod，可以直接删除启动时的yaml，否则pod会自动重启kubectl delete -f qwentest.yaml
+查看所有的node的lable标签信息kubectl get node --show-labelskubectl get node xxx --show-labelskubectl get node --show-labels | grep model
+打标签kubectl label nodes ecs-jhjs-1234-003 key=vaule
+删除某节点的lable标签kubectl label nodes cce100-64-29-79.cce-stack.com model-
+创建一个命名空间namespacekubectl create namespace xxx
+查看所有节点的标签kubectl get nodes --show-labelskubectl get nodes --show-labels | grep model=llama2-70b
+
+]]></content>
+      <categories>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>运维</tag>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2-Qwen模型镜像制作</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</url>
+    <content><![CDATA[由于新机器挂载文件存储速度非常慢，通过dockerfile文件来直接生成镜像非常慢，所以本镜像在自己的V100云主机中进行打包。
+1. 首先docker pull拉取一个ubuntu基础环境https://hub.docker.com/r/nvidia/cuda/tags?page=11&page_size&#x3D;&amp;name&#x3D;&amp;ordering&#x3D;docker pull nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+2. 安装nvidia-container-toolkit，使docker可以调用宿主机gpu资源2.1 下载nvidia-container-toolkit distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &amp;&amp; \ curl -s -L [https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list](https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list) | sed &#39;s#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g&#39; | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+2.2 安装nvidia-container-toolkit  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit
+2.3 添加nvidia-docker源  curl -s -L [https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list](https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list) |   sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+2.4 更新并重新执行安装  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit如果执行过程中报W: GPG error: https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/amd64  InRelease: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY DDCAE044F796ECB0，则需要确认你的系统是否信任NVIDIA的GPG密钥。如果没有，你需要导入它。可以通过以下命令导入GPG密钥：curl -s [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo apt-key add -
+2.5 完成 nvidia-container-toolkit 的安装之后，我们继续执行 nvidia-ctk runtime configure 命令，为 Docker 添加 nvidia 这个运行时。完成后，我们的应用就能在容器中使用显卡资源了  sudo nvidia-ctk runtime configure --runtime=docker
+  
+2.6 重启docker  sudo systemctl restart docker
+2.7 查看是否安装成功  dpkg -l | grep nvidia-container-toolkit
+  
+3. 拉取基础镜像成功后，创建一个docker容器docker imagessudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04exit
+4. 退出容器后，将本地跑同的qwen模型代码&#x2F;权重&#x2F;数据集&#x2F;环境cp到创建的qwen镜像中docker cp /opt/tmp/Qwen/ 02649afd9710:/qwen
+5. 重启docker，exec执行docker ps -adocker start qwendocker exec -it 02649afd9710 bash
+6. 因为想在容器中执行自身的python环境，不借用宿主机的环境，所以需要单独再安装conda、pytorch等环境。7. 安装完基础环境后，需要安装qwen模型的依赖pip install -r requirements.txt
+8. 没有vim编辑器还需安装vimapt-get updateapt-get install -y vim
+9. deepspeed安装pip install &quot;peft&lt;0.8.0&quot; deepspeed
+10. 此时在qwen容器中执行训练脚本，拉起训练。bash finetune/finetune_lora_single_gpu.sh
+11. 将此时qwen容器打成镜像docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
+12. 将打好的镜像转成tar包，供新机器解压使用docker save -o qwen-7b.tar qwen-7b:v1.0
+13. 加载tar镜像, 使用load进行从tar文件导出镜像docker load -i qwen-7b.tar
+14. 由于新机器挂载文件存储的原因，镜像解压速度太慢，于是打算将打好的qwen镜像push到阿里云个人仓库中，在新机器中直接pull该镜像。15. 将镜像推送到Registrydocker login --username=aliyun9599911612 registry.cn-shanghai.aliyuncs.comdocker tag 37c7b97b67f6 registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0docker push registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
+16. 在3号机器中，拉取该镜像docker pull registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
+17. 通过该镜像，run一个容器docker run -it --name qwen --gpus all registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0 bash
 ]]></content>
       <categories>
         <category>模型训练调优 -NVIDIA</category>

@@ -170,4 +170,172 @@
 <li>创建一个命名空间namespace<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl create namespace xxx<br></code></pre></td></tr></table></figure></li>
 <li>查看所有节点的标签<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl get nodes --show-labels<br>kubectl get nodes --show-labels | grep model=llama2-70b<br></code></pre></td></tr></table></figure></li>
 </ol>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B42_k8s%E5%91%BD%E4%BB%A4/">https://lyapunovxb.github.io/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B42_k8s%E5%91%BD%E4%BB%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lyapunovxb.github.io" target="_blank">lyapunovxb blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%BF%90%E7%BB%B4/">运维</a><a class="post-meta__tags" href="/tags/k8s/">k8s</a></div><div class="post-share"><div class="social-share" data-image="/img/background/bg_%E8%BF%90%E7%BB%B4.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/" title="运维1_docker命令"><img class="cover" src="/img/background/bg_%E8%BF%90%E7%BB%B4.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">运维1_docker命令</div></div><div class="info-2"><div class="info-item-1"> 启动一个容器 1sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？ 12345docker ps -adocker start qwendocker exec -it 容器id bash  拉取一个新镜像后，通过这个镜像创建一个容器。 1docker run -it --name qwen --gpus all 镜像名:镜像tags bash  将此时qwen容器打成镜像 1docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0  </div></div></div></a><a class="pagination-related" href="/2025/11/04/Linux/Linux2_linux%E5%91%BD%E4%BB%A4/" title="Linux2_Linux命令"><img class="cover" src="/img/background/bg_Linux.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Linux2_Linux命令</div></div><div class="info-2"><div class="info-item-1"> 当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程查询正在运行的进程并gerp finetune_lora_single_gpu.shps aux | grep finetune_lora_single_gpu.shps aux | grep finetune_lora_ds.shkill -9 372813 根据上一步查出来的进程号，用kill -9强制删除nvidia-smi 查看是否gpu显存已经清空 查看某个文件的前20行head -n 20 train_data_law.json 查看当前文件夹的大小du -sh . 查看当前文件夹挂载的是哪一个盘df -h .从大到小查看当前文件夹的下的文件大小du -sh * | sort -rh 查看当前文件下所有文件的大小ls -lh 把一个名为Yuan2的文件夹的所有内容（包括该文件夹名），cp到&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model目录下，使最后的目录为 &#x2F;mnt&#x2F;users&#x2F;wangxi...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/04/Linux/Linux1_kimi%E9%97%AE%E9%A2%98/" title="Linux1_kimi问题"><img class="cover" src="/img/background/bg_Linux.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="info-item-2">Linux1_kimi问题</div></div><div class="info-2"><div class="info-item-1"> 权重转换代码换行符Kimi: 出现这些错误通常是因为脚本文件在不同的操作系统环境下被编辑或创建，导致文件的换行符不一致。Unix&#x2F;Linux系统使用LF（Line Feed，\n）作为换行符，而Windows系统使用CR+LF（Carriage Return + Line Feed，\r\n）作为换行符。错误信息中的 $&#39;\r&#39;: command not found 表示脚本尝试执行一个以 \r 开头的命令，这通常是因为脚本文件中的换行符是 \r\n 而不是 \n。此外，syntax error near unexpected token &#39;elif&#39; 错误表明脚本解析器在遇到 elif 时遇到了语法错误，这可能是因为 elif 之前的行（可能是第59行）以 \r\n 结尾，导致 elif 行实际上是从一个新的行开始，而不是在预期的位置。要解决这个问题，你可以使用 dos2unix 工具将脚本文件从Windows格式转换为Unix&#x2F;Linux格式。如果你没有 dos2unix 工具，可以使用 sed 命令来移除 \r 字符：1...</div></div></div></a><a class="pagination-related" href="/2025/11/04/Linux/Linux2_linux%E5%91%BD%E4%BB%A4/" title="Linux2_Linux命令"><img class="cover" src="/img/background/bg_Linux.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="info-item-2">Linux2_Linux命令</div></div><div class="info-2"><div class="info-item-1"> 当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程查询正在运行的进程并gerp finetune_lora_single_gpu.shps aux | grep finetune_lora_single_gpu.shps aux | grep finetune_lora_ds.shkill -9 372813 根据上一步查出来的进程号，用kill -9强制删除nvidia-smi 查看是否gpu显存已经清空 查看某个文件的前20行head -n 20 train_data_law.json 查看当前文件夹的大小du -sh . 查看当前文件夹挂载的是哪一个盘df -h .从大到小查看当前文件夹的下的文件大小du -sh * | sort -rh 查看当前文件下所有文件的大小ls -lh 把一个名为Yuan2的文件夹的所有内容（包括该文件夹名），cp到&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model目录下，使最后的目录为 &#x2F;mnt&#x2F;users&#x2F;wangxi...</div></div></div></a><a class="pagination-related" href="/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/" title="运维1_docker命令"><img class="cover" src="/img/background/bg_%E8%BF%90%E7%BB%B4.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="info-item-2">运维1_docker命令</div></div><div class="info-2"><div class="info-item-1"> 启动一个容器 1sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？ 12345docker ps -adocker start qwendocker exec -it 容器id bash  拉取一个新镜像后，通过这个镜像创建一个容器。 1docker run -it --name qwen --gpus all 镜像名:镜像tags bash  将此时qwen容器打成镜像 1docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0  </div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wangxiangbo</div><div class="author-info-description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lyapunovxb"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/11/06/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF1_%E8%B0%83%E7%94%A8api%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%86%99%E6%B3%95/" title="前端1_调用api接口的写法"><img src="/img/background/bg_%E5%89%8D%E7%AB%AF.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前端1_调用api接口的写法"/></a><div class="content"><a class="title" href="/2025/11/06/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF1_%E8%B0%83%E7%94%A8api%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%86%99%E6%B3%95/" title="前端1_调用api接口的写法">前端1_调用api接口的写法</a><time datetime="2025-11-06T01:00:00.000Z" title="发表于 2025-11-06 09:00:00">2025-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/" title="2-Qwen模型镜像制作"><img src="/img/background/bg_%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2-Qwen模型镜像制作"/></a><div class="content"><a class="title" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/" title="2-Qwen模型镜像制作">2-Qwen模型镜像制作</a><time datetime="2025-11-06T01:00:00.000Z" title="发表于 2025-11-06 09:00:00">2025-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1-Qwen模型本地部署与单机单卡/多卡训练"><img src="/img/background/bg_%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="1-Qwen模型本地部署与单机单卡/多卡训练"/></a><div class="content"><a class="title" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1-Qwen模型本地部署与单机单卡/多卡训练">1-Qwen模型本地部署与单机单卡/多卡训练</a><time datetime="2025-11-06T01:00:00.000Z" title="发表于 2025-11-06 09:00:00">2025-11-06</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By wangxiangbo</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><div class="aplayer" data-url="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E9%BC%93%E6%A5%BC-%E8%B5%B5%E9%9B%B7.mp3" data-lrc="/music/鼓楼-赵雷.lrc" data-name="鼓楼" data-artist="赵雷" data-cover="/music/maxresdefault.jpg" data-fixed="true" data-autoplay="true" data-mutex="true" data-theme="#ad7a86"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B42_k8s%E5%91%BD%E4%BB%A4/">https://lyapunovxb.github.io/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B42_k8s%E5%91%BD%E4%BB%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lyapunovxb.github.io" target="_blank">lyapunovxb blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%BF%90%E7%BB%B4/">运维</a><a class="post-meta__tags" href="/tags/k8s/">k8s</a></div><div class="post-share"><div class="social-share" data-image="/img/background/bg_%E8%BF%90%E7%BB%B4.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/06/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF1_%E8%B0%83%E7%94%A8api%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%86%99%E6%B3%95/" title="前端1_调用api接口的写法"><img class="cover" src="/img/background/bg_%E5%89%8D%E7%AB%AF.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">前端1_调用api接口的写法</div></div><div class="info-2"><div class="info-item-1">Get请求写法1. 看Parameters中是否有需要带参数，其中Authorization为授权认证的token可以不用考虑。1.1 若是没有其余的参数限定，那么SyncRequestFuncType&lt;请求参数类型,响应返回参数类型&gt;，第一个参数就为void或者undefined。返回类型可以使用any，等获取到响应参数之后，在对其通过Interface&#x2F;type进行明确。 123456789export const getApi: SyncRequestFuncType&lt;void,responseType&gt; = () =&gt; &#123;return javaAxios(&#123; method: &quot;get&quot;, url: &quot;xxx/xxxx&quot;,&#125;);&#125;;  1.2 若是有其余参数限定，这时需要箭头函数中需要带着params来进行请求，且reuturn中也需要将params带着。 1.2.1 `单个参数`，例如id，这时在请求参数类型中，需要明确出请求参数的类型&lt;&#123...</div></div></div></a><a class="pagination-related" href="/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/" title="运维1_docker命令"><img class="cover" src="/img/background/bg_%E8%BF%90%E7%BB%B4.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">运维1_docker命令</div></div><div class="info-2"><div class="info-item-1"> 启动一个容器 1sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？ 12345docker ps -adocker start qwendocker exec -it 容器id bash  拉取一个新镜像后，通过这个镜像创建一个容器。 1docker run -it --name qwen --gpus all 镜像名:镜像tags bash  将此时qwen容器打成镜像 1docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0  </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/04/Linux/Linux2_linux%E5%91%BD%E4%BB%A4/" title="Linux2_Linux命令"><img class="cover" src="/img/background/bg_Linux.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="info-item-2">Linux2_Linux命令</div></div><div class="info-2"><div class="info-item-1"> 当执行训练任务时，手动关闭训练，此时gup资源仍然占用，需要手动kill掉进程查询正在运行的进程并gerp finetune_lora_single_gpu.shps aux | grep finetune_lora_single_gpu.shps aux | grep finetune_lora_ds.shkill -9 372813 根据上一步查出来的进程号，用kill -9强制删除nvidia-smi 查看是否gpu显存已经清空 查看某个文件的前20行head -n 20 train_data_law.json 查看当前文件夹的大小du -sh . 查看当前文件夹挂载的是哪一个盘df -h .从大到小查看当前文件夹的下的文件大小du -sh * | sort -rh 查看当前文件下所有文件的大小ls -lh 把一个名为Yuan2的文件夹的所有内容（包括该文件夹名），cp到&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;nemo&#x2F;model目录下，使最后的目录为 &#x2F;mnt&#x2F;users&#x2F;wangxi...</div></div></div></a><a class="pagination-related" href="/2025/11/04/Linux/Linux1_kimi%E9%97%AE%E9%A2%98/" title="Linux1_kimi问题"><img class="cover" src="/img/background/bg_Linux.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="info-item-2">Linux1_kimi问题</div></div><div class="info-2"><div class="info-item-1"> 权重转换代码换行符Kimi: 出现这些错误通常是因为脚本文件在不同的操作系统环境下被编辑或创建，导致文件的换行符不一致。Unix&#x2F;Linux系统使用LF（Line Feed，\n）作为换行符，而Windows系统使用CR+LF（Carriage Return + Line Feed，\r\n）作为换行符。错误信息中的 $&#39;\r&#39;: command not found 表示脚本尝试执行一个以 \r 开头的命令，这通常是因为脚本文件中的换行符是 \r\n 而不是 \n。此外，syntax error near unexpected token &#39;elif&#39; 错误表明脚本解析器在遇到 elif 时遇到了语法错误，这可能是因为 elif 之前的行（可能是第59行）以 \r\n 结尾，导致 elif 行实际上是从一个新的行开始，而不是在预期的位置。要解决这个问题，你可以使用 dos2unix 工具将脚本文件从Windows格式转换为Unix&#x2F;Linux格式。如果你没有 dos2unix 工具，可以使用 sed 命令来移除 \r 字符：1...</div></div></div></a><a class="pagination-related" href="/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/" title="运维1_docker命令"><img class="cover" src="/img/background/bg_%E8%BF%90%E7%BB%B4.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-04</div><div class="info-item-2">运维1_docker命令</div></div><div class="info-2"><div class="info-item-1"> 启动一个容器 1sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？ 12345docker ps -adocker start qwendocker exec -it 容器id bash  拉取一个新镜像后，通过这个镜像创建一个容器。 1docker run -it --name qwen --gpus all 镜像名:镜像tags bash  将此时qwen容器打成镜像 1docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0  </div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wangxiangbo</div><div class="author-info-description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lyapunovxb"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/11/06/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF1_%E8%B0%83%E7%94%A8api%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%86%99%E6%B3%95/" title="前端1_调用api接口的写法"><img src="/img/background/bg_%E5%89%8D%E7%AB%AF.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前端1_调用api接口的写法"/></a><div class="content"><a class="title" href="/2025/11/06/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF1_%E8%B0%83%E7%94%A8api%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%86%99%E6%B3%95/" title="前端1_调用api接口的写法">前端1_调用api接口的写法</a><time datetime="2025-11-06T01:00:00.000Z" title="发表于 2025-11-06 09:00:00">2025-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1-Qwen模型本地部署与单机单卡/多卡训练"><img src="/img/background/bg_%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="1-Qwen模型本地部署与单机单卡/多卡训练"/></a><div class="content"><a class="title" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1-Qwen模型本地部署与单机单卡/多卡训练">1-Qwen模型本地部署与单机单卡/多卡训练</a><time datetime="2025-11-06T01:00:00.000Z" title="发表于 2025-11-06 09:00:00">2025-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/" title="2-Qwen模型镜像制作"><img src="/img/background/bg_%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2-Qwen模型镜像制作"/></a><div class="content"><a class="title" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/" title="2-Qwen模型镜像制作">2-Qwen模型镜像制作</a><time datetime="2025-11-06T01:00:00.000Z" title="发表于 2025-11-06 09:00:00">2025-11-06</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By wangxiangbo</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><div class="aplayer" data-url="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E9%BC%93%E6%A5%BC-%E8%B5%B5%E9%9B%B7.mp3" data-lrc="/music/鼓楼-赵雷.lrc" data-name="鼓楼" data-artist="赵雷" data-cover="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E6%97%A0%E6%B3%95%E9%95%BF%E5%A4%A7.jpg" data-fixed="true" data-autoplay="true" data-mutex="true" data-theme="#ad7a86"></div><script>
+(function() {
+  // 存储键名
+  const STORAGE_KEY = 'aplayer_progress';
+  const STORAGE_PLAYING_KEY = 'aplayer_playing';
+  const STORAGE_URL_KEY = 'aplayer_url';
+  
+  // 获取播放器的音频 URL
+  function getAudioUrl(aplayer) {
+    if (!aplayer || !aplayer.audio) return null;
+    // 优先使用 audio.src
+    if (aplayer.audio.src) {
+      return aplayer.audio.src.split('?')[0]; // 移除查询参数以便比较
+    }
+    return null;
+  }
+  
+  // 保存播放进度
+  function saveProgress(aplayer) {
+    if (!aplayer || !aplayer.audio) return;
+    
+    const currentTime = aplayer.audio.currentTime;
+    const duration = aplayer.audio.duration;
+    const url = getAudioUrl(aplayer);
+    const isPlaying = !aplayer.audio.paused;
+    
+    if (url && duration && duration > 0) {
+      localStorage.setItem(STORAGE_KEY, currentTime.toString());
+      localStorage.setItem(STORAGE_URL_KEY, url);
+      localStorage.setItem(STORAGE_PLAYING_KEY, isPlaying.toString());
+    }
+  }
+  
+  // 恢复播放进度
+  function restoreProgress(aplayer) {
+    if (!aplayer || !aplayer.audio) return;
+    
+    const savedUrl = localStorage.getItem(STORAGE_URL_KEY);
+    const currentUrl = getAudioUrl(aplayer);
+    
+    // 只有当前播放的歌曲与保存的歌曲一致时才恢复进度
+    if (savedUrl && currentUrl && (savedUrl === currentUrl || savedUrl.includes(currentUrl) || currentUrl.includes(savedUrl))) {
+      const savedProgress = parseFloat(localStorage.getItem(STORAGE_KEY) || '0');
+      const wasPlaying = localStorage.getItem(STORAGE_PLAYING_KEY) === 'true';
+      
+      if (savedProgress > 0) {
+        // 等待音频加载完成后恢复进度
+        const restore = () => {
+          if (aplayer.audio.duration > 0 && savedProgress < aplayer.audio.duration) {
+            aplayer.audio.currentTime = savedProgress;
+            // 如果之前是播放状态且当前是暂停状态，则继续播放
+            if (wasPlaying && aplayer.audio.paused) {
+              // 延迟一下确保 currentTime 已设置
+              setTimeout(() => {
+                aplayer.play().catch(() => {
+                  // 忽略自动播放被阻止的错误
+                });
+              }, 100);
+            }
+          }
+        };
+        
+        // 如果音频已经加载好，直接恢复
+        if (aplayer.audio.readyState >= 2) {
+          restore();
+        } else if (aplayer.audio.readyState >= 1) {
+          // 有元数据但可能还没加载完，等待 canplay
+          aplayer.audio.addEventListener('canplay', restore, { once: true });
+        } else {
+          // 还没加载，等待 loadedmetadata
+          aplayer.audio.addEventListener('loadedmetadata', function handler() {
+            if (aplayer.audio.readyState >= 2) {
+              restore();
+            } else {
+              aplayer.audio.addEventListener('canplay', restore, { once: true });
+            }
+            aplayer.audio.removeEventListener('loadedmetadata', handler);
+          }, { once: true });
+        }
+      }
+    }
+  }
+  
+  // 存储已初始化的播放器，避免重复绑定
+  let initializedPlayer = null;
+  let saveTimer = null;
+  
+  // 初始化 APlayer 进度保存功能
+  function initAplayerProgress() {
+    // 如果已经初始化过，先清理旧的事件监听器
+    if (initializedPlayer && initializedPlayer.audio) {
+      // 注意：由于我们使用了匿名函数，无法完全移除，但可以通过标记来避免重复执行
+      // 这里我们重新查找播放器，因为页面切换可能导致播放器重新创建
+    }
+    
+    // 等待 APlayer 初始化完成
+    const checkAplayer = setInterval(() => {
+      if (window.aplayers && window.aplayers.length > 0) {
+        clearInterval(checkAplayer);
+        
+        // 找到固定的播放器（通常是全局播放器）
+        const fixedPlayer = window.aplayers.find(ap => ap.options && ap.options.fixed);
+        if (fixedPlayer && fixedPlayer !== initializedPlayer) {
+          initializedPlayer = fixedPlayer;
+          
+          // 恢复播放进度（延迟一下确保音频已开始加载）
+          setTimeout(() => {
+            restoreProgress(fixedPlayer);
+          }, 300);
+          
+          // 监听时间更新，定期保存进度
+          fixedPlayer.audio.addEventListener('timeupdate', () => {
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+              saveProgress(fixedPlayer);
+            }, 1000); // 每秒保存一次
+          });
+          
+          // 监听播放/暂停状态变化
+          fixedPlayer.audio.addEventListener('play', () => {
+            saveProgress(fixedPlayer);
+          });
+          
+          fixedPlayer.audio.addEventListener('pause', () => {
+            saveProgress(fixedPlayer);
+          });
+          
+          // 监听音频结束，清除保存的进度
+          fixedPlayer.audio.addEventListener('ended', () => {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_URL_KEY);
+            localStorage.removeItem(STORAGE_PLAYING_KEY);
+          });
+        }
+      }
+    }, 100);
+    
+    // 10秒后停止检查，避免无限循环
+    setTimeout(() => clearInterval(checkAplayer), 10000);
+  }
+  
+  // 页面卸载前保存进度
+  window.addEventListener('beforeunload', () => {
+    if (initializedPlayer) {
+      saveProgress(initializedPlayer);
+    }
+  });
+  
+  // 页面隐藏时保存进度（移动端切换应用时）
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && initializedPlayer) {
+      saveProgress(initializedPlayer);
+    }
+  });
+  
+  // 页面加载完成后初始化进度保存功能
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAplayerProgress);
+  } else {
+    initAplayerProgress();
+  }
+  
+  // 如果使用 pjax，在页面切换后重新初始化
+  if (window.btf && window.btf.addGlobalFn) {
+    window.btf.addGlobalFn('pjaxComplete', initAplayerProgress, 'aplayerProgress');
+  }
+})();
+</script>
+<script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>
