@@ -1,0 +1,73 @@
+<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script>/* 优化布局7的背景样式 - 当没有封面图片时使用渐变背景 */
+#recent-posts.masonry .recent-post-item .post_cover {
+  position: relative;
+  min-height: 17em;
+}
+
+/* 当使用div背景（非图片）时，应用渐变背景 */
+#recent-posts.masonry .recent-post-item .post_cover div.post-bg {
+  background: linear-gradient(135deg, #a8b5ff 0%, #c8b5e8 25%, #f5c8f0 50%, #8fc5fe 75%, #66d9fe 100%) !important;
+  background-size: 400% 400% !important;
+  animation: gradientShift 15s ease infinite !important;
+  opacity: 0.75;
+}
+
+/* 当图片不存在或加载失败时，使用渐变背景作为后备 */
+#recent-posts.masonry .recent-post-item .post_cover img.post-bg[src=""],
+#recent-posts.masonry .recent-post-item .post_cover img.post-bg:not([src]) {
+  display: none;
+}
+
+/* 当图片不存在时，在post_cover上添加渐变背景 */
+#recent-posts.masonry .recent-post-item .post_cover:not(:has(img.post-bg)) {
+  background: linear-gradient(135deg, #a8b5ff 0%, #c8b5e8 25%, #f5c8f0 50%, #8fc5fe 75%, #66d9fe 100%) !important;
+  background-size: 400% 400% !important;
+  animation: gradientShift 15s ease infinite !important;
+}
+
+/* 渐变动画 */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 优化遮罩层，让文字更清晰 */
+#recent-posts.masonry .recent-post-item .post_cover:before {
+  background: linear-gradient(to bottom, 
+    rgba(0, 0, 0, 0.15) 0%, 
+    rgba(0, 0, 0, 0.3) 50%, 
+    rgba(0, 0, 0, 0.45) 100%) !important;
+  backdrop-filter: blur(1.5px) !important;
+  transition: all 0.3s ease;
+}
+
+/* 悬停时遮罩变淡，显示更多背景 */
+#recent-posts.masonry .recent-post-item:hover .post_cover:before {
+  background: linear-gradient(to bottom, 
+    rgba(0, 0, 0, 0.1) 0%, 
+    rgba(0, 0, 0, 0.2) 50%, 
+    rgba(0, 0, 0, 0.35) 100%) !important;
+}
+
+/* 暗色模式下的渐变背景 */
+[data-theme="dark"] #recent-posts.masonry .recent-post-item .post_cover div.post-bg {
+  background: linear-gradient(135deg, #3d5a8f 0%, #4a6ba8 25%, #9ba8c0 50%, #6fb8fe 75%, #4a5a6a 100%) !important;
+  opacity: 0.7;
+}
+
+[data-theme="dark"] #recent-posts.masonry .recent-post-item .post_cover:not(:has(img.post-bg)) {
+  background: linear-gradient(135deg, #3d5a8f 0%, #4a6ba8 25%, #9ba8c0 50%, #6fb8fe 75%, #4a5a6a 100%) !important;
+}
+
+/* 使用类名作为后备方案（通过JavaScript添加） */
+#recent-posts.masonry .recent-post-item .post_cover.no-cover-img {
+  background: linear-gradient(135deg, #a8b5ff 0%, #c8b5e8 25%, #f5c8f0 50%, #8fc5fe 75%, #66d9fe 100%) !important;
+  background-size: 400% 400% !important;
+  animation: gradientShift 15s ease infinite !important;
+}
+
+[data-theme="dark"] #recent-posts.masonry .recent-post-item .post_cover.no-cover-img {
+  background: linear-gradient(135deg, #3d5a8f 0%, #4a6ba8 25%, #9ba8c0 50%, #6fb8fe 75%, #4a5a6a 100%) !important;
+}
+

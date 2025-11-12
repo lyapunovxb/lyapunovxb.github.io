@@ -90,11 +90,13 @@
   
   // 初始化 APlayer 进度保存功能
   function initAplayerProgress() {
-    // 如果已经初始化过，先清理旧的事件监听器
-    if (initializedPlayer && initializedPlayer.audio) {
-      // 注意：由于我们使用了匿名函数，无法完全移除，但可以通过标记来避免重复执行
-      // 这里我们重新查找播放器，因为页面切换可能导致播放器重新创建
+    // 如果已经初始化过且播放器仍然有效，跳过重复初始化
+    if (initializedPlayer && initializedPlayer.audio && window.aplayers && window.aplayers.includes(initializedPlayer)) {
+      return;
     }
+    
+    // 重置初始化状态，允许重新绑定
+    initializedPlayer = null;
     
     // 等待 APlayer 初始化完成
     const checkAplayer = setInterval(() => {
@@ -134,16 +136,6 @@
             localStorage.removeItem(STORAGE_URL_KEY);
             localStorage.removeItem(STORAGE_PLAYING_KEY);
           });
-          
-          // 监听播放列表切换（播放列表模式）
-          fixedPlayer.on('listswitch', () => {
-            // 切换歌曲时，清除旧歌曲的进度，保存当前歌曲进度
-            setTimeout(() => {
-              if (fixedPlayer.audio) {
-                saveProgress(fixedPlayer);
-              }
-            }, 500);
-          });
         }
       }
     }, 100);
@@ -166,16 +158,58 @@
     }
   });
   
-  // 页面加载完成后初始化进度保存功能
+  // 等待 APlayer 和 Meting 加载完成
+  function waitForAplayer() {
+    // 检查 APlayer 是否已加载
+    if (typeof window.APlayer === 'undefined') {
+      // 如果 APlayer 还没加载，等待一段时间后重试
+      setTimeout(waitForAplayer, 100);
+      return;
+    }
+    
+    // APlayer 已加载，等待播放器实例创建
+    // 因为 Meting 是异步初始化的，需要轮询检查
+    let retryCount = 0;
+    const maxRetries = 50; // 最多等待5秒 (50 * 100ms)
+    
+    const checkAplayerReady = () => {
+      if (window.aplayers && window.aplayers.length > 0) {
+        // 找到固定的播放器
+        const fixedPlayer = window.aplayers.find(ap => ap.options && ap.options.fixed);
+        if (fixedPlayer) {
+          // 播放器已创建，初始化进度保存功能
+          setTimeout(initAplayerProgress, 300);
+          return;
+        }
+      }
+      
+      // 如果还没创建，继续等待
+      retryCount++;
+      if (retryCount < maxRetries) {
+        setTimeout(checkAplayerReady, 100);
+      } else {
+        // 超时后仍然尝试初始化（可能播放器创建较慢）
+        setTimeout(initAplayerProgress, 300);
+      }
+    };
+    
+    // 开始检查
+    checkAplayerReady();
+  }
+  
+  // 页面加载完成后等待 APlayer 初始化
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAplayerProgress);
+    document.addEventListener('DOMContentLoaded', waitForAplayer);
   } else {
-    initAplayerProgress();
+    waitForAplayer();
   }
   
   // 如果使用 pjax，在页面切换后重新初始化
   if (window.btf && window.btf.addGlobalFn) {
-    window.btf.addGlobalFn('pjaxComplete', initAplayerProgress, 'aplayerProgress');
+    window.btf.addGlobalFn('pjaxComplete', () => {
+      // 重置初始化状态，允许重新初始化
+      initializedPlayer = null;
+      waitForAplayer();
+    }, 'aplayerProgress');
   }
 })();
-
