@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Git3_gitlab仓库代码提交流程</title>
+    <url>/2025/11/04/Git/Git3_gitlab%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[
+gitlab上fork主仓库，生成个人的远端仓库origin&#x2F;develop
+修改git提交用户配置为九天账号git config --global --listgit config --global user.name wangxiangbo_JTAGIgit config --global user.email wangxiangbo_JTAGI@cmss.chinamobile.com
+拉取个人的远端仓库git clone http://gitlab.cmss.com/wangxiangbo/CM_OPTIMUS.git 
+查看分支git branch -a
+查看远程仓库分支git branch -r
+通过个人的远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
+列出所有的远程仓库以及对应的 URLgit remote -v
+将远程仓库地址添加到本地Git仓库的远程仓库列表中，本地的upstream&#x2F;develop仓库会和gitlab远程仓库关联起来git remote add upstream http://gitlab.cmss.com/AGI/CM_OPTIMUS.git
+upstream&#x2F;develop远端仓库拉取最新的代码git fetch upstream
+将upstream&#x2F;develop远端仓库的最新代码合并到本地的develop分支中git merge upstream/develop
+将本地develop最新的代码推到个人的远端仓库origin&#x2F;develop中git push origin develop
+提交develop到origin&#x2F;develop代码之前，保证自己的本地个人的远端仓库origin&#x2F;develop和本地gitlab的远端仓库upstream&#x2F;develop保持一致再提交，防止后续origin&#x2F;develop合并打upstream&#x2F;develop上出现冲突。#本地代码修改后拉取最新代码#1.拉取源代码git fetch upstream #2.暂存本地修改的代码git stash#3.合并源代码到当前的develop仓库git merge upstream/develop#4.将本地修改的推送到远程的origin分支，使origin/develop和upstream/develop保持一致git push origin develop#5.将暂存的代码弹出来git stash pop
+souretree上add需要提交的代码
+提交add之后的代码git commit -v
+#修改下方的提交信息，第一行为提交描述信息deepseek-7B预训练Code Source From: Self CodeDescription: deepseek-7B预训练Jira: #CMOPTIMUS-1089市场项目编号（名称）：CM_OPTIMUS
+将提交完之后的代码合并到origin&#x2F;develop上git push origin develop
+gitlab中找的到自己仓库下CM_OPTIMUS
+找到Merge requests，然后点击开始一个合并
+然后选择自己的分支为develop，还有旁边的分支develop，然后点击最下方的merge即可。该操作是将自己个人远端的orgin&#x2F;develop仓库提交修改后的代码合并到gitlab远端的主仓库中（upstream&#x2F;develop已和其关联，并通过git fetch保持最新）选中自己刚刚提交到origin&#x2F;develop上的代码，合并到AGI&#x2F;CM_OPTIMUS的develop分支上在Write里添加合并人信息
+
+]]></content>
+      <categories>
+        <category>开发</category>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>开发</tag>
+        <tag>gitlab</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git2_gerrit仓库代码提交流程</title>
+    <url>/2025/11/04/Git/Git2_gerrit%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[
+生成个人密钥ssh-keygen -C wangxiangbo_JTAGI@cmss.chinamobile.com
+修改config文件，增加gerrit仓库配置，增加刚生成的个人密钥id_ed25519host gerritport 29418hostname gerrit.cmss.comuser wangxiangbo_JTAGIIdentityFile ~/.ssh/id_ed25519
+在gerrit中setting设置中，增加ssh的公钥，即id_ed25519.pub
+设置邮箱，邮箱名wangxiangbo@cmss.chinamobile.com为不带JTAGI后缀的邮箱。
+用ssh clone代码仓库git clone &quot;ssh://wangxiangbo_JTAGI@gerrit.cmss.com:29418/AGI/CM_OPTIMUS&quot; &amp;&amp; scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg &quot;CM_OPTIMUS/.git/hooks/&quot;
+查看分支git branch -a
+查看远端分支git branch -r
+通过远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
+修改代码后，add之后并commit提交git commit -v
+推送远端origin&#x2F;develop仓库git push origin HEAD:refs/for/develop
+在推送过程中会出现缺失 Change-Id 的错误gitdir=$(git rev-parse --git-dir); scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
+执行完毕后如果出现subsystem request failed on channel 0，则将-p修改为-Ogitdir=$(git rev-parse --git-dir); scp -O -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
+将本次commit提交的末尾加上Change-Id git commit --amend --no-edit
+再次pushgit push origin HEAD:refs/for/develop
+提交完成之后，打开gerrit，找到develop分支的gitweb
+选择review
+找到刚刚提交的代码
+点击add reviewer，评审人要最少要两个以上
+第一次之后提交代码步骤git pull origingit add xxxgit commit -v git push origin HEAD:refs/for/develop
+
+]]></content>
+      <categories>
+        <category>开发</category>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>开发</tag>
+        <tag>gerrit</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git1_git命令</title>
     <url>/2025/11/04/Git/Git1_git%20%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[git commmit -v和git push origin develop之后，我怎么撤销本次commit提交的代码，将origin develop的仓库返回值提交之前的状态？
@@ -39,98 +107,6 @@ git push origin develop --force-with-lease
       <tags>
         <tag>开发</tag>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git2_gerrit仓库代码提交流程</title>
-    <url>/2025/11/04/Git/Git2_gerrit%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[
-生成个人密钥ssh-keygen -C wangxiangbo_JTAGI@cmss.chinamobile.com
-修改config文件，增加gerrit仓库配置，增加刚生成的个人密钥id_ed25519host gerritport 29418hostname gerrit.cmss.comuser wangxiangbo_JTAGIIdentityFile ~/.ssh/id_ed25519
-在gerrit中setting设置中，增加ssh的公钥，即id_ed25519.pub
-设置邮箱，邮箱名wangxiangbo@cmss.chinamobile.com为不带JTAGI后缀的邮箱。
-用ssh clone代码仓库git clone &quot;ssh://wangxiangbo_JTAGI@gerrit.cmss.com:29418/AGI/CM_OPTIMUS&quot; &amp;&amp; scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg &quot;CM_OPTIMUS/.git/hooks/&quot;
-查看分支git branch -a
-查看远端分支git branch -r
-通过远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
-修改代码后，add之后并commit提交git commit -v
-推送远端origin&#x2F;develop仓库git push origin HEAD:refs/for/develop
-在推送过程中会出现缺失 Change-Id 的错误gitdir=$(git rev-parse --git-dir); scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
-执行完毕后如果出现subsystem request failed on channel 0，则将-p修改为-Ogitdir=$(git rev-parse --git-dir); scp -O -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
-将本次commit提交的末尾加上Change-Id git commit --amend --no-edit
-再次pushgit push origin HEAD:refs/for/develop
-提交完成之后，打开gerrit，找到develop分支的gitweb
-选择review
-找到刚刚提交的代码
-点击add reviewer，评审人要最少要两个以上
-第一次之后提交代码步骤git pull origingit add xxxgit commit -v git push origin HEAD:refs/for/develop
-
-]]></content>
-      <categories>
-        <category>开发</category>
-        <category>git</category>
-      </categories>
-      <tags>
-        <tag>开发</tag>
-        <tag>gerrit</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git3_gitlab仓库代码提交流程</title>
-    <url>/2025/11/04/Git/Git3_gitlab%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[
-gitlab上fork主仓库，生成个人的远端仓库origin&#x2F;develop
-修改git提交用户配置为九天账号git config --global --listgit config --global user.name wangxiangbo_JTAGIgit config --global user.email wangxiangbo_JTAGI@cmss.chinamobile.com
-拉取个人的远端仓库git clone http://gitlab.cmss.com/wangxiangbo/CM_OPTIMUS.git 
-查看分支git branch -a
-查看远程仓库分支git branch -r
-通过个人的远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
-列出所有的远程仓库以及对应的 URLgit remote -v
-将远程仓库地址添加到本地Git仓库的远程仓库列表中，本地的upstream&#x2F;develop仓库会和gitlab远程仓库关联起来git remote add upstream http://gitlab.cmss.com/AGI/CM_OPTIMUS.git
-upstream&#x2F;develop远端仓库拉取最新的代码git fetch upstream
-将upstream&#x2F;develop远端仓库的最新代码合并到本地的develop分支中git merge upstream/develop
-将本地develop最新的代码推到个人的远端仓库origin&#x2F;develop中git push origin develop
-提交develop到origin&#x2F;develop代码之前，保证自己的本地个人的远端仓库origin&#x2F;develop和本地gitlab的远端仓库upstream&#x2F;develop保持一致再提交，防止后续origin&#x2F;develop合并打upstream&#x2F;develop上出现冲突。#本地代码修改后拉取最新代码#1.拉取源代码git fetch upstream #2.暂存本地修改的代码git stash#3.合并源代码到当前的develop仓库git merge upstream/develop#4.将本地修改的推送到远程的origin分支，使origin/develop和upstream/develop保持一致git push origin develop#5.将暂存的代码弹出来git stash pop
-souretree上add需要提交的代码
-提交add之后的代码git commit -v
-#修改下方的提交信息，第一行为提交描述信息deepseek-7B预训练Code Source From: Self CodeDescription: deepseek-7B预训练Jira: #CMOPTIMUS-1089市场项目编号（名称）：CM_OPTIMUS
-将提交完之后的代码合并到origin&#x2F;develop上git push origin develop
-gitlab中找的到自己仓库下CM_OPTIMUS
-找到Merge requests，然后点击开始一个合并
-然后选择自己的分支为develop，还有旁边的分支develop，然后点击最下方的merge即可。该操作是将自己个人远端的orgin&#x2F;develop仓库提交修改后的代码合并到gitlab远端的主仓库中（upstream&#x2F;develop已和其关联，并通过git fetch保持最新）选中自己刚刚提交到origin&#x2F;develop上的代码，合并到AGI&#x2F;CM_OPTIMUS的develop分支上在Write里添加合并人信息
-
-]]></content>
-      <categories>
-        <category>开发</category>
-        <category>git</category>
-      </categories>
-      <tags>
-        <tag>开发</tag>
-        <tag>gitlab</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux1_kimi问题</title>
-    <url>/2025/11/04/Linux/Linux1_kimi%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[
-权重转换代码换行符Kimi: 出现这些错误通常是因为脚本文件在不同的操作系统环境下被编辑或创建，导致文件的换行符不一致。Unix&#x2F;Linux系统使用LF（Line Feed，\n）作为换行符，而Windows系统使用CR+LF（Carriage Return + Line Feed，\r\n）作为换行符。错误信息中的 $&#39;\r&#39;: command not found 表示脚本尝试执行一个以 \r 开头的命令，这通常是因为脚本文件中的换行符是 \r\n 而不是 \n。此外，syntax error near unexpected token &#39;elif&#39; 错误表明脚本解析器在遇到 elif 时遇到了语法错误，这可能是因为 elif 之前的行（可能是第59行）以 \r\n 结尾，导致 elif 行实际上是从一个新的行开始，而不是在预期的位置。要解决这个问题，你可以使用 dos2unix 工具将脚本文件从Windows格式转换为Unix&#x2F;Linux格式。如果你没有 dos2unix 工具，可以使用 sed 命令来移除 \r 字符：sed -i &#x27;s/\r$//&#x27; hf2mcore_convertor.sh
-这条命令会查找文件中的所有行，并移除每行末尾的 \r 字符。如果你有 dos2unix 工具，可以使用以下命令：dos2unix hf2mcore_convertor.sh
-这将把文件从Windows格式转换为Unix&#x2F;Linux格式。在运行这些命令之后，再次执行脚本应该就不会出现这些错误了。
-修改文件遇到Read-only file systemKimi: 当你遇到 “Read-only file system” 错误时，通常意味着你的文件系统出于某种原因被挂载为只读模式。这可能是由于文件系统损坏、磁盘硬件问题、或者挂载时指定了错误的参数。以下是一些解决步骤：
-检查文件系统挂载状态：使用 mount 命令查看所有挂载的文件系统及其状态。你可以使用如下命令：mount | grep /path/to/mount/point
-查看挂载点是否为只读（ro）。
-重新挂载文件系统为读写模式：如果文件系统被挂载为只读，你可以尝试重新挂载它为读写模式。使用以下命令：sudo mount -o remount,rw /path/to/mount/point
-请将 /path/to/mount/point 替换为实际的挂载点路径。
-检查和修复文件系统：如果重新挂载不起作用，可能是文件系统损坏。你可以使用 fsck 命令来检查和修复文件系统。例如，对于 ext4 文件系统，可以使用：sudo fsck -f /dev/sda1
-请确保替换 /dev/sda1 为你的实际分区。
-
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>运维</tag>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -184,28 +160,27 @@ export const sortVideos: SyncRequestFuncType&lt;string[], void&gt; = (params) =&
       </tags>
   </entry>
   <entry>
-    <title>运维1_docker命令</title>
-    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/</url>
+    <title>Linux1_kimi问题</title>
+    <url>/2025/11/04/Linux/Linux1_kimi%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[
-启动一个容器
-sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？
-docker ps -adocker start qwendocker exec -it 容器id bash
-
-拉取一个新镜像后，通过这个镜像创建一个容器。
-docker run -it --name qwen --gpus all 镜像名:镜像tags bash
-
-将此时qwen容器打成镜像
-docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
+权重转换代码换行符Kimi: 出现这些错误通常是因为脚本文件在不同的操作系统环境下被编辑或创建，导致文件的换行符不一致。Unix&#x2F;Linux系统使用LF（Line Feed，\n）作为换行符，而Windows系统使用CR+LF（Carriage Return + Line Feed，\r\n）作为换行符。错误信息中的 $&#39;\r&#39;: command not found 表示脚本尝试执行一个以 \r 开头的命令，这通常是因为脚本文件中的换行符是 \r\n 而不是 \n。此外，syntax error near unexpected token &#39;elif&#39; 错误表明脚本解析器在遇到 elif 时遇到了语法错误，这可能是因为 elif 之前的行（可能是第59行）以 \r\n 结尾，导致 elif 行实际上是从一个新的行开始，而不是在预期的位置。要解决这个问题，你可以使用 dos2unix 工具将脚本文件从Windows格式转换为Unix&#x2F;Linux格式。如果你没有 dos2unix 工具，可以使用 sed 命令来移除 \r 字符：sed -i &#x27;s/\r$//&#x27; hf2mcore_convertor.sh
+这条命令会查找文件中的所有行，并移除每行末尾的 \r 字符。如果你有 dos2unix 工具，可以使用以下命令：dos2unix hf2mcore_convertor.sh
+这将把文件从Windows格式转换为Unix&#x2F;Linux格式。在运行这些命令之后，再次执行脚本应该就不会出现这些错误了。
+修改文件遇到Read-only file systemKimi: 当你遇到 “Read-only file system” 错误时，通常意味着你的文件系统出于某种原因被挂载为只读模式。这可能是由于文件系统损坏、磁盘硬件问题、或者挂载时指定了错误的参数。以下是一些解决步骤：
+检查文件系统挂载状态：使用 mount 命令查看所有挂载的文件系统及其状态。你可以使用如下命令：mount | grep /path/to/mount/point
+查看挂载点是否为只读（ro）。
+重新挂载文件系统为读写模式：如果文件系统被挂载为只读，你可以尝试重新挂载它为读写模式。使用以下命令：sudo mount -o remount,rw /path/to/mount/point
+请将 /path/to/mount/point 替换为实际的挂载点路径。
+检查和修复文件系统：如果重新挂载不起作用，可能是文件系统损坏。你可以使用 fsck 命令来检查和修复文件系统。例如，对于 ext4 文件系统，可以使用：sudo fsck -f /dev/sda1
+请确保替换 /dev/sda1 为你的实际分区。
 
 ]]></content>
       <categories>
-        <category>运维</category>
-        <category>docker</category>
+        <category>Linux</category>
       </categories>
       <tags>
         <tag>运维</tag>
-        <tag>docker</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -235,33 +210,28 @@ hg上面下载模型pip install -U huggingface_hubhuggingface-cli download bigsc
       </tags>
   </entry>
   <entry>
-    <title>基于Mindformers的llama3.1模型微调</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Mindformers/llama3.1%E5%BE%AE%E8%B0%83/</url>
-    <content><![CDATA[启动容器docker run -dit --ipc=host --net=host \--name=wxb_mindformers \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/code:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/output:/job/output \-v /mnt/weight-1:/job/mnt \swr.cn-central-221.ovaijisuan.com/mindformers/mindformers1.3_mindspore2.4:20241114 \/bin/bash
+    <title>运维1_docker命令</title>
+    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[
+启动一个容器
+sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？
+docker ps -adocker start qwendocker exec -it 容器id bash
 
+拉取一个新镜像后，通过这个镜像创建一个容器。
+docker run -it --name qwen --gpus all 镜像名:镜像tags bash
 
-代码准备git clone https://gitee.com/mindspore/mindformers.git
+将此时qwen容器打成镜像
+docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
 
-数据集python research/llama3/llama_preprocess.py \--dataset_type qa \--input_glob /job/data/alpaca/alpaca-data-conversation.json \--model_file /job/mnt/huggingface/llama-3-8b-hf \--seq_length 8192 \--output_file /job/data/alpaca
-
-权重转换python convert_weight.py --model llama --input_path /job/mnt/huggingface/llama-3-8b-hf --output_path /job/data/mindformers/llama3_8b_ckpt
-
-训练脚本seed: 0output_dir: &#x27;/job/output&#x27; # path to save checkpoint/strategyload_checkpoint: &#x27;/job/data/mindformers/llama3_8b_ckpt/&#x27;src_strategy_path_or_dir: &#x27;&#x27;auto_trans_ckpt: False  # If true, auto transform load_checkpoint to load in distributed modelonly_save_strategy: Falseresume_training: Falserun_mode: &#x27;finetune&#x27; # trainer configtrainer:  type: CausalLanguageModelingTrainer  model_name: &#x27;llama3_8b&#x27; # runner configrunner_config:  epochs: 2  batch_size: 1  sink_mode: True  sink_size: 2 # optimizeroptimizer:  type: FP32StateAdamWeightDecay  beta1: 0.9  beta2: 0.95  eps: 1.e-8 # lr sechdulelr_schedule:  type: CosineWithWarmUpLR  learning_rate: 1.e-5  lr_end: 0.0  warmup_ratio: 0.03  total_steps: -1 # -1 means it will load the total steps of the dataset # datasettrain_dataset: &amp;train_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;/job/data/alpaca/alpaca_llama3_8192/alpaca-fastchat8192.mindrecord&quot;    shuffle: True  input_columns: [&quot;input_ids&quot;,&quot;labels&quot;]  # &quot;input_ids&quot;, &quot;labels&quot; , labels are used in instruction finetune.  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: True  batch_size: 6  repeat: 1  numa_enable: False  prefetch_size: 1train_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *train_dataset# if True, do evaluate during the training process. if false, do nothing.# note that the task trainer should support _evaluate_in_training function.do_eval: False # eval dataseteval_dataset: &amp;eval_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;&quot;    shuffle: False  input_columns: [&quot;input_ids&quot;]  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: False  repeat: 1  numa_enable: False  prefetch_size: 1eval_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *eval_dataset use_parallel: True# parallel context configparallel:  parallel_mode: 1 # 0-data parallel, 1-semi-auto parallel, 2-auto parallel, 3-hybrid parallel  gradients_mean: False  enable_alltoall: False  full_batch: True  search_mode: &quot;sharding_propagation&quot;  enable_parallel_optimizer: True  strategy_ckpt_save_file: &quot;./ckpt_strategy.ckpt&quot;  parallel_optimizer_config:    gradient_accumulation_shard: False    parallel_optimizer_threshold: 64# default parallel of device num = 8 for Atlas 800T A2parallel_config:  data_parallel: 1  model_parallel: 4  pipeline_stage: 2  use_seq_parallel: False  micro_batch_num: 8  vocab_emb_dp: True  gradient_aggregation_group: 4# when model parallel is greater than 1, we can set micro_batch_interleave_num=2, that may accelerate the train process.micro_batch_interleave_num: 1 # recompute configrecompute_config:  recompute: True  select_recompute: False  parallel_optimizer_comm_recompute: True  mp_comm_recompute: True  recompute_slice_activation: True # callbackscallbacks:  - type: MFLossMonitor  - type: CheckpointMointor    prefix: &quot;llama3_8b&quot;    save_checkpoint_steps: 10000    integrated_save: False    async_save: False  - type: ObsMonitor # mindspore context init configcontext:  mode: 0 #0--Graph Mode; 1--Pynative Mode  device_target: &quot;Ascend&quot;  enable_graph_kernel: False  graph_kernel_flags: &quot;--disable_expand_ops=Softmax,Dropout --enable_parallel_fusion=true --reduce_fuse_depth=8 --enable_auto_tensor_inplace=true&quot;  max_call_depth: 10000  max_device_memory: &quot;26GB&quot;  save_graphs: False  save_graphs_path: &quot;./graph&quot;  device_id: 0  runtime_num_threads: 1 # model configmodel:  model_config:    type: LlamaConfig    batch_size: 1 # add for increase predict    seq_length: 8192    hidden_size: 4096    num_layers: 32    num_heads: 32    n_kv_heads: 8    vocab_size: 128256    intermediate_size: 14336    rms_norm_eps: 1.0e-5    bos_token_id: 128000    eos_token_id: 128001    pad_token_id: 128002    ignore_token_id: -100    compute_dtype: &quot;bfloat16&quot;    layernorm_compute_type: &quot;float32&quot;    softmax_compute_type: &quot;float32&quot;    rotary_dtype: &quot;float32&quot;    param_init_type: &quot;bfloat16&quot;    use_past: False    scaling_factor: 1.0    theta: 500000    extend_method: &quot;None&quot; # support &quot;None&quot;, &quot;PI&quot;, &quot;NTK&quot;    use_flash_attention: True # FA can accelerate training or finetune    offset: 0    fine_grain_interleave: 1    checkpoint_name_or_path: &quot;&quot;    repetition_penalty: 1    max_decode_length: 512    top_k: 3    top_p: 1    do_sample: False  arch:    type: LlamaForCausalLM # metricmetric:  type: PerplexityMetric # wrapper cell configrunner_wrapper:  type: MFTrainOneStepCell  scale_sense: 1.0  use_clip_grad: True eval_callbacks:  - type: ObsMonitor auto_tune: Falsefilepath_prefix: &#x27;./autotune&#x27;autotune_per_step: 10 profile: Falseprofile_start_step: 5profile_stop_step: 7init_start_profile: Trueprofile_communication: Trueprofile_memory: Truelayer_scale: Falselayer_decay: 0.65lr_scale_factor: 256 # aiccremote_save_url: &quot;Please input obs url on AICC platform.&quot;
-
-训练拉起
-git
- clone https://gitee.com/mindspore/mindformers.gitgit
- clone https://gitee.com/mindspore/mindformers.git
 ]]></content>
       <categories>
-        <category>模型训练调优</category>
-        <category>昇腾</category>
+        <category>运维</category>
+        <category>docker</category>
       </categories>
       <tags>
-        <tag>模型训练调优</tag>
-        <tag>昇腾</tag>
-        <tag>910B</tag>
-        <tag>Mindformers</tag>
+        <tag>运维</tag>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -298,604 +268,6 @@ kubectl通过ns获取所有的pods的详细信息kubectl get pods -n &lt;ns_name
       <tags>
         <tag>测试2</tag>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Tulu3-8B-后训练实践</title>
-    <url>/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/</url>
-    <content><![CDATA[训练环境镜像registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:tulu3
-
-镜像中已包含tulu3后训练所需要的所有依赖环境。
-代码结构/mnt/users/wangxiangbo/model/tulu3/open-instruct-main
-
-
-data包含了sft、dpo、rlvr所需的数据集
-
-eval相关
-
-scripts&#x2F;configs训练脚本
-
-
-tulu3_sft.sh #tulu3 sft单机脚本
-
-
-hostfilehostfile-12setRank.shtulu3_dpo.sh #多机dpo脚本tulu3_dpo_single.sh #单机4卡dpo脚本tulu3_dpo.yaml #多机yamltulu3_sft.sh #多机sft脚本
-
-
-tulu3_rlvr_single.sh #tulu3 rlvr单机脚本
-
-
-loss_plot.py #loss曲线绘图脚本
-
-open_instructsft、dpo、rlvr相关训练代码
-
-sft实践单机4卡测试sft数据集sft数据集采用tulu3官网提供的数据集
-
-sft数据集样例：
-&#123;&quot;id&quot;:&quot;oasst1_2644&quot;,&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;有缓解社交恐惧症的实用方法吗？&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;以下是一些实用的方法，可能有助于缓解社交恐惧症：\n\n1.  寻求专业帮助：寻求心理医生或心理治疗师的帮助是缓解社交恐惧症的最佳方法之一。专业的治疗师可以帮助你识别和处理恐惧的源头，并提供有效的治疗方案。\n\n2. 练习深呼吸和放松技巧：当你感到焦虑和紧张时，尝试通过深呼吸和放松技巧来帮助你冷静下来。深呼吸可以帮助你减轻身体上的压力和紧张感，从而使你更放松和镇定。\n\n3. 学习积极思考：避免消极的自我对话，例如“我会失败”、“我不行”等等。改变自己的思考方式，尝试以积极、自信的态度面对社交场合。\n\n4.  採取柔性方法：為了對抗焦慮症狀，建議使用一些方法來提醒你的身體是安全的，例如：  \n\n＊ 呼吸訓練（用鼻子深深的吸一口氣再用嘴巴將氣慢慢地吐出，當你專注在吐氣時，你就會被帶出抵抗或逃避的情緒中。） \n\n ＊ 專注於現在（這麼做讓你能夠專注於自己所經歷的每分每秒。試著說出你現在能看見、聞到、碰觸到並聽得到的東西，或是坐在椅子上並感受自己的腳觸碰地面的感覺，或身體正被支撐著的感覺。）\n\n5. 給自己一點從容：在過渡時期練習自我同情，並提醒自己感到不確定與不安是很正常的。\n\n这些方法可以帮助你缓解社交恐惧症，但不同的人可能需要不同的方法和治疗方案。如果你感到严重的焦虑和恐惧，请及时寻求专业帮助。&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;,&#123;&quot;content&quot;:&quot;好吧，可是我要去哪裡尋求專業幫助？&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;您可以先參考美國精神疾病診斷標準 **DSM-5** 中的6點標準，或者進行一些專業的心理測試。如果您符合這些標准或測試結果顯示您有社交恐懼症，您應儘早尋求專業的幫助。\n\n尋求專業幫助的途徑有以下幾種：\n\n- **諮詢醫生或心理健康專家**。他們可以為您提供診斷，藥物治療，心理治療等服務。\n- **參加心理諮詢或治療機構**。這些機構通常有專業的心理諮詢師或治療師，可以為您提供個人或團體的心理諮詢或治療服務。\n- **加入互助小組或社區**。這些小組或社區通常由有相同或類似問題的人組成，可以為您提供支持，鼓勵，交流和分享的平台。\n\n以上是我為您搜索到的一些信息，希望對您有所幫助。如果您還有其他問題，歡迎繼續提問。&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;],&quot;source&quot;:&quot;ai2-adapt-dev\/oasst1_converted&quot;&#125;
-
-由于是.parquet格式数据，转成json后一共有93w条数据。
-
-由于机器数量有限，训练其完整数据集需要较长时间，故将.parquet转为json后将数据集缩减至5k条，并再次转回.parquet格式数据。
-
-单机脚本配置export CUDA_VISIBLE_DEVICES=0,1,2,3export WANDB_MODE=disabledcurrent_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)LOG_SAVE=&quot;/mnt/open-instruct-main/output/sft/$&#123;current_time&#125;-tulu3-sft.log&quot;MODEL_SIZE=8BNUM_GPUS=4BATCH_SIZE_PER_GPU=2TOTAL_BATCH_SIZE=8GRADIENT_ACC_STEPS=$(($TOTAL_BATCH_SIZE/($NUM_GPUS * $BATCH_SIZE_PER_GPU)))echo &quot;Training llama model $&#123;MODEL_SIZE&#125; using $NUM_GPUS GPUs, $BATCH_SIZE_PER_GPU batch size per GPU, $GRADIENT_ACC_STEPS gradient accumulation steps&quot;accelerate launch \    --mixed_precision fp16 \    --num_machines 1 \    --num_processes $NUM_GPUS \    --use_deepspeed \    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \    /mnt/open-instruct-main/open_instruct/finetune.py \    --model_name_or_path /mnt/LLM-Research/Meta-Llama-31-8B \    --tokenizer_name /mnt/LLM-Research/Meta-Llama-31-8B \    --use_slow_tokenizer \    --train_file /mnt/open-instruct-main/data/sft_data_json/sft_dataset_5k.json \    --max_seq_length 4096 \    --preprocessing_num_workers 4 \    --per_device_train_batch_size $BATCH_SIZE_PER_GPU \    --gradient_accumulation_steps $GRADIENT_ACC_STEPS \    --learning_rate 2e-5 \    --lr_scheduler_type linear \    --warmup_ratio 0.03 \    --weight_decay 0. \    --num_train_epochs 1 \    --output_dir /mnt/open-instruct-main/output/sft \    --gradient_checkpointing true \    --report_to none \    --use_flash_attn false 2&gt;&amp;1 | tee -a &quot;$LOG_SAVE&quot;
-
-为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。
---max_seq_length 4096
---learning_rate 2e-5
---lr_scheduler_type linear
---warmup_ratio 0.03
-其中的模型权重利用llama3.1-8B-base模型。
-训练测试训练结束
-
-
-
-
-资源类型
-利用率
-内存&#x2F;显存占用量
-
-
-
-CPU
-53.2%
-80.7%
-
-
-GPU
-85.5%
-66.4%
-
-
-loss曲线
-evalllama3.1-8B通过tulu3提供的sft数据集（删减至5k条）后，得到的tulu3_sft权重
-
-
-
-
-类别
-Llama-31-8B
-tulu3-sft-weight
-Llama-31-Tulu-3-8B-SFT
-
-
-
-平均准确率
-0.6014
-0.5729
-0.6356
-
-
-子类别准确率
--
--
--
-
-
-数学
-0.4098
-0.3778
-0.4192
-
-
-健康
-0.6561
-0.6183
-0.6720
-
-
-物理
-0.5063
-0.4891
-0.5328
-
-
-商业
-0.7643
-0.7346
-0.8101
-
-
-生物
-0.7555
-0.6982
-0.7775
-
-
-化学
-0.4851
-0.4851
-0.5186
-
-
-计算机科学
-0.5752
-0.5194
-0.6092
-
-
-经济
-0.5930
-0.5809
-0.6213
-
-
-工程
-0.5517
-0.5172
-0.5517
-
-
-哲学
-0.4881
-0.4627
-0.5775
-
-
-其他
-0.6524
-0.6532⬆
-0.7090
-
-
-历史
-0.7452
-0.7172
-0.7774
-
-
-地理
-0.7323
-0.7273
-0.7677
-
-
-政治
-0.7546
-0.7099
-0.7762
-
-
-心理学
-0.7174
-0.6845
-0.7485
-
-
-文化
-0.8102
-0.7440
-0.7922
-
-
-法律
-0.4878
-0.4589
-0.5020
-
-
-类别准确率
--
--
--
-
-
-STEM
-0.5192
-0.4864
-0.5394
-
-
-人文学科
-0.5388
-0.5116
-0.5887
-
-
-社会科学
-0.7062
-0.6740
-0.7296
-
-
-其他（商业、健康等）
-0.6693
-0.6465
-0.7039
-
-
-eval结果分析
-SFT后权重的平均准确率: 0.5729
-SFT前权重的平均准确率: 0.6014
-
-整体平均准确率下降了 ~2.85%。
-原因：本次实验（由于机器环境限制）将原始的tulu3 SFT数据集（93w）删减到5k条，导致模型未能充分学习各个领域的知识和任务特性，泛化能力下降。
-dpo实践单机4卡测试偏好数据集偏好数据集采用tulu3官网提供的数据集。
-
-偏好数据集样例：
-&#123;&quot;id&quot;:&quot;allenai\/tulu-3-sft-reused-off-policy_0&quot;,&quot;prompt&quot;:&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;,&quot;chosen&quot;:[&#123;&quot;content&quot;:&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;Here&#x27;s how to solve this problem:\n\n**Understanding the Information**\n\n* **Each rabbit has 3 or 7 neighbors:** This means there must be a pattern in how the rabbits are distributed within the cages.\n* **At least one rabbit in each cage:**  We can&#x27;t have cages without any rabbits.\n\n**Reasoning**\n\n* **Corner Cages:**  Rabbits in the corner cages (cages 1 and 5) can only have 3 neighbors (two adjacent cages and one within their own cage).\n* **Middle Cages:** Rabbits in the middle cages (cages 2, 3, and 4) must have 7 neighbors to balance out the setup. \n\n**The Solution**\n\nSince rabbits in the middle cages need 7 neighbors, and there&#x27;s at least one rabbit in each cage, the central cage (cage 3) must have **4 rabbits**. \n\n\n\nLet me know if you&#x27;d like to explore other logic puzzles! \n&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;],&quot;rejected&quot;:[&#123;&quot;content&quot;:&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;The central cage has the same number of rabbits as any other cage, so it also has either 3 or 7 neighbors.\nThere are (at most) 7 rabbits in the central cage and (at most) 3 rabbits in any cage on either side. Hence, there are (at most) 7 rabbits in each of those cages. The total number of rabbits in the 5 cages is (at most) 5 * 7 + 1 = 36 + 1 = 37.\nOne cage must have exactly the right number of neighbors, but two cages cannot have the right number.\nIf each cage has exactly 3 neighbors, the total number of rabbits in all 5 cages is 1 + 5 * 3 = 16\nIf each cage has exactly 7 neighbors, the total number of rabbits in all 5 cages is 1 + 5 * 7 = 32\nNow that we know there are at most 36 rabbits, we can safely conclude that there is 1 rabbit in the central cage, that there are 5 cages with 3 rabbits each and one cage with 7 rabbits and that the central cage has 3 neighbors.\nThe central cage has exactly 3 rabbits and 3 neighbors.\nIn the other 4 cages, there are (at most) 5 * 3 = 15 rabbits.\nIn the other 5 cages, there are (at least) 32 – 16 = 16 rabbits.&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;],&quot;source&quot;:&quot;allenai\/tulu-3-sft-reused-off-policy&quot;&#125;
-
-由于是.parquet格式数据，转成json后一共有67w条数据。
-
-由于机器数量有限，训练其完整数据集需要较长时间，故将.parquet转为json后将数据集缩减至5k条，并再次转回.parquet格式数据。
-
-单机脚本配置单机脚本，部分配置OOM，采用deepseed中zero3以及cpu_offloading，开启梯度累积。
-# you need 8 GPUs for full finetuningexport CUDA_VISIBLE_DEVICES=0,1,2,3export WANDB_MODE=disabledNUM_GPUS=4BATCH_SIZE_PER_GPU=1TOTAL_BATCH_SIZE=8GRADIENT_ACC_STEPS=$(($TOTAL_BATCH_SIZE/$NUM_GPUS/$BATCH_SIZE_PER_GPU))current_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)LOG_SAVE=&quot;/mnt/open-instruct-main/output/dpo/$&#123;current_time&#125;-tulu3-dpo.log&quot;echo &quot;Training model using $NUM_GPUS GPUs, $BATCH_SIZE_PER_GPU batch size per GPU, $GRADIENT_ACC_STEPS gradient accumulation steps&quot;#stage3_no_offloading_accelerate.confaccelerate launch \    --mixed_precision fp16 \    --num_machines 1 \    --num_processes $NUM_GPUS \    --use_deepspeed \    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \    /mnt/open-instruct-main/open_instruct/dpo_tune.py \    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-SFT \    --use_flash_attn  false\    --gradient_checkpointing \    --tokenizer_name /mnt/LLM-Research/Llama-31-Tulu-3-8B-SFT \    --use_slow_tokenizer \    --dataset_name /mnt/open-instruct-main/data/dpo_data_5k \    --max_seq_length 2048 \    --preprocessing_num_workers 4 \    --per_device_train_batch_size $BATCH_SIZE_PER_GPU \    --gradient_accumulation_steps $GRADIENT_ACC_STEPS \    --learning_rate 5e-7 \    --lr_scheduler_type linear \    --warmup_ratio 0.1 \    --weight_decay 0. \    --num_train_epochs 1 \    --output_dir /mnt/open-instruct-main/output/dpo \    --with_tracking False \    --logging_steps 1 2&gt;&amp;1 | tee -a &quot;$LOG_SAVE&quot;
-
-为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。
---max_seq_length 2048
---learning_rate 5e-7
---lr_scheduler_type linear
---warmup_ratio 0.1
-其中的模型权重利用tulu3开源的经过llama3.1-8B sft得到的权重。
-
-训练测试关闭cpu_offloading注：关闭cpu_offloading之后，迭代10步左右会OOM
-
-
-
-
-资源类型
-利用率
-内存&#x2F;显存占用量
-
-
-
-CPU
-16.5%
-12.1%
-
-
-GPU
-100%
-93.6%
-
-
-开启cpu_offloading
-
-
-
-资源类型
-利用率
-内存&#x2F;显存占用量
-
-
-
-CPU
-55.0%
-58.2%
-
-
-GPU
-85.8%
-68.7%
-
-
-训练完成
-得到的dpo权重
-
-loss曲线
-eval评测数据集采用MMLU，一个包含来自各个知识领域的多项选择题的巨大多任务测试。 测试涵盖了人文学科、社会科学、自然科学以及其他对某些人来说重要的学习领域。 数据集中的问题是由研究生和本科生从在线免费资源中手动收集的。这包括研究生入学考试和美国医学执照考试等考试的练习题。还包括为本科生课程设计的题目，以及为牛津大学出版社书籍读者设计的题目。 一些任务涵盖一个主题，如心理学，但难度级别特定，例如“初阶”、“高中”、“大学”或“专业”。 例如，“专业心理学”任务借鉴了心理学专业实践考试的免费练习题中的问题，而“高中心理学”任务则包含类似高级 Placement 心理学考试中的问题。
-:::tipsMMLU数据集样例如下，摘自MMLU论文https://arxiv.org/abs/2009.03300
-:::
-
-eg：以下是MMLU上College Biology类问题及答案：
-&quot;Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to&quot;,maintain the population at a point corresponding to the midpoint of its logistic curve,opt for zero population control once the K value of the curve has been reached,reduce the carrying capacity cif the environment to lower the K value,increase the mortality rate,C
-
-eg：以下是dpo_weight在MMLU上College Biology类问题的回答：
-0,1,2,3,4,5,correct,choiceA_probs,choiceB_probs,choiceC_probs,choiceD_probs&quot;Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to&quot;,maintain the population at a point corresponding to the midpoint of its logistic curve,opt for zero population control once the K value of the curve has been reached,reduce the carrying capacity cif the environment to lower the K value,increase the mortality rate,C,True,0.07324660569429398,0.0071399579755961895,0.6528399586677551,0.1929791122674942
-
-
-
-本次dpo后得到的权重dpo_weight对比tulu3开源的sft权重Llama-31-Tulu-3-8B-SFT。
-Llama-31-Tulu-3-8B-SFT在MMLU上的表现：
-
-dpo_weight在MMLU上的表现：
-
-
-
-
-类别
-Llama-31-8B
-Llama-31-Tulu-3-8B-SFT
-dpo_weight
-Llama-31-Tulu-3-8B-DPO
-
-
-
-平均准确率
-0.6014
-0.6356
-**0.6377**⬆
-0.6352
-
-
-子类别准确率
--
--
--
--
-
-
-数学
-0.4098
-0.4192
-0.4352⬆
-0.4258
-
-
-健康
-0.6561
-0.6720
-0.6726⬆
-0.6915
-
-
-物理
-0.5063
-0.5328
-0.5500⬆
-0.5391
-
-
-商业
-0.7643
-0.8101
-0.7941
-0.7849
-
-
-生物
-0.7555
-0.7775
-0.7775⬆
-0.7731
-
-
-化学
-0.4851
-0.5186
-0.5182
-0.5248
-
-
-计算机科学
-0.5752
-0.6092
-0.6189⬆
-0.6117
-
-
-经济
-0.5930
-0.6213
-0.6173
-0.6429
-
-
-工程
-0.5517
-0.5517
-0.5655⬆
-0.5586
-
-
-哲学
-0.4881
-0.5775
-0.5626
-0.5388
-
-
-其他
-0.6524
-0.7090
-0.7107⬆
-0.7082
-
-
-历史
-0.7452
-0.7774
-0.7828⬆
-0.7720
-
-
-地理
-0.7323
-0.7677
-0.7778⬆
-0.7778
-
-
-政治
-0.7546
-0.7762
-0.7793⬆
-0.7762
-
-
-心理学
-0.7174
-0.7485
-0.7519⬆
-0.7476
-
-
-文化
-0.8102
-0.7922
-0.7892
-0.8042
-
-
-法律
-0.4878
-0.5020
-0.5133⬆
-0.5156
-
-
-父类别准确率
--
--
--
--
-
-
-STEM
-0.5192
-0.5394
-0.5507⬆
-0.5437
-
-
-人文学科
-0.5388
-0.5887
-0.5877
-0.5762
-
-
-社会科学
-0.7062
-0.7296
-0.7309⬆
-0.7364
-
-
-其他（商业、健康、杂项）
-0.6693
-0.7039
-0.7027
-0.7101
-
-
-dpo代码实现分析Length-Normalized DPO 的实现_get_batch_logps 函数tulu3论文中说明了，tulu3-8B的dpo使用了长度归一化的DPO（Length-Normalized DPO），以此来消除因回答的序列长度（对比来说很长的话）带来的概率偏好影响。 当 average_log_prob=True 时，会将每个 token 的 log 概率进行平均处理，实现序列长度归一化。 如果average_log_prob=False，则是直接求和。
-代码具体实现如下：
-def _get_batch_logps(    logits: torch.FloatTensor, labels: torch.LongTensor, average_log_prob: bool = False) -&gt; torch.FloatTensor:    # 确保logits和labels的形状在除了最后一个维度外是相同的。    assert logits.shape[:-1] == labels.shape    # 两行代码分别对labels和logits进行切片操作，去掉了每个序列的第一个和最后一个元素。    labels = labels[:, 1:].clone()    logits = logits[:, :-1, :]    # 这行代码创建了一个掩码loss_mask，用于标识哪些标签不是-100（即不是要被忽略的标签）。    loss_mask = labels != -100    # 这行代码将labels中值为-100的元素替换为0，因为在PyTorch中，0可以作为无效索引。    labels[labels == -100] = 0    # 计算每个token的对数概率。首先对logits应用log_softmax函数，然后在最后一个维度上使用torch.gather根据labels索引来选择对应的对数概率。    per_token_logps = torch.gather(logits.log_softmax(-1), dim=2, index=labels.unsqueeze(2)).squeeze(2)    # 根据average_log_prob的值决定返回值。如果average_log_prob为True，则返回每个样本的平均对数概率；否则，返回每个样本的对数概率之和    if average_log_prob:        return (per_token_logps * loss_mask).sum(-1) / loss_mask.sum(-1)    else:        return (per_token_logps * loss_mask).sum(-1)
-
-:::tips函数_get_batch_logps用于计算给定标签（labels）在给定的模型输出（logits）下的对数概率（log probabilities）。
-参数说明：
-
-logits：模型的输出（未归一化的）。形状为(batch_size, sequence_length, vocab_size)，其中batch_size是批次大小，sequence_length是序列长度，vocab_size是词汇表的大小。
-labels：要计算对数概率的标签。值为-100的标签标记将被忽略。形状为(batch_size, sequence_length)。
-average_log_prob：一个布尔值，默认为False。如果为True，则返回每个（未被掩码的）token的平均对数概率；如果为False，则返回（未被掩码的）token的对数概率之和。
-
-返回值：
-
-返回一个形状为(batch_size,)的张量，包含给定标签在给定logits下的对数概率的平均值或总和。
-
-该函数是用来计算模型预测的概率，并根据标签来确定哪些预测是有效的（即标签值不为-100）。如果average_log_prob参数为True，则函数返回的是平均对数概率；如果为False，则返回的是总和。
-:::
-concatenated_forward 函数 在训练中，concatenated_forward 负责对模型的 logps 进行计算：  
-def concatenated_forward(    model: nn.Module,    batch: Dict[str, Union[List, torch.LongTensor]],    average_log_prob: bool = False,    output_router_logits: bool = False,) -&gt; Tuple[torch.FloatTensor, torch.FloatTensor]:    concatenated_batch = concatenated_inputs(batch)    if output_router_logits:        outputs = model(            input_ids=concatenated_batch[&quot;concatenated_input_ids&quot;],            attention_mask=concatenated_batch[&quot;concatenated_attention_mask&quot;],            output_router_logits=True,        )        logits = outputs.logits.to(torch.float32)        aux_loss = outputs.aux_loss    else:        logits = model(            input_ids=concatenated_batch[&quot;concatenated_input_ids&quot;],            attention_mask=concatenated_batch[&quot;concatenated_attention_mask&quot;],        ).logits.to(torch.float32)        aux_loss = None    all_logps = _get_batch_logps(logits, concatenated_batch[&quot;concatenated_labels&quot;], average_log_prob=average_log_prob)    chosen_logps = all_logps[: batch[&quot;chosen_input_ids&quot;].shape[0]]    rejected_logps = all_logps[batch[&quot;chosen_input_ids&quot;].shape[0] :]    return chosen_logps, rejected_logps, aux_loss
-
- 参数 average_log_prob 是从主脚本dpo_tune.py中传递的，当设置为 True 时，启用长度归一化。  
-dpo_loss 函数dpo_loss 中计算 logits 的差值：  
-pi_logratios = policy_chosen_logps - policy_rejected_logpsref_logratios = reference_chosen_logps - reference_rejected_logpslogits = pi_logratios - ref_logratios
-
- 如果 average_log_prob=True，则 policy_chosen_logps 和 policy_rejected_logps 都是归一化的值，从而影响最终的 logits 和损失计算。  
-控制参数 在主脚本dpo_tune.py中，通过以下代码控制是否启用长度归一化：  
-average_log_prob_loss_types = [&quot;simpo&quot;, &quot;dpo_norm&quot;]average_log_prob = args.dpo_loss_type in average_log_prob_loss_types
-
- 当 dpo_loss_type 设置为 &quot;dpo_norm&quot; 时，average_log_prob归一化被启用，进而在 _get_batch_logps 和 concatenated_forward 中触发长度归一化逻辑。  
-rlvr实践单机4卡测试训练数据集
-.parquet转为json后的数据集样例：
-&#123;&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;Question: Find the domain of the expression $\\frac&#123;\\sqrt&#123;x-2&#125;&#125;&#123;\\sqrt&#123;5-x&#125;&#125;$.&#125;\nAnswer:The expressions inside each square root must be non-negative.\nTherefore, $x-2 \\ge 0$, so $x\\ge2$, and $5 - x \\ge 0$, so $x \\le 5$.\nAlso, the denominator cannot be equal to zero, so $5-x&gt;0$, which gives $x&lt;5$.\nTherefore, the domain of the expression is $\\boxed&#123;[2,5)&#125;$.\n\nQuestion: If $\\det \\mathbf&#123;A&#125; = 2$ and $\\det \\mathbf&#123;B&#125; = 12,$ then find $\\det (\\mathbf&#123;A&#125; \\mathbf&#123;B&#125;).$\nAnswer:We have that $\\det (\\mathbf&#123;A&#125; \\mathbf&#123;B&#125;) = (\\det \\mathbf&#123;A&#125;)(\\det \\mathbf&#123;B&#125;) = (2)(12) = \\boxed&#123;24&#125;.$\n\nQuestion: Terrell usually lifts two 20-pound weights 12 times. If he uses two 15-pound weights instead, how many times must Terrell lift them in order to lift the same total weight?\nAnswer:If Terrell lifts two 20-pound weights 12 times, he lifts a total of $2\\cdot 12\\cdot20=480$ pounds of weight.  If he lifts two 15-pound weights instead for $n$ times, he will lift a total of $2\\cdot15\\cdot n=30n$ pounds of weight.  Equating this to 480 pounds, we can solve for $n$: \\begin&#123;align*&#125;\n30n&amp;=480\\\\\n\\Rightarrow\\qquad n&amp;=480\/30=\\boxed&#123;16&#125;\n\\end&#123;align*&#125;\n\nQuestion: If the system of equations\n\n\\begin&#123;align*&#125;\n6x-4y&amp;=a,\\\\\n6y-9x &amp;=b.\n\\end&#123;align*&#125;has a solution $(x, y)$ where $x$ and $y$ are both nonzero, find $\\frac&#123;a&#125;&#123;b&#125;,$ assuming $b$ is nonzero.\nAnswer:If we multiply the first equation by $-\\frac&#123;3&#125;&#123;2&#125;$, we obtain\n\n$$6y-9x=-\\frac&#123;3&#125;&#123;2&#125;a.$$Since we also know that $6y-9x=b$, we have\n\n$$-\\frac&#123;3&#125;&#123;2&#125;a=b\\Rightarrow\\frac&#123;a&#125;&#123;b&#125;=\\boxed&#123;-\\frac&#123;2&#125;&#123;3&#125;&#125;.$$\n\nQuestion: What is the modulo $13$ residue of $247+5 \\cdot 39 + 7 \\cdot 143 +4 \\cdot 15?$&quot;,&quot;role&quot;:&quot;user&quot;&#125;],&quot;ground_truth&quot;:&quot;8&quot;,&quot;dataset&quot;:&quot;MATH&quot;,&quot;constraint_type&quot;:null,&quot;constraint&quot;:null&#125;
-
-
-验证数据集
-&#123;&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;Question: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\nAnswer:There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. So the answer is 6.\n\nQuestion: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?\nAnswer:There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. So the answer is 5.\n\nQuestion: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?\nAnswer:Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. So the answer is 39.\n\nQuestion: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?\nAnswer:Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. So the answer is 8.\n\nQuestion: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?\nAnswer:Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. So the answer is 9.\n\nQuestion: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?\nAnswer:There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. So the answer is 29.\n\nQuestion: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?\nAnswer:Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. So the answer is 33.\n\nQuestion: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?\nAnswer:Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. So the answer is 8.\n\nQuestion: A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?&quot;,&quot;role&quot;:&quot;user&quot;&#125;],&quot;ground_truth&quot;:&quot;3&quot;,&quot;dataset&quot;:&quot;gsm8k&quot;&#125;&#123;&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;Question: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\nAnswer:There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. So the answer is 6.\n\nQuestion: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?\nAnswer:There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. So the answer is 5.\n\nQuestion: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?\nAnswer:Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. So the answer is 39.\n\nQuestion: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?\nAnswer:Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. So the answer is 8.\n\nQuestion: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?\nAnswer:Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. So the answer is 9.\n\nQuestion: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?\nAnswer:There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. So the answer is 29.\n\nQuestion: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?\nAnswer:Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. So the answer is 33.\n\nQuestion: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?\nAnswer:Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. So the answer is 8.\n\nQuestion: Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&quot;,&quot;role&quot;:&quot;user&quot;&#125;],&quot;ground_truth&quot;:&quot;70000&quot;,&quot;dataset&quot;:&quot;gsm8k&quot;&#125;
-
-
-单机脚本配置export WANDB_MODE=disabledexport PYTORCH_CUDA_ALLOC_CONF=expandable_segments:Truecurrent_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)LOG_SAVE=&quot;/mnt/open-instruct-main/output/rlvr/$&#123;current_time&#125;-tulu3-rlvr.log&quot;python /mnt/open-instruct-main/open_instruct/ppo_vllm_thread_ray_gtrl.py \    --dataset_mixer &#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth_mixed&quot;: 1.0&#125;&#x27; \    --dataset_train_splits train \    --dataset_eval_mixer &#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth&quot;: 1.0&#125;&#x27; \    --dataset_eval_splits test \    --max_token_length 2048 \    --max_prompt_token_length 2048 \    --response_length 2048 \    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-DPO \    --reward_model_path /mnt/LLM-Research/LLama-31-Tulu3-8B-RM \    --non_stop_penalty \    --stop_token eos \    --temperature 1.0 \    --ground_truths_key ground_truth \    --chat_template tulu \    --sft_messages_key messages \    --learning_rate 3e-7 \    --total_episodes 10000000 \    --penalty_reward_value -10.0 \    --deepspeed_stage 3 \    --per_device_train_batch_size 1 \    --local_rollout_forward_batch_size 1 \    --local_mini_batch_size 16 \    --local_rollout_batch_size 16 \    --actor_num_gpus_per_node 3 \    --vllm_tensor_parallel_size 2 \    --beta 0.05 \    --apply_verifiable_reward true \    --output_dir /mnt/open-instruct-main/output/rlvr \    --seed 3 \    --num_evals 3 \    --save_freq 100 \    --reward_model_multiplier 0.0 \    --gradient_checkpointing \    --with_tracking False 2&gt;&amp;1 | tee -a &quot;$LOG_SAVE&quot;
-
-为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。
---max_token_length 2048
---max_prompt_token_length 2048 
---response_length 2048
---learning_rate 3e-7
---penalty_reward_value -10.0
---reward_model_multiplier 0.0
-其中的模型权重利用tulu3开源的经过tulu3-sft dpo得到的Llama-31-Tulu-3-8B-DPO权重，奖励模型采用tulu3开源的LLama-31-Tulu3-8B-RM。
-训练测试加载ckpt时一直卡住不动，尚未解决。
-
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>NVIDIA</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>Nvidia</tag>
-        <tag>Tulu3</tag>
-        <tag>V100</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于Modellink的llama2-7b和Mistral-7b模型微调</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Modellink/llama2-7B+Mistral-7B/</url>
-    <content><![CDATA[基于docker的mistral-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
-
-权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
-
-python  tools/checkpoint/convert_ckpt.py \    --model-type GPT \    --loader llama2_hf \    --saver megatron \    --load-dir /job/mnt/huggingface/mistral-7b-hf/ \    --save-dir /job/data/megatron/mistral-7b-tp4-pp2 \    --tokenizer-model /job/mnt/huggingface/mistral-7b-hf/tokenizer.model \    --target-tensor-parallel-size 4 \    --target-pipeline-parallel-size 2
-
-
-数据集下载sudo wget https://hf-mirror.com/datasets/silk-road/alpaca-data-gpt4-chinese/resolve/main/Alpaca_data_gpt4_zh.jsonl
-
-处理python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/mistral/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/mistral-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
-
-
-处理完成
-
-微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/mistral/Alpaca_finetune/&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/mistral-7b-hf&quot;CKPT_SAVE_DIR=&quot;/job/output/mistral_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/mistral-7b-tp4-pp2/&quot;TP=4PP=2NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --sliding-window 4096 \    --num-layers $&#123;NUM_LAYERS&#125; \    --hidden-size 4096 \    --ffn-hidden-size 14336 \    --num-attention-heads 32 \    --group-query-attention \    --num-query-groups 8 \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path $&#123;TOKENIZER_MODEL&#125; \    --seq-length 32768 \    --max-position-embeddings 32768 \    --micro-batch-size 1 \    --global-batch-size 32 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 1000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --use-fused-swiglu \    --use-rotary-position-embeddings \    --use-fused-rotary-pos-emb \    --use-mc2 \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --overlap-grad-reduce \    --load $&#123;CKPT_LOAD_DIR&#125; \    --save $&#123;CKPT_SAVE_DIR&#125; \    --bf16 \    --finetune \    --is-instruction-dataset \    --log-throughput \    --recompute-granularity full \    --recompute-method block \    --recompute-num-layers 32&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_mistral_7B.log
-
-拉起训练
-基于docker的llama2-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
-
-权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
-
-python  tools/checkpoint/convert_ckpt.py \       --model-type GPT \       --loader llama2_hf \       --saver megatron \       --target-tensor-parallel-size 8 \       --target-pipeline-parallel-size 1 \       --load-dir /job/mnt/huggingface/Llama-2-7b-hf// \       --save-dir /job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1/ \       --tokenizer-model /job/mnt/huggingface/Llama-2-7b-hf/tokenizer.json
-
-
-数据集python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/llama2/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/Llama-2-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
-
-
-
-微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/llama2/Alpaca_finetune&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/Llama-2-7b-hf/&quot;CKPT_SAVE_DIR=&quot;/job/output/llama2_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1&quot;TP=8PP=1NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --num-layers 32 \    --hidden-size 4096 \    --ffn-hidden-size 11008 \    --num-attention-heads 32 \    --tokenizer-type Llama2Tokenizer \    --tokenizer-model $&#123;TOKENIZER_MODEL&#125; \    --seq-length 4096 \    --max-position-embeddings 4096 \    --micro-batch-size 1 \    --global-batch-size 256 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 5000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --use-fused-swiglu \    --use-fused-rotary-pos-emb \    --overlap-grad-reduce \    --bf16&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_llama2_7B.log
-
-拉起训练
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>昇腾</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>昇腾</tag>
-        <tag>910B</tag>
-        <tag>Mindformers</tag>
       </tags>
   </entry>
   <entry>
@@ -937,35 +309,38 @@ import json# 读取以.jsonl结尾的文件json_data = []with open(&#x27;/opt/tm
       <tags>
         <tag>模型训练调优</tag>
         <tag>Nvidia</tag>
-        <tag>V100</tag>
         <tag>Qwen</tag>
+        <tag>V100</tag>
       </tags>
   </entry>
   <entry>
-    <title>1.3-基于docker的Qwen单机单卡_多卡训练</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.3-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84Qwen%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/</url>
-    <content><![CDATA[1. 查看容器docker ps
-2. exec进入容器docker exec -it containerid bash
-3. 进入qwen目录并修改finetune_lora_single_gpu.sh参数#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/qwen/train_data_law.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune/finetune_lora_single_gpu.sh [-m MODEL_PATH] [-d DATA_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneexport CUDA_VISIBLE_DEVICES=0python finetune.py \  --model_name_or_path $MODEL \  --data_path $DATA \  --bf16 True \  --output_dir output_qwen \  --num_train_epochs 5 \  --per_device_train_batch_size 1 \  --per_device_eval_batch_size 1 \  --gradient_accumulation_steps 8 \  --evaluation_strategy &quot;no&quot; \  --save_strategy &quot;steps&quot; \  --save_steps 100 \  --save_total_limit 10 \  --learning_rate 3e-4 \  --weight_decay 0.1 \  --adam_beta2 0.95 \  --warmup_ratio 0.01 \  --lr_scheduler_type &quot;cosine&quot; \  --logging_steps 1 \  --report_to &quot;none&quot; \  --model_max_length 512 \  --lazy_preprocess True \  --gradient_checkpointing \  --use_lora# If you use fp16 instead of bf16, you should use deepspeed# --fp16 True --deepspeed finetune/ds_config_zero2.json
-4. 执行finetune_lora_single_gpu.sh单机单卡5. 修改finetune_lora_ds.sh参数#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1DIR=`pwd`# Guide:# This script supports distributed training on multi-gpu workers (as well as single-worker training).# Please set the options below according to the comments.# For multi-gpu workers training, these options should be manually set for each worker.# After setting the options, please run the script on each worker.# Number of GPUs per GPU workerGPUS_PER_NODE=$(python -c &#x27;import torch; print(torch.cuda.device_count())&#x27;)# Number of GPU workers, for single-worker training, please set to 1NNODES=$&#123;NNODES:-1&#125;# The rank of this worker, should be in &#123;0, ..., WORKER_CNT-1&#125;, for single-worker training, please set to 0NODE_RANK=$&#123;NODE_RANK:-0&#125;# The ip address of the rank-0 worker, for single-worker training, please set to localhostMASTER_ADDR=$&#123;MASTER_ADDR:-localhost&#125;# The port for communicationMASTER_PORT=$&#123;MASTER_PORT:-6001&#125;MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/qwen/train_data_law.json&quot;DS_CONFIG_PATH=&quot;finetune/ds_config_zero2.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune/finetune_lora_ds.sh [-m MODEL_PATH] [-d DATA_PATH] [--deepspeed DS_CONFIG_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        --deepspeed )            shift            DS_CONFIG_PATH=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneDISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;#export CUDA_VISIBLE_DEVICES=2,3torchrun $DISTRIBUTED_ARGS finetune.py \    --model_name_or_path $MODEL \    --data_path $DATA \    --bf16 False \    --output_dir output_qwen \    --num_train_epochs 5 \    --per_device_train_batch_size 2 \    --per_device_eval_batch_size 1 \    --gradient_accumulation_steps 8 \    --evaluation_strategy &quot;no&quot; \    --save_strategy &quot;steps&quot; \    --save_steps 100 \    --save_total_limit 10 \    --learning_rate 3e-4 \    --weight_decay 0.1 \    --adam_beta2 0.95 \    --warmup_ratio 0.01 \    --lr_scheduler_type &quot;cosine&quot; \    --logging_steps 1 \    --report_to &quot;none&quot; \    --model_max_length 512 \    --lazy_preprocess True \    --use_lora \    --gradient_checkpointing \    --deepspeed $&#123;DS_CONFIG_PATH&#125;
-6. 修改deepspeed中ds_config_zero2.json配置文件，增加TFlops显示其中具体增加的参数配置为flops_profiler
-&quot;flops_profiler&quot;: &#123;        &quot;enabled&quot;: true,        &quot;profile_step&quot;: 1,        &quot;module_depth&quot;: -1,        &quot;top_modules&quot;: 1,        &quot;detailed&quot;: false,        &quot;output_file&quot;: null    &#125;,
-&#123;    &quot;fp16&quot;: &#123;        &quot;enabled&quot;: &quot;auto&quot;,        &quot;loss_scale&quot;: 0,        &quot;loss_scale_window&quot;: 1000,        &quot;initial_scale_power&quot;: 16,        &quot;hysteresis&quot;: 2,        &quot;min_loss_scale&quot;: 1    &#125;,    &quot;bf16&quot;: &#123;        &quot;enabled&quot;: &quot;auto&quot;    &#125;,    &quot;optimizer&quot;: &#123;        &quot;type&quot;: &quot;AdamW&quot;,        &quot;params&quot;: &#123;            &quot;lr&quot;: &quot;auto&quot;,            &quot;betas&quot;: &quot;auto&quot;,            &quot;eps&quot;: &quot;auto&quot;,            &quot;weight_decay&quot;: &quot;auto&quot;        &#125;    &#125;,    &quot;scheduler&quot;: &#123;        &quot;type&quot;: &quot;WarmupLR&quot;,        &quot;params&quot;: &#123;            &quot;warmup_min_lr&quot;: &quot;auto&quot;,            &quot;warmup_max_lr&quot;: &quot;auto&quot;,            &quot;warmup_num_steps&quot;: &quot;auto&quot;        &#125;    &#125;,    &quot;zero_optimization&quot;: &#123;        &quot;stage&quot;: 2,        &quot;offload_optimizer&quot;: &#123;            &quot;device&quot;: &quot;none&quot;,            &quot;pin_memory&quot;: true        &#125;,        &quot;allgather_partitions&quot;: true,        &quot;allgather_bucket_size&quot;: 2e8,        &quot;overlap_comm&quot;: true,        &quot;reduce_scatter&quot;: true,        &quot;reduce_bucket_size&quot;: 2e8,        &quot;contiguous_gradients&quot;: true    &#125;,    &quot;flops_profiler&quot;: &#123;        &quot;enabled&quot;: true,        &quot;profile_step&quot;: 1,        &quot;module_depth&quot;: -1,        &quot;top_modules&quot;: 1,        &quot;detailed&quot;: false,        &quot;output_file&quot;: null    &#125;,    &quot;gradient_accumulation_steps&quot;: &quot;auto&quot;,    &quot;gradient_clipping&quot;: &quot;auto&quot;,    &quot;steps_per_print&quot;: 100,    &quot;train_batch_size&quot;: &quot;auto&quot;,    &quot;train_micro_batch_size_per_gpu&quot;: &quot;auto&quot;,    &quot;wall_clock_breakdown&quot;: false&#125;
-7. 执行finetune_lora_ds.sh单机多卡训练其中报了Error while creating shared memory segment &#x2F;dev&#x2F;shm&#x2F;nccl-KXWrmA (size 9637888)导致在docker中单机多卡拉起失败问题原因：docker的shm共享内存不足，可以通过命令df -h | grep shm查看当前容器的shm大小，默认为64M，这是远远不够的，所以要增加该容器的shm共享内存大小。参考博文https://blog.csdn.net/gg864461719/article/details/112466585
-解决方法1：创建完容器之后，手动修改shm共享内存大小a. 首先要关闭docker, 否则下面的操作步骤会无效.service docker stop
-b. 进入宿主机中&#x2F;docker&#x2F;containers&#x2F;容器id 修改该容器的hostconfig.json文件，把其中的ShmSize的大小后面增加22（就变为了6.3G）其默认的是67108864_KB_ 就约等于64M。c. 重启docker服务systemctl start docker
-d. 解决完之后，重新查看shm的共享内存大小，此时已经变为了6.3G解决方法2：在通过镜像run容器时，就直接指定–shm-size 6Gdocker run -it --name qwen --gpus all --shm-size 6G registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0 bash
-重新拉起训练bash finetune/finetune_lora_ds.sh其中tflops在9.5~10.5之间
+    <title>基于Mindformers的llama3.1模型微调</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Mindformers/llama3.1%E5%BE%AE%E8%B0%83/</url>
+    <content><![CDATA[启动容器docker run -dit --ipc=host --net=host \--name=wxb_mindformers \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/code:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/output:/job/output \-v /mnt/weight-1:/job/mnt \swr.cn-central-221.ovaijisuan.com/mindformers/mindformers1.3_mindspore2.4:20241114 \/bin/bash
+
+
+代码准备git clone https://gitee.com/mindspore/mindformers.git
+
+数据集python research/llama3/llama_preprocess.py \--dataset_type qa \--input_glob /job/data/alpaca/alpaca-data-conversation.json \--model_file /job/mnt/huggingface/llama-3-8b-hf \--seq_length 8192 \--output_file /job/data/alpaca
+
+权重转换python convert_weight.py --model llama --input_path /job/mnt/huggingface/llama-3-8b-hf --output_path /job/data/mindformers/llama3_8b_ckpt
+
+训练脚本seed: 0output_dir: &#x27;/job/output&#x27; # path to save checkpoint/strategyload_checkpoint: &#x27;/job/data/mindformers/llama3_8b_ckpt/&#x27;src_strategy_path_or_dir: &#x27;&#x27;auto_trans_ckpt: False  # If true, auto transform load_checkpoint to load in distributed modelonly_save_strategy: Falseresume_training: Falserun_mode: &#x27;finetune&#x27; # trainer configtrainer:  type: CausalLanguageModelingTrainer  model_name: &#x27;llama3_8b&#x27; # runner configrunner_config:  epochs: 2  batch_size: 1  sink_mode: True  sink_size: 2 # optimizeroptimizer:  type: FP32StateAdamWeightDecay  beta1: 0.9  beta2: 0.95  eps: 1.e-8 # lr sechdulelr_schedule:  type: CosineWithWarmUpLR  learning_rate: 1.e-5  lr_end: 0.0  warmup_ratio: 0.03  total_steps: -1 # -1 means it will load the total steps of the dataset # datasettrain_dataset: &amp;train_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;/job/data/alpaca/alpaca_llama3_8192/alpaca-fastchat8192.mindrecord&quot;    shuffle: True  input_columns: [&quot;input_ids&quot;,&quot;labels&quot;]  # &quot;input_ids&quot;, &quot;labels&quot; , labels are used in instruction finetune.  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: True  batch_size: 6  repeat: 1  numa_enable: False  prefetch_size: 1train_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *train_dataset# if True, do evaluate during the training process. if false, do nothing.# note that the task trainer should support _evaluate_in_training function.do_eval: False # eval dataseteval_dataset: &amp;eval_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;&quot;    shuffle: False  input_columns: [&quot;input_ids&quot;]  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: False  repeat: 1  numa_enable: False  prefetch_size: 1eval_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *eval_dataset use_parallel: True# parallel context configparallel:  parallel_mode: 1 # 0-data parallel, 1-semi-auto parallel, 2-auto parallel, 3-hybrid parallel  gradients_mean: False  enable_alltoall: False  full_batch: True  search_mode: &quot;sharding_propagation&quot;  enable_parallel_optimizer: True  strategy_ckpt_save_file: &quot;./ckpt_strategy.ckpt&quot;  parallel_optimizer_config:    gradient_accumulation_shard: False    parallel_optimizer_threshold: 64# default parallel of device num = 8 for Atlas 800T A2parallel_config:  data_parallel: 1  model_parallel: 4  pipeline_stage: 2  use_seq_parallel: False  micro_batch_num: 8  vocab_emb_dp: True  gradient_aggregation_group: 4# when model parallel is greater than 1, we can set micro_batch_interleave_num=2, that may accelerate the train process.micro_batch_interleave_num: 1 # recompute configrecompute_config:  recompute: True  select_recompute: False  parallel_optimizer_comm_recompute: True  mp_comm_recompute: True  recompute_slice_activation: True # callbackscallbacks:  - type: MFLossMonitor  - type: CheckpointMointor    prefix: &quot;llama3_8b&quot;    save_checkpoint_steps: 10000    integrated_save: False    async_save: False  - type: ObsMonitor # mindspore context init configcontext:  mode: 0 #0--Graph Mode; 1--Pynative Mode  device_target: &quot;Ascend&quot;  enable_graph_kernel: False  graph_kernel_flags: &quot;--disable_expand_ops=Softmax,Dropout --enable_parallel_fusion=true --reduce_fuse_depth=8 --enable_auto_tensor_inplace=true&quot;  max_call_depth: 10000  max_device_memory: &quot;26GB&quot;  save_graphs: False  save_graphs_path: &quot;./graph&quot;  device_id: 0  runtime_num_threads: 1 # model configmodel:  model_config:    type: LlamaConfig    batch_size: 1 # add for increase predict    seq_length: 8192    hidden_size: 4096    num_layers: 32    num_heads: 32    n_kv_heads: 8    vocab_size: 128256    intermediate_size: 14336    rms_norm_eps: 1.0e-5    bos_token_id: 128000    eos_token_id: 128001    pad_token_id: 128002    ignore_token_id: -100    compute_dtype: &quot;bfloat16&quot;    layernorm_compute_type: &quot;float32&quot;    softmax_compute_type: &quot;float32&quot;    rotary_dtype: &quot;float32&quot;    param_init_type: &quot;bfloat16&quot;    use_past: False    scaling_factor: 1.0    theta: 500000    extend_method: &quot;None&quot; # support &quot;None&quot;, &quot;PI&quot;, &quot;NTK&quot;    use_flash_attention: True # FA can accelerate training or finetune    offset: 0    fine_grain_interleave: 1    checkpoint_name_or_path: &quot;&quot;    repetition_penalty: 1    max_decode_length: 512    top_k: 3    top_p: 1    do_sample: False  arch:    type: LlamaForCausalLM # metricmetric:  type: PerplexityMetric # wrapper cell configrunner_wrapper:  type: MFTrainOneStepCell  scale_sense: 1.0  use_clip_grad: True eval_callbacks:  - type: ObsMonitor auto_tune: Falsefilepath_prefix: &#x27;./autotune&#x27;autotune_per_step: 10 profile: Falseprofile_start_step: 5profile_stop_step: 7init_start_profile: Trueprofile_communication: Trueprofile_memory: Truelayer_scale: Falselayer_decay: 0.65lr_scale_factor: 256 # aiccremote_save_url: &quot;Please input obs url on AICC platform.&quot;
+
+训练拉起
+git
+ clone https://gitee.com/mindspore/mindformers.gitgit
+ clone https://gitee.com/mindspore/mindformers.git
 ]]></content>
       <categories>
         <category>模型训练调优</category>
-        <category>NVIDIA</category>
+        <category>昇腾</category>
       </categories>
       <tags>
         <tag>模型训练调优</tag>
-        <tag>Nvidia</tag>
-        <tag>V100</tag>
-        <tag>Qwen</tag>
+        <tag>昇腾</tag>
+        <tag>910B</tag>
+        <tag>Mindformers</tag>
       </tags>
   </entry>
   <entry>
@@ -1003,40 +378,8 @@ d. 解决完之后，重新查看shm的共享内存大小，此时已经变为�
       <tags>
         <tag>模型训练调优</tag>
         <tag>Nvidia</tag>
-        <tag>V100</tag>
         <tag>Qwen</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>1.4-基于k8s拉起Qwen模型的多机多卡微调</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.4-%E5%9F%BA%E4%BA%8Ek8s%E6%8B%89%E8%B5%B7Qwen%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E5%BE%AE%E8%B0%83/</url>
-    <content><![CDATA[一、镜像准备
-1. 查看镜像docker images
-2. 修改镜像标签docker tag ec99659d9677 registry.paas/library/qwen:v3.0
-3. 将镜像推至仓库docker push registry.paas/library/qwen:v3.0
-4. 如果出现签名认证失败，需要修改docker守护进程配置文件vim /etc/docker/daemon.json增加如下配置：
-&#123;&quot;insecure-registries&quot;:[&quot;registry.paas&quot;]&#125;
-重启dockersystemctl daemon-reload &amp;&amp; systemctl restart docker
-5. 重新push至registry.paas&#x2F;library&#x2F;xxx:tags仓库二、修改配置文件
-1. qwentest.yamlapiVersion: apps/v1kind: DaemonSetmetadata:  name: qwentestspec:  selector:    matchLabels:      app: qwentest  template:    metadata:      labels:        app: qwentest    spec:      hostNetwork: true      nodeSelector:        model: qwen-7b      containers:      - name: qwentest        image: registry.paas/library/qwen:v3.0        imagePullPolicy: IfNotPresent        resources:         limits:           nvidia.com/gpu: &quot;4&quot;         requests:           nvidia.com/gpu: &quot;4&quot;        command:                                  # training command, which can be modified              - &quot;/bin/bash&quot;              - &quot;-c&quot;                #- sleep 10000              - |                cd /mnt/ &amp;&amp;                cp setRank.sh /qwen/ &amp;&amp;                cd /qwen/ &amp;&amp;                chmod +x setRank.sh &amp;&amp;                bash setRank.sh &amp;&amp;                chmod +x finetune_lora_ds.sh &amp;&amp;                bash finetune_lora_ds.sh        securityContext:          privileged: true        volumeMounts:        - name: processeddata          mountPath: /mnt        - name: dshm          mountPath: /dev/shm        - name: tmp-volume          mountPath: /tmp      volumes:      - name: processeddata        hostPath:          path: /mnt/users/wangxiangbo/runk8s      - name: dshm        emptyDir:          medium: Memory          sizeLimit: 1G      - name: tmp-volume        hostPath:          path: /tmp
-2. hostfile192.168.0.20192.168.0.58
-3. setRank.sh#!/bin/bashshell_name=&quot;finetune_lora_ds.sh&quot;shell_dir=&quot;/mnt/&quot;local_dir=&quot;/qwen/&quot;## 复制脚本到/qwen/下cp $shell_dir$shell_name $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$shell_dir&quot;hostfile)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)ls# 初始化ranknode_rank=-1# 遍历数组for i in &quot;$&#123;!ips[@]&#125;&quot;; do    # 使用tr命令去除空白字符    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        node_rank=$i        break    fidoneif [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
-
-4. sh#!/bin/bash/bin/bash -i &lt;&lt;&#x27;EOF&#x27;export NCCL_IB_DISABLE=1export NCCL_SOCKET_IFNAME=eth0export NCCL_P2P_DISABLE=1export NCCL_DEBUG=INFOsource ~/.bashrc. /opt/miniconda/etc/profile.d/conda.shconda activate qwenexport CUDA_DEVICE_MAX_CONNECTIONS=1export CUDA_VISIBLE_DEVICES=0,1,2,3DIR=`pwd`# Number of GPUs per GPU workerGPUS_PER_NODE=4# Number of GPU workers, for single-worker training, please set to 1NNODES=2# The rank of this worker, should be in &#123;0, ..., WORKER_CNT-1&#125;, for single-worker training, please set to 0NODE_RANK=0# The ip address of the rank-0 worker, for single-worker training, please set to localhostMASTER_ADDR=192.168.0.20# The port for communicationMASTER_PORT=6003MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/qwen/train_data_law.json&quot;DS_CONFIG_PATH=&quot;/qwen/finetune/ds_config_zero2.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune_lora_ds.sh [-m MODEL_PATH] [-d DATA_PATH] [--deepspeed DS_CONFIG_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        --deepspeed )            shift            DS_CONFIG_PATH=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneDISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;torchrun $DISTRIBUTED_ARGS finetune.py \    --model_name_or_path $MODEL \    --data_path $DATA \    --bf16 False \    --output_dir output_qwen \    --num_train_epochs 5 \    --per_device_train_batch_size 8 \    --per_device_eval_batch_size 1 \    --gradient_accumulation_steps 8 \    --evaluation_strategy &quot;no&quot; \    --save_strategy &quot;steps&quot; \    --save_steps 100 \    --save_total_limit 10 \    --learning_rate 3e-4 \    --weight_decay 0.1 \    --adam_beta2 0.95 \    --warmup_ratio 0.01 \    --lr_scheduler_type &quot;cosine&quot; \    --logging_steps 1 \    --report_to &quot;none&quot; \    --model_max_length 512 \    --lazy_preprocess True \    --use_lora \    --gradient_checkpointing \    --ddp_find_unused_parameters False \EOF
-三、拉起训练（3号和4号两机8卡）
-1. 切换到1号机器master节点上，给带训练得3号和4号机器打上标签kubectl label nodes ecs-jhjs-1234-003 model=qwen-7bkubectl label nodes ecs-jhjs-1234-004 model=qwen-7b
-2. 准备好启动脚本等文件后，在master节点1号机器上，利用修改好的qwentest.yaml文件拉起训练任务3. kubectl apply -f qwentest.yaml4. 通过kubectl查看pod节点启动信息
-5. 查看两个节点pod的logs日志kubectl logs qwentest-czm8n -fkubectl logs qwentest-qthsf -f
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>NVIDIA</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>Nvidia</tag>
         <tag>V100</tag>
-        <tag>Qwen</tag>
       </tags>
   </entry>
   <entry>
@@ -1634,8 +977,665 @@ qlora在拉起训练时，需要对模型权重进行INT-4量化，会损失掉�
       <tags>
         <tag>模型训练调优</tag>
         <tag>Nvidia</tag>
-        <tag>V100</tag>
         <tag>Qwen</tag>
+        <tag>V100</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1.4-基于k8s拉起Qwen模型的多机多卡微调</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.4-%E5%9F%BA%E4%BA%8Ek8s%E6%8B%89%E8%B5%B7Qwen%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E5%BE%AE%E8%B0%83/</url>
+    <content><![CDATA[一、镜像准备
+1. 查看镜像docker images
+2. 修改镜像标签docker tag ec99659d9677 registry.paas/library/qwen:v3.0
+3. 将镜像推至仓库docker push registry.paas/library/qwen:v3.0
+4. 如果出现签名认证失败，需要修改docker守护进程配置文件vim /etc/docker/daemon.json增加如下配置：
+&#123;&quot;insecure-registries&quot;:[&quot;registry.paas&quot;]&#125;
+重启dockersystemctl daemon-reload &amp;&amp; systemctl restart docker
+5. 重新push至registry.paas&#x2F;library&#x2F;xxx:tags仓库二、修改配置文件
+1. qwentest.yamlapiVersion: apps/v1kind: DaemonSetmetadata:  name: qwentestspec:  selector:    matchLabels:      app: qwentest  template:    metadata:      labels:        app: qwentest    spec:      hostNetwork: true      nodeSelector:        model: qwen-7b      containers:      - name: qwentest        image: registry.paas/library/qwen:v3.0        imagePullPolicy: IfNotPresent        resources:         limits:           nvidia.com/gpu: &quot;4&quot;         requests:           nvidia.com/gpu: &quot;4&quot;        command:                                  # training command, which can be modified              - &quot;/bin/bash&quot;              - &quot;-c&quot;                #- sleep 10000              - |                cd /mnt/ &amp;&amp;                cp setRank.sh /qwen/ &amp;&amp;                cd /qwen/ &amp;&amp;                chmod +x setRank.sh &amp;&amp;                bash setRank.sh &amp;&amp;                chmod +x finetune_lora_ds.sh &amp;&amp;                bash finetune_lora_ds.sh        securityContext:          privileged: true        volumeMounts:        - name: processeddata          mountPath: /mnt        - name: dshm          mountPath: /dev/shm        - name: tmp-volume          mountPath: /tmp      volumes:      - name: processeddata        hostPath:          path: /mnt/users/wangxiangbo/runk8s      - name: dshm        emptyDir:          medium: Memory          sizeLimit: 1G      - name: tmp-volume        hostPath:          path: /tmp
+2. hostfile192.168.0.20192.168.0.58
+3. setRank.sh#!/bin/bashshell_name=&quot;finetune_lora_ds.sh&quot;shell_dir=&quot;/mnt/&quot;local_dir=&quot;/qwen/&quot;## 复制脚本到/qwen/下cp $shell_dir$shell_name $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$shell_dir&quot;hostfile)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)ls# 初始化ranknode_rank=-1# 遍历数组for i in &quot;$&#123;!ips[@]&#125;&quot;; do    # 使用tr命令去除空白字符    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        node_rank=$i        break    fidoneif [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
+
+4. sh#!/bin/bash/bin/bash -i &lt;&lt;&#x27;EOF&#x27;export NCCL_IB_DISABLE=1export NCCL_SOCKET_IFNAME=eth0export NCCL_P2P_DISABLE=1export NCCL_DEBUG=INFOsource ~/.bashrc. /opt/miniconda/etc/profile.d/conda.shconda activate qwenexport CUDA_DEVICE_MAX_CONNECTIONS=1export CUDA_VISIBLE_DEVICES=0,1,2,3DIR=`pwd`# Number of GPUs per GPU workerGPUS_PER_NODE=4# Number of GPU workers, for single-worker training, please set to 1NNODES=2# The rank of this worker, should be in &#123;0, ..., WORKER_CNT-1&#125;, for single-worker training, please set to 0NODE_RANK=0# The ip address of the rank-0 worker, for single-worker training, please set to localhostMASTER_ADDR=192.168.0.20# The port for communicationMASTER_PORT=6003MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/qwen/train_data_law.json&quot;DS_CONFIG_PATH=&quot;/qwen/finetune/ds_config_zero2.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune_lora_ds.sh [-m MODEL_PATH] [-d DATA_PATH] [--deepspeed DS_CONFIG_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        --deepspeed )            shift            DS_CONFIG_PATH=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneDISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;torchrun $DISTRIBUTED_ARGS finetune.py \    --model_name_or_path $MODEL \    --data_path $DATA \    --bf16 False \    --output_dir output_qwen \    --num_train_epochs 5 \    --per_device_train_batch_size 8 \    --per_device_eval_batch_size 1 \    --gradient_accumulation_steps 8 \    --evaluation_strategy &quot;no&quot; \    --save_strategy &quot;steps&quot; \    --save_steps 100 \    --save_total_limit 10 \    --learning_rate 3e-4 \    --weight_decay 0.1 \    --adam_beta2 0.95 \    --warmup_ratio 0.01 \    --lr_scheduler_type &quot;cosine&quot; \    --logging_steps 1 \    --report_to &quot;none&quot; \    --model_max_length 512 \    --lazy_preprocess True \    --use_lora \    --gradient_checkpointing \    --ddp_find_unused_parameters False \EOF
+三、拉起训练（3号和4号两机8卡）
+1. 切换到1号机器master节点上，给带训练得3号和4号机器打上标签kubectl label nodes ecs-jhjs-1234-003 model=qwen-7bkubectl label nodes ecs-jhjs-1234-004 model=qwen-7b
+2. 准备好启动脚本等文件后，在master节点1号机器上，利用修改好的qwentest.yaml文件拉起训练任务3. kubectl apply -f qwentest.yaml4. 通过kubectl查看pod节点启动信息
+5. 查看两个节点pod的logs日志kubectl logs qwentest-czm8n -fkubectl logs qwentest-qthsf -f
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>Nvidia</tag>
+        <tag>Qwen</tag>
+        <tag>V100</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1.3-基于docker的Qwen单机单卡_多卡训练</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.3-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84Qwen%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/</url>
+    <content><![CDATA[1. 查看容器docker ps
+2. exec进入容器docker exec -it containerid bash
+3. 进入qwen目录并修改finetune_lora_single_gpu.sh参数#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/qwen/train_data_law.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune/finetune_lora_single_gpu.sh [-m MODEL_PATH] [-d DATA_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneexport CUDA_VISIBLE_DEVICES=0python finetune.py \  --model_name_or_path $MODEL \  --data_path $DATA \  --bf16 True \  --output_dir output_qwen \  --num_train_epochs 5 \  --per_device_train_batch_size 1 \  --per_device_eval_batch_size 1 \  --gradient_accumulation_steps 8 \  --evaluation_strategy &quot;no&quot; \  --save_strategy &quot;steps&quot; \  --save_steps 100 \  --save_total_limit 10 \  --learning_rate 3e-4 \  --weight_decay 0.1 \  --adam_beta2 0.95 \  --warmup_ratio 0.01 \  --lr_scheduler_type &quot;cosine&quot; \  --logging_steps 1 \  --report_to &quot;none&quot; \  --model_max_length 512 \  --lazy_preprocess True \  --gradient_checkpointing \  --use_lora# If you use fp16 instead of bf16, you should use deepspeed# --fp16 True --deepspeed finetune/ds_config_zero2.json
+4. 执行finetune_lora_single_gpu.sh单机单卡5. 修改finetune_lora_ds.sh参数#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1DIR=`pwd`# Guide:# This script supports distributed training on multi-gpu workers (as well as single-worker training).# Please set the options below according to the comments.# For multi-gpu workers training, these options should be manually set for each worker.# After setting the options, please run the script on each worker.# Number of GPUs per GPU workerGPUS_PER_NODE=$(python -c &#x27;import torch; print(torch.cuda.device_count())&#x27;)# Number of GPU workers, for single-worker training, please set to 1NNODES=$&#123;NNODES:-1&#125;# The rank of this worker, should be in &#123;0, ..., WORKER_CNT-1&#125;, for single-worker training, please set to 0NODE_RANK=$&#123;NODE_RANK:-0&#125;# The ip address of the rank-0 worker, for single-worker training, please set to localhostMASTER_ADDR=$&#123;MASTER_ADDR:-localhost&#125;# The port for communicationMASTER_PORT=$&#123;MASTER_PORT:-6001&#125;MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/qwen/train_data_law.json&quot;DS_CONFIG_PATH=&quot;finetune/ds_config_zero2.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune/finetune_lora_ds.sh [-m MODEL_PATH] [-d DATA_PATH] [--deepspeed DS_CONFIG_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        --deepspeed )            shift            DS_CONFIG_PATH=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneDISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;#export CUDA_VISIBLE_DEVICES=2,3torchrun $DISTRIBUTED_ARGS finetune.py \    --model_name_or_path $MODEL \    --data_path $DATA \    --bf16 False \    --output_dir output_qwen \    --num_train_epochs 5 \    --per_device_train_batch_size 2 \    --per_device_eval_batch_size 1 \    --gradient_accumulation_steps 8 \    --evaluation_strategy &quot;no&quot; \    --save_strategy &quot;steps&quot; \    --save_steps 100 \    --save_total_limit 10 \    --learning_rate 3e-4 \    --weight_decay 0.1 \    --adam_beta2 0.95 \    --warmup_ratio 0.01 \    --lr_scheduler_type &quot;cosine&quot; \    --logging_steps 1 \    --report_to &quot;none&quot; \    --model_max_length 512 \    --lazy_preprocess True \    --use_lora \    --gradient_checkpointing \    --deepspeed $&#123;DS_CONFIG_PATH&#125;
+6. 修改deepspeed中ds_config_zero2.json配置文件，增加TFlops显示其中具体增加的参数配置为flops_profiler
+&quot;flops_profiler&quot;: &#123;        &quot;enabled&quot;: true,        &quot;profile_step&quot;: 1,        &quot;module_depth&quot;: -1,        &quot;top_modules&quot;: 1,        &quot;detailed&quot;: false,        &quot;output_file&quot;: null    &#125;,
+&#123;    &quot;fp16&quot;: &#123;        &quot;enabled&quot;: &quot;auto&quot;,        &quot;loss_scale&quot;: 0,        &quot;loss_scale_window&quot;: 1000,        &quot;initial_scale_power&quot;: 16,        &quot;hysteresis&quot;: 2,        &quot;min_loss_scale&quot;: 1    &#125;,    &quot;bf16&quot;: &#123;        &quot;enabled&quot;: &quot;auto&quot;    &#125;,    &quot;optimizer&quot;: &#123;        &quot;type&quot;: &quot;AdamW&quot;,        &quot;params&quot;: &#123;            &quot;lr&quot;: &quot;auto&quot;,            &quot;betas&quot;: &quot;auto&quot;,            &quot;eps&quot;: &quot;auto&quot;,            &quot;weight_decay&quot;: &quot;auto&quot;        &#125;    &#125;,    &quot;scheduler&quot;: &#123;        &quot;type&quot;: &quot;WarmupLR&quot;,        &quot;params&quot;: &#123;            &quot;warmup_min_lr&quot;: &quot;auto&quot;,            &quot;warmup_max_lr&quot;: &quot;auto&quot;,            &quot;warmup_num_steps&quot;: &quot;auto&quot;        &#125;    &#125;,    &quot;zero_optimization&quot;: &#123;        &quot;stage&quot;: 2,        &quot;offload_optimizer&quot;: &#123;            &quot;device&quot;: &quot;none&quot;,            &quot;pin_memory&quot;: true        &#125;,        &quot;allgather_partitions&quot;: true,        &quot;allgather_bucket_size&quot;: 2e8,        &quot;overlap_comm&quot;: true,        &quot;reduce_scatter&quot;: true,        &quot;reduce_bucket_size&quot;: 2e8,        &quot;contiguous_gradients&quot;: true    &#125;,    &quot;flops_profiler&quot;: &#123;        &quot;enabled&quot;: true,        &quot;profile_step&quot;: 1,        &quot;module_depth&quot;: -1,        &quot;top_modules&quot;: 1,        &quot;detailed&quot;: false,        &quot;output_file&quot;: null    &#125;,    &quot;gradient_accumulation_steps&quot;: &quot;auto&quot;,    &quot;gradient_clipping&quot;: &quot;auto&quot;,    &quot;steps_per_print&quot;: 100,    &quot;train_batch_size&quot;: &quot;auto&quot;,    &quot;train_micro_batch_size_per_gpu&quot;: &quot;auto&quot;,    &quot;wall_clock_breakdown&quot;: false&#125;
+7. 执行finetune_lora_ds.sh单机多卡训练其中报了Error while creating shared memory segment &#x2F;dev&#x2F;shm&#x2F;nccl-KXWrmA (size 9637888)导致在docker中单机多卡拉起失败问题原因：docker的shm共享内存不足，可以通过命令df -h | grep shm查看当前容器的shm大小，默认为64M，这是远远不够的，所以要增加该容器的shm共享内存大小。参考博文https://blog.csdn.net/gg864461719/article/details/112466585
+解决方法1：创建完容器之后，手动修改shm共享内存大小a. 首先要关闭docker, 否则下面的操作步骤会无效.service docker stop
+b. 进入宿主机中&#x2F;docker&#x2F;containers&#x2F;容器id 修改该容器的hostconfig.json文件，把其中的ShmSize的大小后面增加22（就变为了6.3G）其默认的是67108864_KB_ 就约等于64M。c. 重启docker服务systemctl start docker
+d. 解决完之后，重新查看shm的共享内存大小，此时已经变为了6.3G解决方法2：在通过镜像run容器时，就直接指定–shm-size 6Gdocker run -it --name qwen --gpus all --shm-size 6G registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0 bash
+重新拉起训练bash finetune/finetune_lora_ds.sh其中tflops在9.5~10.5之间
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>Nvidia</tag>
+        <tag>Qwen</tag>
+        <tag>V100</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基于Modellink的llama2-7b和Mistral-7b模型微调</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Modellink/llama2-7B+Mistral-7B/</url>
+    <content><![CDATA[基于docker的mistral-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
+
+权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
+
+python  tools/checkpoint/convert_ckpt.py \    --model-type GPT \    --loader llama2_hf \    --saver megatron \    --load-dir /job/mnt/huggingface/mistral-7b-hf/ \    --save-dir /job/data/megatron/mistral-7b-tp4-pp2 \    --tokenizer-model /job/mnt/huggingface/mistral-7b-hf/tokenizer.model \    --target-tensor-parallel-size 4 \    --target-pipeline-parallel-size 2
+
+
+数据集下载sudo wget https://hf-mirror.com/datasets/silk-road/alpaca-data-gpt4-chinese/resolve/main/Alpaca_data_gpt4_zh.jsonl
+
+处理python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/mistral/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/mistral-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
+
+
+处理完成
+
+微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/mistral/Alpaca_finetune/&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/mistral-7b-hf&quot;CKPT_SAVE_DIR=&quot;/job/output/mistral_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/mistral-7b-tp4-pp2/&quot;TP=4PP=2NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --sliding-window 4096 \    --num-layers $&#123;NUM_LAYERS&#125; \    --hidden-size 4096 \    --ffn-hidden-size 14336 \    --num-attention-heads 32 \    --group-query-attention \    --num-query-groups 8 \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path $&#123;TOKENIZER_MODEL&#125; \    --seq-length 32768 \    --max-position-embeddings 32768 \    --micro-batch-size 1 \    --global-batch-size 32 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 1000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --use-fused-swiglu \    --use-rotary-position-embeddings \    --use-fused-rotary-pos-emb \    --use-mc2 \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --overlap-grad-reduce \    --load $&#123;CKPT_LOAD_DIR&#125; \    --save $&#123;CKPT_SAVE_DIR&#125; \    --bf16 \    --finetune \    --is-instruction-dataset \    --log-throughput \    --recompute-granularity full \    --recompute-method block \    --recompute-num-layers 32&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_mistral_7B.log
+
+拉起训练
+基于docker的llama2-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
+
+权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
+
+python  tools/checkpoint/convert_ckpt.py \       --model-type GPT \       --loader llama2_hf \       --saver megatron \       --target-tensor-parallel-size 8 \       --target-pipeline-parallel-size 1 \       --load-dir /job/mnt/huggingface/Llama-2-7b-hf// \       --save-dir /job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1/ \       --tokenizer-model /job/mnt/huggingface/Llama-2-7b-hf/tokenizer.json
+
+
+数据集python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/llama2/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/Llama-2-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
+
+
+
+微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/llama2/Alpaca_finetune&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/Llama-2-7b-hf/&quot;CKPT_SAVE_DIR=&quot;/job/output/llama2_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1&quot;TP=8PP=1NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --num-layers 32 \    --hidden-size 4096 \    --ffn-hidden-size 11008 \    --num-attention-heads 32 \    --tokenizer-type Llama2Tokenizer \    --tokenizer-model $&#123;TOKENIZER_MODEL&#125; \    --seq-length 4096 \    --max-position-embeddings 4096 \    --micro-batch-size 1 \    --global-batch-size 256 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 5000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --use-fused-swiglu \    --use-fused-rotary-pos-emb \    --overlap-grad-reduce \    --bf16&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_llama2_7B.log
+
+拉起训练
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>昇腾</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>昇腾</tag>
+        <tag>910B</tag>
+        <tag>Mindformers</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tulu3-8B-后训练实践</title>
+    <url>/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[训练环境镜像registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:tulu3
+
+镜像中已包含tulu3后训练所需要的所有依赖环境。
+代码结构/mnt/users/wangxiangbo/model/tulu3/open-instruct-main
+
+
+data包含了sft、dpo、rlvr所需的数据集
+
+eval相关
+
+scripts&#x2F;configs训练脚本
+
+
+tulu3_sft.sh #tulu3 sft单机脚本
+
+
+hostfilehostfile-12setRank.shtulu3_dpo.sh #多机dpo脚本tulu3_dpo_single.sh #单机4卡dpo脚本tulu3_dpo.yaml #多机yamltulu3_sft.sh #多机sft脚本
+
+
+tulu3_rlvr_single.sh #tulu3 rlvr单机脚本
+
+
+loss_plot.py #loss曲线绘图脚本
+
+open_instructsft、dpo、rlvr相关训练代码
+
+sft实践单机4卡测试sft数据集sft数据集采用tulu3官网提供的数据集
+
+sft数据集样例：
+&#123;&quot;id&quot;:&quot;oasst1_2644&quot;,&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;有缓解社交恐惧症的实用方法吗？&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;以下是一些实用的方法，可能有助于缓解社交恐惧症：\n\n1.  寻求专业帮助：寻求心理医生或心理治疗师的帮助是缓解社交恐惧症的最佳方法之一。专业的治疗师可以帮助你识别和处理恐惧的源头，并提供有效的治疗方案。\n\n2. 练习深呼吸和放松技巧：当你感到焦虑和紧张时，尝试通过深呼吸和放松技巧来帮助你冷静下来。深呼吸可以帮助你减轻身体上的压力和紧张感，从而使你更放松和镇定。\n\n3. 学习积极思考：避免消极的自我对话，例如“我会失败”、“我不行”等等。改变自己的思考方式，尝试以积极、自信的态度面对社交场合。\n\n4.  採取柔性方法：為了對抗焦慮症狀，建議使用一些方法來提醒你的身體是安全的，例如：  \n\n＊ 呼吸訓練（用鼻子深深的吸一口氣再用嘴巴將氣慢慢地吐出，當你專注在吐氣時，你就會被帶出抵抗或逃避的情緒中。） \n\n ＊ 專注於現在（這麼做讓你能夠專注於自己所經歷的每分每秒。試著說出你現在能看見、聞到、碰觸到並聽得到的東西，或是坐在椅子上並感受自己的腳觸碰地面的感覺，或身體正被支撐著的感覺。）\n\n5. 給自己一點從容：在過渡時期練習自我同情，並提醒自己感到不確定與不安是很正常的。\n\n这些方法可以帮助你缓解社交恐惧症，但不同的人可能需要不同的方法和治疗方案。如果你感到严重的焦虑和恐惧，请及时寻求专业帮助。&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;,&#123;&quot;content&quot;:&quot;好吧，可是我要去哪裡尋求專業幫助？&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;您可以先參考美國精神疾病診斷標準 **DSM-5** 中的6點標準，或者進行一些專業的心理測試。如果您符合這些標准或測試結果顯示您有社交恐懼症，您應儘早尋求專業的幫助。\n\n尋求專業幫助的途徑有以下幾種：\n\n- **諮詢醫生或心理健康專家**。他們可以為您提供診斷，藥物治療，心理治療等服務。\n- **參加心理諮詢或治療機構**。這些機構通常有專業的心理諮詢師或治療師，可以為您提供個人或團體的心理諮詢或治療服務。\n- **加入互助小組或社區**。這些小組或社區通常由有相同或類似問題的人組成，可以為您提供支持，鼓勵，交流和分享的平台。\n\n以上是我為您搜索到的一些信息，希望對您有所幫助。如果您還有其他問題，歡迎繼續提問。&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;],&quot;source&quot;:&quot;ai2-adapt-dev\/oasst1_converted&quot;&#125;
+
+由于是.parquet格式数据，转成json后一共有93w条数据。
+
+由于机器数量有限，训练其完整数据集需要较长时间，故将.parquet转为json后将数据集缩减至5k条，并再次转回.parquet格式数据。
+
+单机脚本配置export CUDA_VISIBLE_DEVICES=0,1,2,3export WANDB_MODE=disabledcurrent_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)LOG_SAVE=&quot;/mnt/open-instruct-main/output/sft/$&#123;current_time&#125;-tulu3-sft.log&quot;MODEL_SIZE=8BNUM_GPUS=4BATCH_SIZE_PER_GPU=2TOTAL_BATCH_SIZE=8GRADIENT_ACC_STEPS=$(($TOTAL_BATCH_SIZE/($NUM_GPUS * $BATCH_SIZE_PER_GPU)))echo &quot;Training llama model $&#123;MODEL_SIZE&#125; using $NUM_GPUS GPUs, $BATCH_SIZE_PER_GPU batch size per GPU, $GRADIENT_ACC_STEPS gradient accumulation steps&quot;accelerate launch \    --mixed_precision fp16 \    --num_machines 1 \    --num_processes $NUM_GPUS \    --use_deepspeed \    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \    /mnt/open-instruct-main/open_instruct/finetune.py \    --model_name_or_path /mnt/LLM-Research/Meta-Llama-31-8B \    --tokenizer_name /mnt/LLM-Research/Meta-Llama-31-8B \    --use_slow_tokenizer \    --train_file /mnt/open-instruct-main/data/sft_data_json/sft_dataset_5k.json \    --max_seq_length 4096 \    --preprocessing_num_workers 4 \    --per_device_train_batch_size $BATCH_SIZE_PER_GPU \    --gradient_accumulation_steps $GRADIENT_ACC_STEPS \    --learning_rate 2e-5 \    --lr_scheduler_type linear \    --warmup_ratio 0.03 \    --weight_decay 0. \    --num_train_epochs 1 \    --output_dir /mnt/open-instruct-main/output/sft \    --gradient_checkpointing true \    --report_to none \    --use_flash_attn false 2&gt;&amp;1 | tee -a &quot;$LOG_SAVE&quot;
+
+为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。
+--max_seq_length 4096
+--learning_rate 2e-5
+--lr_scheduler_type linear
+--warmup_ratio 0.03
+其中的模型权重利用llama3.1-8B-base模型。
+训练测试训练结束
+
+
+
+
+资源类型
+利用率
+内存&#x2F;显存占用量
+
+
+
+CPU
+53.2%
+80.7%
+
+
+GPU
+85.5%
+66.4%
+
+
+loss曲线
+evalllama3.1-8B通过tulu3提供的sft数据集（删减至5k条）后，得到的tulu3_sft权重
+
+
+
+
+类别
+Llama-31-8B
+tulu3-sft-weight
+Llama-31-Tulu-3-8B-SFT
+
+
+
+平均准确率
+0.6014
+0.5729
+0.6356
+
+
+子类别准确率
+-
+-
+-
+
+
+数学
+0.4098
+0.3778
+0.4192
+
+
+健康
+0.6561
+0.6183
+0.6720
+
+
+物理
+0.5063
+0.4891
+0.5328
+
+
+商业
+0.7643
+0.7346
+0.8101
+
+
+生物
+0.7555
+0.6982
+0.7775
+
+
+化学
+0.4851
+0.4851
+0.5186
+
+
+计算机科学
+0.5752
+0.5194
+0.6092
+
+
+经济
+0.5930
+0.5809
+0.6213
+
+
+工程
+0.5517
+0.5172
+0.5517
+
+
+哲学
+0.4881
+0.4627
+0.5775
+
+
+其他
+0.6524
+0.6532⬆
+0.7090
+
+
+历史
+0.7452
+0.7172
+0.7774
+
+
+地理
+0.7323
+0.7273
+0.7677
+
+
+政治
+0.7546
+0.7099
+0.7762
+
+
+心理学
+0.7174
+0.6845
+0.7485
+
+
+文化
+0.8102
+0.7440
+0.7922
+
+
+法律
+0.4878
+0.4589
+0.5020
+
+
+类别准确率
+-
+-
+-
+
+
+STEM
+0.5192
+0.4864
+0.5394
+
+
+人文学科
+0.5388
+0.5116
+0.5887
+
+
+社会科学
+0.7062
+0.6740
+0.7296
+
+
+其他（商业、健康等）
+0.6693
+0.6465
+0.7039
+
+
+eval结果分析
+SFT后权重的平均准确率: 0.5729
+SFT前权重的平均准确率: 0.6014
+
+整体平均准确率下降了 ~2.85%。
+原因：本次实验（由于机器环境限制）将原始的tulu3 SFT数据集（93w）删减到5k条，导致模型未能充分学习各个领域的知识和任务特性，泛化能力下降。
+dpo实践单机4卡测试偏好数据集偏好数据集采用tulu3官网提供的数据集。
+
+偏好数据集样例：
+&#123;&quot;id&quot;:&quot;allenai\/tulu-3-sft-reused-off-policy_0&quot;,&quot;prompt&quot;:&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;,&quot;chosen&quot;:[&#123;&quot;content&quot;:&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;Here&#x27;s how to solve this problem:\n\n**Understanding the Information**\n\n* **Each rabbit has 3 or 7 neighbors:** This means there must be a pattern in how the rabbits are distributed within the cages.\n* **At least one rabbit in each cage:**  We can&#x27;t have cages without any rabbits.\n\n**Reasoning**\n\n* **Corner Cages:**  Rabbits in the corner cages (cages 1 and 5) can only have 3 neighbors (two adjacent cages and one within their own cage).\n* **Middle Cages:** Rabbits in the middle cages (cages 2, 3, and 4) must have 7 neighbors to balance out the setup. \n\n**The Solution**\n\nSince rabbits in the middle cages need 7 neighbors, and there&#x27;s at least one rabbit in each cage, the central cage (cage 3) must have **4 rabbits**. \n\n\n\nLet me know if you&#x27;d like to explore other logic puzzles! \n&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;],&quot;rejected&quot;:[&#123;&quot;content&quot;:&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;,&quot;role&quot;:&quot;user&quot;&#125;,&#123;&quot;content&quot;:&quot;The central cage has the same number of rabbits as any other cage, so it also has either 3 or 7 neighbors.\nThere are (at most) 7 rabbits in the central cage and (at most) 3 rabbits in any cage on either side. Hence, there are (at most) 7 rabbits in each of those cages. The total number of rabbits in the 5 cages is (at most) 5 * 7 + 1 = 36 + 1 = 37.\nOne cage must have exactly the right number of neighbors, but two cages cannot have the right number.\nIf each cage has exactly 3 neighbors, the total number of rabbits in all 5 cages is 1 + 5 * 3 = 16\nIf each cage has exactly 7 neighbors, the total number of rabbits in all 5 cages is 1 + 5 * 7 = 32\nNow that we know there are at most 36 rabbits, we can safely conclude that there is 1 rabbit in the central cage, that there are 5 cages with 3 rabbits each and one cage with 7 rabbits and that the central cage has 3 neighbors.\nThe central cage has exactly 3 rabbits and 3 neighbors.\nIn the other 4 cages, there are (at most) 5 * 3 = 15 rabbits.\nIn the other 5 cages, there are (at least) 32 – 16 = 16 rabbits.&quot;,&quot;role&quot;:&quot;assistant&quot;&#125;],&quot;source&quot;:&quot;allenai\/tulu-3-sft-reused-off-policy&quot;&#125;
+
+由于是.parquet格式数据，转成json后一共有67w条数据。
+
+由于机器数量有限，训练其完整数据集需要较长时间，故将.parquet转为json后将数据集缩减至5k条，并再次转回.parquet格式数据。
+
+单机脚本配置单机脚本，部分配置OOM，采用deepseed中zero3以及cpu_offloading，开启梯度累积。
+# you need 8 GPUs for full finetuningexport CUDA_VISIBLE_DEVICES=0,1,2,3export WANDB_MODE=disabledNUM_GPUS=4BATCH_SIZE_PER_GPU=1TOTAL_BATCH_SIZE=8GRADIENT_ACC_STEPS=$(($TOTAL_BATCH_SIZE/$NUM_GPUS/$BATCH_SIZE_PER_GPU))current_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)LOG_SAVE=&quot;/mnt/open-instruct-main/output/dpo/$&#123;current_time&#125;-tulu3-dpo.log&quot;echo &quot;Training model using $NUM_GPUS GPUs, $BATCH_SIZE_PER_GPU batch size per GPU, $GRADIENT_ACC_STEPS gradient accumulation steps&quot;#stage3_no_offloading_accelerate.confaccelerate launch \    --mixed_precision fp16 \    --num_machines 1 \    --num_processes $NUM_GPUS \    --use_deepspeed \    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \    /mnt/open-instruct-main/open_instruct/dpo_tune.py \    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-SFT \    --use_flash_attn  false\    --gradient_checkpointing \    --tokenizer_name /mnt/LLM-Research/Llama-31-Tulu-3-8B-SFT \    --use_slow_tokenizer \    --dataset_name /mnt/open-instruct-main/data/dpo_data_5k \    --max_seq_length 2048 \    --preprocessing_num_workers 4 \    --per_device_train_batch_size $BATCH_SIZE_PER_GPU \    --gradient_accumulation_steps $GRADIENT_ACC_STEPS \    --learning_rate 5e-7 \    --lr_scheduler_type linear \    --warmup_ratio 0.1 \    --weight_decay 0. \    --num_train_epochs 1 \    --output_dir /mnt/open-instruct-main/output/dpo \    --with_tracking False \    --logging_steps 1 2&gt;&amp;1 | tee -a &quot;$LOG_SAVE&quot;
+
+为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。
+--max_seq_length 2048
+--learning_rate 5e-7
+--lr_scheduler_type linear
+--warmup_ratio 0.1
+其中的模型权重利用tulu3开源的经过llama3.1-8B sft得到的权重。
+
+训练测试关闭cpu_offloading注：关闭cpu_offloading之后，迭代10步左右会OOM
+
+
+
+
+资源类型
+利用率
+内存&#x2F;显存占用量
+
+
+
+CPU
+16.5%
+12.1%
+
+
+GPU
+100%
+93.6%
+
+
+开启cpu_offloading
+
+
+
+资源类型
+利用率
+内存&#x2F;显存占用量
+
+
+
+CPU
+55.0%
+58.2%
+
+
+GPU
+85.8%
+68.7%
+
+
+训练完成
+得到的dpo权重
+
+loss曲线
+eval评测数据集采用MMLU，一个包含来自各个知识领域的多项选择题的巨大多任务测试。 测试涵盖了人文学科、社会科学、自然科学以及其他对某些人来说重要的学习领域。 数据集中的问题是由研究生和本科生从在线免费资源中手动收集的。这包括研究生入学考试和美国医学执照考试等考试的练习题。还包括为本科生课程设计的题目，以及为牛津大学出版社书籍读者设计的题目。 一些任务涵盖一个主题，如心理学，但难度级别特定，例如“初阶”、“高中”、“大学”或“专业”。 例如，“专业心理学”任务借鉴了心理学专业实践考试的免费练习题中的问题，而“高中心理学”任务则包含类似高级 Placement 心理学考试中的问题。
+:::tipsMMLU数据集样例如下，摘自MMLU论文https://arxiv.org/abs/2009.03300
+:::
+
+eg：以下是MMLU上College Biology类问题及答案：
+&quot;Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to&quot;,maintain the population at a point corresponding to the midpoint of its logistic curve,opt for zero population control once the K value of the curve has been reached,reduce the carrying capacity cif the environment to lower the K value,increase the mortality rate,C
+
+eg：以下是dpo_weight在MMLU上College Biology类问题的回答：
+0,1,2,3,4,5,correct,choiceA_probs,choiceB_probs,choiceC_probs,choiceD_probs&quot;Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to&quot;,maintain the population at a point corresponding to the midpoint of its logistic curve,opt for zero population control once the K value of the curve has been reached,reduce the carrying capacity cif the environment to lower the K value,increase the mortality rate,C,True,0.07324660569429398,0.0071399579755961895,0.6528399586677551,0.1929791122674942
+
+
+
+本次dpo后得到的权重dpo_weight对比tulu3开源的sft权重Llama-31-Tulu-3-8B-SFT。
+Llama-31-Tulu-3-8B-SFT在MMLU上的表现：
+
+dpo_weight在MMLU上的表现：
+
+
+
+
+类别
+Llama-31-8B
+Llama-31-Tulu-3-8B-SFT
+dpo_weight
+Llama-31-Tulu-3-8B-DPO
+
+
+
+平均准确率
+0.6014
+0.6356
+**0.6377**⬆
+0.6352
+
+
+子类别准确率
+-
+-
+-
+-
+
+
+数学
+0.4098
+0.4192
+0.4352⬆
+0.4258
+
+
+健康
+0.6561
+0.6720
+0.6726⬆
+0.6915
+
+
+物理
+0.5063
+0.5328
+0.5500⬆
+0.5391
+
+
+商业
+0.7643
+0.8101
+0.7941
+0.7849
+
+
+生物
+0.7555
+0.7775
+0.7775⬆
+0.7731
+
+
+化学
+0.4851
+0.5186
+0.5182
+0.5248
+
+
+计算机科学
+0.5752
+0.6092
+0.6189⬆
+0.6117
+
+
+经济
+0.5930
+0.6213
+0.6173
+0.6429
+
+
+工程
+0.5517
+0.5517
+0.5655⬆
+0.5586
+
+
+哲学
+0.4881
+0.5775
+0.5626
+0.5388
+
+
+其他
+0.6524
+0.7090
+0.7107⬆
+0.7082
+
+
+历史
+0.7452
+0.7774
+0.7828⬆
+0.7720
+
+
+地理
+0.7323
+0.7677
+0.7778⬆
+0.7778
+
+
+政治
+0.7546
+0.7762
+0.7793⬆
+0.7762
+
+
+心理学
+0.7174
+0.7485
+0.7519⬆
+0.7476
+
+
+文化
+0.8102
+0.7922
+0.7892
+0.8042
+
+
+法律
+0.4878
+0.5020
+0.5133⬆
+0.5156
+
+
+父类别准确率
+-
+-
+-
+-
+
+
+STEM
+0.5192
+0.5394
+0.5507⬆
+0.5437
+
+
+人文学科
+0.5388
+0.5887
+0.5877
+0.5762
+
+
+社会科学
+0.7062
+0.7296
+0.7309⬆
+0.7364
+
+
+其他（商业、健康、杂项）
+0.6693
+0.7039
+0.7027
+0.7101
+
+
+dpo代码实现分析Length-Normalized DPO 的实现_get_batch_logps 函数tulu3论文中说明了，tulu3-8B的dpo使用了长度归一化的DPO（Length-Normalized DPO），以此来消除因回答的序列长度（对比来说很长的话）带来的概率偏好影响。 当 average_log_prob=True 时，会将每个 token 的 log 概率进行平均处理，实现序列长度归一化。 如果average_log_prob=False，则是直接求和。
+代码具体实现如下：
+def _get_batch_logps(    logits: torch.FloatTensor, labels: torch.LongTensor, average_log_prob: bool = False) -&gt; torch.FloatTensor:    # 确保logits和labels的形状在除了最后一个维度外是相同的。    assert logits.shape[:-1] == labels.shape    # 两行代码分别对labels和logits进行切片操作，去掉了每个序列的第一个和最后一个元素。    labels = labels[:, 1:].clone()    logits = logits[:, :-1, :]    # 这行代码创建了一个掩码loss_mask，用于标识哪些标签不是-100（即不是要被忽略的标签）。    loss_mask = labels != -100    # 这行代码将labels中值为-100的元素替换为0，因为在PyTorch中，0可以作为无效索引。    labels[labels == -100] = 0    # 计算每个token的对数概率。首先对logits应用log_softmax函数，然后在最后一个维度上使用torch.gather根据labels索引来选择对应的对数概率。    per_token_logps = torch.gather(logits.log_softmax(-1), dim=2, index=labels.unsqueeze(2)).squeeze(2)    # 根据average_log_prob的值决定返回值。如果average_log_prob为True，则返回每个样本的平均对数概率；否则，返回每个样本的对数概率之和    if average_log_prob:        return (per_token_logps * loss_mask).sum(-1) / loss_mask.sum(-1)    else:        return (per_token_logps * loss_mask).sum(-1)
+
+:::tips函数_get_batch_logps用于计算给定标签（labels）在给定的模型输出（logits）下的对数概率（log probabilities）。
+参数说明：
+
+logits：模型的输出（未归一化的）。形状为(batch_size, sequence_length, vocab_size)，其中batch_size是批次大小，sequence_length是序列长度，vocab_size是词汇表的大小。
+labels：要计算对数概率的标签。值为-100的标签标记将被忽略。形状为(batch_size, sequence_length)。
+average_log_prob：一个布尔值，默认为False。如果为True，则返回每个（未被掩码的）token的平均对数概率；如果为False，则返回（未被掩码的）token的对数概率之和。
+
+返回值：
+
+返回一个形状为(batch_size,)的张量，包含给定标签在给定logits下的对数概率的平均值或总和。
+
+该函数是用来计算模型预测的概率，并根据标签来确定哪些预测是有效的（即标签值不为-100）。如果average_log_prob参数为True，则函数返回的是平均对数概率；如果为False，则返回的是总和。
+:::
+concatenated_forward 函数 在训练中，concatenated_forward 负责对模型的 logps 进行计算：  
+def concatenated_forward(    model: nn.Module,    batch: Dict[str, Union[List, torch.LongTensor]],    average_log_prob: bool = False,    output_router_logits: bool = False,) -&gt; Tuple[torch.FloatTensor, torch.FloatTensor]:    concatenated_batch = concatenated_inputs(batch)    if output_router_logits:        outputs = model(            input_ids=concatenated_batch[&quot;concatenated_input_ids&quot;],            attention_mask=concatenated_batch[&quot;concatenated_attention_mask&quot;],            output_router_logits=True,        )        logits = outputs.logits.to(torch.float32)        aux_loss = outputs.aux_loss    else:        logits = model(            input_ids=concatenated_batch[&quot;concatenated_input_ids&quot;],            attention_mask=concatenated_batch[&quot;concatenated_attention_mask&quot;],        ).logits.to(torch.float32)        aux_loss = None    all_logps = _get_batch_logps(logits, concatenated_batch[&quot;concatenated_labels&quot;], average_log_prob=average_log_prob)    chosen_logps = all_logps[: batch[&quot;chosen_input_ids&quot;].shape[0]]    rejected_logps = all_logps[batch[&quot;chosen_input_ids&quot;].shape[0] :]    return chosen_logps, rejected_logps, aux_loss
+
+ 参数 average_log_prob 是从主脚本dpo_tune.py中传递的，当设置为 True 时，启用长度归一化。  
+dpo_loss 函数dpo_loss 中计算 logits 的差值：  
+pi_logratios = policy_chosen_logps - policy_rejected_logpsref_logratios = reference_chosen_logps - reference_rejected_logpslogits = pi_logratios - ref_logratios
+
+ 如果 average_log_prob=True，则 policy_chosen_logps 和 policy_rejected_logps 都是归一化的值，从而影响最终的 logits 和损失计算。  
+控制参数 在主脚本dpo_tune.py中，通过以下代码控制是否启用长度归一化：  
+average_log_prob_loss_types = [&quot;simpo&quot;, &quot;dpo_norm&quot;]average_log_prob = args.dpo_loss_type in average_log_prob_loss_types
+
+ 当 dpo_loss_type 设置为 &quot;dpo_norm&quot; 时，average_log_prob归一化被启用，进而在 _get_batch_logps 和 concatenated_forward 中触发长度归一化逻辑。  
+rlvr实践单机4卡测试训练数据集
+.parquet转为json后的数据集样例：
+&#123;&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;Question: Find the domain of the expression $\\frac&#123;\\sqrt&#123;x-2&#125;&#125;&#123;\\sqrt&#123;5-x&#125;&#125;$.&#125;\nAnswer:The expressions inside each square root must be non-negative.\nTherefore, $x-2 \\ge 0$, so $x\\ge2$, and $5 - x \\ge 0$, so $x \\le 5$.\nAlso, the denominator cannot be equal to zero, so $5-x&gt;0$, which gives $x&lt;5$.\nTherefore, the domain of the expression is $\\boxed&#123;[2,5)&#125;$.\n\nQuestion: If $\\det \\mathbf&#123;A&#125; = 2$ and $\\det \\mathbf&#123;B&#125; = 12,$ then find $\\det (\\mathbf&#123;A&#125; \\mathbf&#123;B&#125;).$\nAnswer:We have that $\\det (\\mathbf&#123;A&#125; \\mathbf&#123;B&#125;) = (\\det \\mathbf&#123;A&#125;)(\\det \\mathbf&#123;B&#125;) = (2)(12) = \\boxed&#123;24&#125;.$\n\nQuestion: Terrell usually lifts two 20-pound weights 12 times. If he uses two 15-pound weights instead, how many times must Terrell lift them in order to lift the same total weight?\nAnswer:If Terrell lifts two 20-pound weights 12 times, he lifts a total of $2\\cdot 12\\cdot20=480$ pounds of weight.  If he lifts two 15-pound weights instead for $n$ times, he will lift a total of $2\\cdot15\\cdot n=30n$ pounds of weight.  Equating this to 480 pounds, we can solve for $n$: \\begin&#123;align*&#125;\n30n&amp;=480\\\\\n\\Rightarrow\\qquad n&amp;=480\/30=\\boxed&#123;16&#125;\n\\end&#123;align*&#125;\n\nQuestion: If the system of equations\n\n\\begin&#123;align*&#125;\n6x-4y&amp;=a,\\\\\n6y-9x &amp;=b.\n\\end&#123;align*&#125;has a solution $(x, y)$ where $x$ and $y$ are both nonzero, find $\\frac&#123;a&#125;&#123;b&#125;,$ assuming $b$ is nonzero.\nAnswer:If we multiply the first equation by $-\\frac&#123;3&#125;&#123;2&#125;$, we obtain\n\n$$6y-9x=-\\frac&#123;3&#125;&#123;2&#125;a.$$Since we also know that $6y-9x=b$, we have\n\n$$-\\frac&#123;3&#125;&#123;2&#125;a=b\\Rightarrow\\frac&#123;a&#125;&#123;b&#125;=\\boxed&#123;-\\frac&#123;2&#125;&#123;3&#125;&#125;.$$\n\nQuestion: What is the modulo $13$ residue of $247+5 \\cdot 39 + 7 \\cdot 143 +4 \\cdot 15?$&quot;,&quot;role&quot;:&quot;user&quot;&#125;],&quot;ground_truth&quot;:&quot;8&quot;,&quot;dataset&quot;:&quot;MATH&quot;,&quot;constraint_type&quot;:null,&quot;constraint&quot;:null&#125;
+
+
+验证数据集
+&#123;&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;Question: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\nAnswer:There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. So the answer is 6.\n\nQuestion: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?\nAnswer:There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. So the answer is 5.\n\nQuestion: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?\nAnswer:Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. So the answer is 39.\n\nQuestion: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?\nAnswer:Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. So the answer is 8.\n\nQuestion: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?\nAnswer:Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. So the answer is 9.\n\nQuestion: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?\nAnswer:There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. So the answer is 29.\n\nQuestion: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?\nAnswer:Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. So the answer is 33.\n\nQuestion: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?\nAnswer:Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. So the answer is 8.\n\nQuestion: A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?&quot;,&quot;role&quot;:&quot;user&quot;&#125;],&quot;ground_truth&quot;:&quot;3&quot;,&quot;dataset&quot;:&quot;gsm8k&quot;&#125;&#123;&quot;messages&quot;:[&#123;&quot;content&quot;:&quot;Question: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\nAnswer:There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. So the answer is 6.\n\nQuestion: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?\nAnswer:There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. So the answer is 5.\n\nQuestion: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?\nAnswer:Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. So the answer is 39.\n\nQuestion: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?\nAnswer:Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. So the answer is 8.\n\nQuestion: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?\nAnswer:Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. So the answer is 9.\n\nQuestion: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?\nAnswer:There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. So the answer is 29.\n\nQuestion: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?\nAnswer:Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. So the answer is 33.\n\nQuestion: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?\nAnswer:Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. So the answer is 8.\n\nQuestion: Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&quot;,&quot;role&quot;:&quot;user&quot;&#125;],&quot;ground_truth&quot;:&quot;70000&quot;,&quot;dataset&quot;:&quot;gsm8k&quot;&#125;
+
+
+单机脚本配置export WANDB_MODE=disabledexport PYTORCH_CUDA_ALLOC_CONF=expandable_segments:Truecurrent_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)LOG_SAVE=&quot;/mnt/open-instruct-main/output/rlvr/$&#123;current_time&#125;-tulu3-rlvr.log&quot;python /mnt/open-instruct-main/open_instruct/ppo_vllm_thread_ray_gtrl.py \    --dataset_mixer &#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth_mixed&quot;: 1.0&#125;&#x27; \    --dataset_train_splits train \    --dataset_eval_mixer &#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth&quot;: 1.0&#125;&#x27; \    --dataset_eval_splits test \    --max_token_length 2048 \    --max_prompt_token_length 2048 \    --response_length 2048 \    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-DPO \    --reward_model_path /mnt/LLM-Research/LLama-31-Tulu3-8B-RM \    --non_stop_penalty \    --stop_token eos \    --temperature 1.0 \    --ground_truths_key ground_truth \    --chat_template tulu \    --sft_messages_key messages \    --learning_rate 3e-7 \    --total_episodes 10000000 \    --penalty_reward_value -10.0 \    --deepspeed_stage 3 \    --per_device_train_batch_size 1 \    --local_rollout_forward_batch_size 1 \    --local_mini_batch_size 16 \    --local_rollout_batch_size 16 \    --actor_num_gpus_per_node 3 \    --vllm_tensor_parallel_size 2 \    --beta 0.05 \    --apply_verifiable_reward true \    --output_dir /mnt/open-instruct-main/output/rlvr \    --seed 3 \    --num_evals 3 \    --save_freq 100 \    --reward_model_multiplier 0.0 \    --gradient_checkpointing \    --with_tracking False 2&gt;&amp;1 | tee -a &quot;$LOG_SAVE&quot;
+
+为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。
+--max_token_length 2048
+--max_prompt_token_length 2048 
+--response_length 2048
+--learning_rate 3e-7
+--penalty_reward_value -10.0
+--reward_model_multiplier 0.0
+其中的模型权重利用tulu3开源的经过tulu3-sft dpo得到的Llama-31-Tulu-3-8B-DPO权重，奖励模型采用tulu3开源的LLama-31-Tulu3-8B-RM。
+训练测试加载ckpt时一直卡住不动，尚未解决。
+
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>Nvidia</tag>
+        <tag>V100</tag>
+        <tag>Tulu3</tag>
       </tags>
   </entry>
 </search>
