@@ -1,4 +1,4 @@
-<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script>/**
+/**
  * 为布局7添加渐变背景兼容性支持
  * 当文章没有封面图片或图片加载失败时，自动应用渐变背景
  */

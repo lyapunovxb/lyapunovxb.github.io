@@ -1,4 +1,4 @@
-<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script>/* 优化布局7的背景样式 - 当没有封面图片时使用渐变背景 */
+/* 优化布局7的背景样式 - 当没有封面图片时使用渐变背景 */
 #recent-posts.masonry .recent-post-item .post_cover {
   position: relative;
   min-height: 17em;
