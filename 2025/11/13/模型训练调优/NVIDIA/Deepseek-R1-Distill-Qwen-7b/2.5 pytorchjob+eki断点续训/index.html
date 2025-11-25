@@ -1,0 +1,462 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>2.5 pytorchjob+eki断点续训 | Lyapunovxb's Blog</title><meta name="author" content="wangxiangbo"><meta name="copyright" content="wangxiangbo"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="环境准备pytorchjob训练环境已由小组同事搭建完成  代码准备断点续训yaml需要注意的是，不能设定自定义的namespace，需要在default下启动pod 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.5 pytorchjob+eki断点续训">
+<meta property="og:url" content="https://lyapunovxb.github.io/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.5%20pytorchjob+eki%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%AD/index.html">
+<meta property="og:site_name" content="Lyapunovxb&#39;s Blog">
+<meta property="og:description" content="环境准备pytorchjob训练环境已由小组同事搭建完成  代码准备断点续训yaml需要注意的是，不能设定自定义的namespace，需要在default下启动pod 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg">
+<meta property="article:published_time" content="2025-11-13T01:00:00.000Z">
+<meta property="article:modified_time" content="2025-11-25T03:27:36.320Z">
+<meta property="article:author" content="wangxiangbo">
+<meta property="article:tag" content="Nvidia">
+<meta property="article:tag" content="V100">
+<meta property="article:tag" content="模型适配">
+<meta property="article:tag" content="Deepseek">
+<meta property="article:tag" content="Megatron-LM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "2.5 pytorchjob+eki断点续训",
+  "url": "https://lyapunovxb.github.io/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.5%20pytorchjob+eki%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%AD/",
+  "image": "https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg",
+  "datePublished": "2025-11-13T01:00:00.000Z",
+  "dateModified": "2025-11-25T03:27:36.320Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "wangxiangbo",
+      "url": "https://lyapunovxb.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar2.jpg"><link rel="canonical" href="https://lyapunovxb.github.io/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.5%20pytorchjob+eki%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%AD/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '2.5 pytorchjob+eki断点续训',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/self/Kimbiedark_1.css"><link rel="stylesheet" href="/self/layout7-gradient.css"><style>#footer { background-color: transparent !important; } [data-theme="dark"] #footer:before { background-color: transparent !important; }</style><style>#nav #menus { position: absolute; left: 50%; transform: translateX(-50%); } #nav #blog-info { flex: 0 0 auto; }</style><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(135deg, rgba(255, 0, 128, 0.28) 0%, rgba(255, 153, 0, 0.28) 18%, rgba(255, 255, 0, 0.28) 36%, rgba(0, 204, 102, 0.28) 54%, rgba(0, 102, 255, 0.28) 72%, rgba(153, 51, 255, 0.28) 100%);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lyapunovxb's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">2.5 pytorchjob+eki断点续训</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">2.5 pytorchjob+eki断点续训</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-13T01:00:00.000Z" title="发表于 2025-11-13 09:00:00">2025-11-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-25T03:27:36.320Z" title="更新于 2025-11-25 11:27:36">2025-11-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%A8%A1%E5%9E%8B%E9%80%82%E9%85%8D/">模型适配</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%A8%A1%E5%9E%8B%E9%80%82%E9%85%8D/NVIDIA/">NVIDIA</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h4 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h4><p>pytorchjob训练环境已由小组同事搭建完成</p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image34.png"></p>
+<h4 id="代码准备"><a href="#代码准备" class="headerlink" title="代码准备"></a>代码准备</h4><h5 id="断点续训yaml"><a href="#断点续训yaml" class="headerlink" title="断点续训yaml"></a>断点续训yaml</h5><p>需要注意的是，不能设定自定义的namespace，需要在default下启动pod</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">&quot;ai.cmss.chinamobile.com/v1alpha1&quot;</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">PyTorchJob</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">deepseek-core</span><br>  <span class="hljs-attr">labels:</span><br>    <span class="hljs-attr">service:</span> <span class="hljs-string">deepseek-core</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">nprocPerNode:</span> <span class="hljs-string">&quot;4&quot;</span><br>  <span class="hljs-attr">pytorchReplicaSpecs:</span><br>    <span class="hljs-attr">Master:</span><br>      <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>      <span class="hljs-attr">template:</span><br>        <span class="hljs-attr">metadata:</span><br>          <span class="hljs-attr">labels:</span><br>            <span class="hljs-attr">app:</span> <span class="hljs-string">ckpt</span><br>        <span class="hljs-attr">spec:</span><br>          <span class="hljs-attr">nodeSelector:</span><br>            <span class="hljs-attr">model-ckpt:</span> <span class="hljs-string">deepseek-master</span><br>          <span class="hljs-attr">restartPolicy:</span> <span class="hljs-string">Always</span><br>          <span class="hljs-attr">hostNetwork:</span> <span class="hljs-literal">true</span><br>          <span class="hljs-attr">dnsPolicy:</span> <span class="hljs-string">ClusterFirstWithHostNet</span><br>          <span class="hljs-attr">affinity:</span><br>            <span class="hljs-attr">podAntiAffinity:</span><br>              <span class="hljs-attr">requiredDuringSchedulingIgnoredDuringExecution:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">labelSelector:</span><br>                    <span class="hljs-attr">matchExpressions:</span><br>                      <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">app</span><br>                        <span class="hljs-attr">operator:</span> <span class="hljs-string">In</span><br>                        <span class="hljs-attr">values:</span><br>                          <span class="hljs-bullet">-</span> <span class="hljs-string">ckpt</span><br>                  <span class="hljs-attr">topologyKey:</span> <span class="hljs-string">&quot;kubernetes.io/hostname&quot;</span><br>          <span class="hljs-attr">containers:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">pytorch</span><br>              <span class="hljs-attr">image:</span> <span class="hljs-string">registry.paas/library/megatron-lm:v1</span><br>              <span class="hljs-attr">imagePullPolicy:</span> <span class="hljs-string">IfNotPresent</span><br>              <span class="hljs-attr">securityContext:</span><br>                <span class="hljs-attr">capabilities:</span><br>                  <span class="hljs-attr">add:</span><br>                    <span class="hljs-bullet">-</span> <span class="hljs-string">SYS_ADMIN</span><br>              <span class="hljs-attr">resources:</span><br>                <span class="hljs-attr">limits:</span><br>                  <span class="hljs-attr">nvidia.com/gpu:</span> <span class="hljs-number">4</span> <span class="hljs-comment"># Request access to all GPU</span><br>                <span class="hljs-attr">requests:</span><br>                  <span class="hljs-attr">nvidia.com/gpu:</span> <span class="hljs-number">4</span><br>              <span class="hljs-attr">env:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">OMP_NUM_THREADS</span><br>                  <span class="hljs-attr">value:</span> <span class="hljs-string">&quot;4&quot;</span><br>              <span class="hljs-attr">command:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;/bin/bash&quot;</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;-c&quot;</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-string">|</span><br><span class="hljs-string">                  cd /data/code/temp/conf/deepseek_core/pretrain &amp;&amp;</span><br><span class="hljs-string">                  bash SetRank.sh &amp;&amp;</span><br><span class="hljs-string">                  cd /data/ &amp;&amp;</span><br><span class="hljs-string">                  bash pretrain_ckpt_deepseek.sh</span><br><span class="hljs-string"></span>              <span class="hljs-attr">volumeMounts:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/data/code</span><br>                  <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">false</span><br>                  <span class="hljs-attr">name:</span> <span class="hljs-string">code</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">shm-volume</span><br>                  <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/dev/shm</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">pod-gpu-resources</span><br>                  <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/tmp</span><br>                  <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">false</span><br>          <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">code</span><br>              <span class="hljs-attr">hostPath:</span><br>                <span class="hljs-attr">path:</span> <span class="hljs-string">/mnt/users/lihai/distribute/core/megatron-core</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">shm-volume</span><br>              <span class="hljs-attr">emptyDir:</span><br>                <span class="hljs-attr">medium:</span> <span class="hljs-string">Memory</span><br>                <span class="hljs-attr">sizeLimit:</span> <span class="hljs-string">1G</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">pod-gpu-resources</span><br>              <span class="hljs-attr">hostPath:</span><br>                <span class="hljs-attr">path:</span> <span class="hljs-string">/var/lib/kubelet/pod-resources</span><br>          <span class="hljs-attr">schedulerName:</span> <span class="hljs-string">ai-scheduler</span><br><br>    <span class="hljs-attr">Worker:</span><br>      <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>      <span class="hljs-attr">restartPolicy:</span> <span class="hljs-string">OnFailure</span><br>      <span class="hljs-attr">template:</span><br>        <span class="hljs-attr">metadata:</span><br>          <span class="hljs-attr">labels:</span><br>            <span class="hljs-attr">app:</span> <span class="hljs-string">ckpt</span><br>        <span class="hljs-attr">spec:</span><br>          <span class="hljs-attr">nodeSelector:</span><br>            <span class="hljs-attr">model-ckpt:</span> <span class="hljs-string">deepseek-worker</span><br>          <span class="hljs-attr">restartPolicy:</span> <span class="hljs-string">Always</span><br>          <span class="hljs-attr">hostNetwork:</span> <span class="hljs-literal">true</span><br>          <span class="hljs-attr">dnsPolicy:</span><br>            <span class="hljs-string">ClusterFirstWithHostNet</span><br>            <span class="hljs-comment">#affinty:</span><br>            <span class="hljs-comment">#podAntiAffinity:</span><br>            <span class="hljs-comment"># requiredDuringSchedulingIgnoredDuringExecution:</span><br>            <span class="hljs-comment"># - labelSelector:</span><br>            <span class="hljs-comment">#     matchExpressions:</span><br>            <span class="hljs-comment">#     - key: app</span><br>            <span class="hljs-comment">#       operator: In</span><br>            <span class="hljs-comment">#       values:</span><br>            <span class="hljs-comment">#       - ckpt</span><br>            <span class="hljs-comment">#   topologyKey: &quot;kubernetes.io/hostname&quot;</span><br>          <span class="hljs-attr">containers:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">pytorch</span><br>              <span class="hljs-attr">image:</span> <span class="hljs-string">registry.paas/library/megatron-lm:v1</span><br>              <span class="hljs-attr">imagePullPolicy:</span> <span class="hljs-string">IfNotPresent</span><br>              <span class="hljs-comment"># workingDir: /workspace/model/glm3/chatglm3/finetune_demo</span><br>              <span class="hljs-attr">securityContext:</span><br>                <span class="hljs-attr">capabilities:</span><br>                  <span class="hljs-attr">add:</span><br>                    <span class="hljs-bullet">-</span> <span class="hljs-string">SYS_ADMIN</span><br>              <span class="hljs-attr">resources:</span><br>                <span class="hljs-attr">limits:</span><br>                  <span class="hljs-attr">nvidia.com/gpu:</span> <span class="hljs-number">4</span> <span class="hljs-comment"># Request access to all GPU</span><br>                <span class="hljs-attr">requests:</span><br>                  <span class="hljs-attr">nvidia.com/gpu:</span> <span class="hljs-number">4</span><br>              <span class="hljs-attr">env:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">OMP_NUM_THREADS</span><br>                  <span class="hljs-attr">value:</span> <span class="hljs-string">&quot;4&quot;</span><br>              <span class="hljs-attr">command:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;/bin/bash&quot;</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;-c&quot;</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-string">|</span><br><span class="hljs-string">                  cd /data/code/temp/conf/deepseek_core/pretrain &amp;&amp;</span><br><span class="hljs-string">                  bash SetRank.sh &amp;&amp;</span><br><span class="hljs-string">                  cd /data/ &amp;&amp;</span><br><span class="hljs-string">                  bash pretrain_ckpt_deepseek.sh</span><br><span class="hljs-string"></span>              <span class="hljs-attr">volumeMounts:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/data/code</span><br>                  <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">false</span><br>                  <span class="hljs-attr">name:</span> <span class="hljs-string">code</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">shm-volume</span><br>                  <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/dev/shm</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">pod-gpu-resources</span><br>                  <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/tmp</span><br>                  <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">false</span><br>          <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">code</span><br>              <span class="hljs-attr">hostPath:</span><br>                <span class="hljs-attr">path:</span> <span class="hljs-string">/mnt/users/lihai/distribute/core/megatron-core</span><br>                <span class="hljs-attr">type:</span> <span class="hljs-string">Directory</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">shm-volume</span><br>              <span class="hljs-attr">emptyDir:</span><br>                <span class="hljs-attr">medium:</span> <span class="hljs-string">Memory</span><br>                <span class="hljs-attr">sizeLimit:</span> <span class="hljs-string">1G</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">pod-gpu-resources</span><br>              <span class="hljs-attr">hostPath:</span><br>                <span class="hljs-attr">path:</span> <span class="hljs-string">/var/lib/kubelet/pod-resources</span><br>          <span class="hljs-attr">schedulerName:</span> <span class="hljs-string">ai-scheduler</span><br><br></code></pre></td></tr></table></figure>
+
+<h5 id="setrank"><a href="#setrank" class="headerlink" title="setrank"></a>setrank</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>origin_shell=&quot;/data/code/examples/deepseek_core/pretrain_ckpt_deepseek.sh&quot;<br><br>conf_dir=&quot;/data/code/temp/conf/&quot;<br><br>local_dir=&quot;/data/&quot;<br><br>shell_name=pretrain_ckpt_deepseek.sh<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 复制脚本到/workspace下</span></span><br>cp $origin_shell $local_dir<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 读取hostfile</span></span><br>readarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$conf_dir&quot;hostfile-236)<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 获取rank0 IP</span></span><br>rank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)<br><br>nodes=$&#123;#ips[@]&#125;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 获取hostfile中配置的IP前缀</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 使用cut提取IP地址的前三个数字部分</span></span><br>ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 获取本机IP</span></span><br>ip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">初始化rank</span><br>node_rank=-1<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">打印调试信息</span><br>echo &quot;本机IP: $ip&quot;<br>echo &quot;rank0 IP: $rank0_ip&quot;<br>echo &quot;所有节点IP: $&#123;ips[@]&#125;&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">遍历数组</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;!ips[@]&#125;</span>&quot;</span>; <span class="hljs-keyword">do</span></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">    <span class="hljs-comment"># 使用tr命令去除空白字符</span></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">    clean_string=$(<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;ips[$i]&#125;</span>&quot;</span> | <span class="hljs-built_in">tr</span> -d <span class="hljs-string">&#x27;[:space:]&#x27;</span>)</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">    <span class="hljs-keyword">if</span> [[ <span class="hljs-string">&quot;<span class="hljs-variable">$clean_string</span>&quot;</span> == <span class="hljs-string">&quot;<span class="hljs-variable">$ip</span>&quot;</span> ]]; <span class="hljs-keyword">then</span></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">        node_rank=<span class="hljs-variable">$i</span></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">        <span class="hljs-built_in">break</span></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">    <span class="hljs-keyword">fi</span></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-keyword">done</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">TODO 测试断点续训</span><br>for i in &quot;$&#123;!ips[@]&#125;&quot;; do<br>    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)<br>    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then<br>        if [[ &quot;$ip&quot; == &quot;$rank0_ip&quot; ]]; then<br>            node_rank=0<br>        else<br>            node_rank=1<br>        fi<br>        break<br>    fi<br>done<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">打印调试信息</span><br>echo &quot;设置的NODE_RANK: $node_rank&quot;<br><br>if [ $node_rank -ne -1 ]; then<br>    ## 修改脚本中MASTER_ADDR<br>    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name<br><br>    ## 修改NNODES<br>    # sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name<br><br>    ## 修改NODE_RANK<br>    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_name<br>fi<br><br></code></pre></td></tr></table></figure>
+
+<h5 id="hostfile"><a href="#hostfile" class="headerlink" title="hostfile"></a>hostfile</h5><p>多机节点故障需要选取3个节点来模拟，其中2台用来拉起训练，之后模拟其中1台发生故障，之后再调度到另一个备用机器上继续训练。</p>
+<p>其中将192.168.0.65作为master节点，192.168.0.20和192.168.0.63作为worker节点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">192.168.0.65<br>192.168.0.20<br>192.168.0.63<br></code></pre></td></tr></table></figure>
+
+<h4 id="节点故障实践"><a href="#节点故障实践" class="headerlink" title="节点故障实践"></a>节点故障实践</h4><h5 id="训练拉起"><a href="#训练拉起" class="headerlink" title="训练拉起"></a>训练拉起</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl apply -f deepseek-ckpt.yaml<br>kubectl get node -owide<br>kubectl get pod -owide<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image35.png"></p>
+<p>可以看出训练再在master节点192.168.0.65和worker节点192.168.0.63上拉起。</p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image36.png"></p>
+<h5 id="ckpt保存"><a href="#ckpt保存" class="headerlink" title="ckpt保存"></a>ckpt保存</h5><p>持续训练，并在interval50步保存ckpt信息，之后继续训练</p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image37.png"></p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image38.png"></p>
+<h5 id="模拟节点故障"><a href="#模拟节点故障" class="headerlink" title="模拟节点故障"></a>模拟节点故障</h5><p>进入192.168.0.63机器，模拟节点故障，停掉k8s服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl stop kubelet<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image39.png"></p>
+<p>停掉后在k8s的master节点查看node状态，是否为NotReady</p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image40.png"></p>
+<p>此时192.168.0.63已经出现故障，再去查看拉起训练的pod信息</p>
+<p>由于192.168.0.63出现故障，pytorchjob会根据hostfile的节点信息，再重新尝试调度到另外的机器上192.168.0.20，可以看出在192.168.0.20重新进行了Init、PodInitializing、Running的过程。</p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image41.png"></p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image42.png"></p>
+<h5 id="查看续训log"><a href="#查看续训log" class="headerlink" title="查看续训log"></a>查看续训log</h5><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image43.png"></p>
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image44.png"></p>
+<p>至此，节点故障断点续训实践完成。</p>
+<p>模拟完成后，重新将192.168.0.63节点恢复</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl start kubelet<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/deepseek/image45.png"></p>
+<h4 id=""><a href="#" class="headerlink" title=""></a></h4></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.5%20pytorchjob+eki%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%AD/">https://lyapunovxb.github.io/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.5%20pytorchjob+eki%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%AD/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lyapunovxb.github.io" target="_blank">Lyapunovxb's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Nvidia/">Nvidia</a><a class="post-meta__tags" href="/tags/V100/">V100</a><a class="post-meta__tags" href="/tags/%E6%A8%A1%E5%9E%8B%E9%80%82%E9%85%8D/">模型适配</a><a class="post-meta__tags" href="/tags/Deepseek/">Deepseek</a><a class="post-meta__tags" href="/tags/Megatron-LM/">Megatron-LM</a></div><div class="post-share"><div class="social-share" data-image="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.2%20Deepseek-7B%E9%A2%84%E8%AE%AD%E7%BB%83%E9%80%82%E9%85%8D/" title="2.2 Deepseek-7B预训练适配"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">2.2 Deepseek-7B预训练适配</div></div><div class="info-2"><div class="info-item-1">预训练物料及代码准备Deepseek-7B的Tokenizer下载位置位于&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-ckpt  数据集准备位置位于&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets  pretrain_mcore_deepseek.sh预训练脚本1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011021031041051061071081091101111121131141151161171181191201211221231241251261271281291301311...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.1%20Deepseek-7B%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86/" title="2.1 数据集处理"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">2.1 数据集处理</div></div><div class="info-2"><div class="info-item-1">下载初始数据集 下载WuDaoCorpora2.0开源数据集到&#x2F;mnt&#x2F;workspace&#x2F;llama3-datasets工作目录下  12wget https://atp-modelzoo.oss-cn-hangzhou.aliyuncs.com/release/datasets/WuDaoCorpus2.0_base_sample.tgztar zxvf WuDaoCorpus2.0_base_sample.tgz   Megatron-LM预训练数据清洗mmap数据是一种预先执行tokenize处理的数据格式，可以极大减少训练微调过程中等待数据读入的时间，当数据量极大时，优势显著。 123456789101112131415161718#! /bin/bashset -ex# 请在此处设置原始数据所在路径data_dir=/mnt/users/wangxiangbo/dataset/WuDaoCorpus2.0_base_sample#开始数据清洗流程dataset_dir=$(dirname $data_dir)mkdir -p $&#123...</div></div></div></a><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.3%20Deepseek-7B%E6%9D%83%E9%87%8D%E8%BD%AC%E6%8D%A2/" title="2.3 Deepseek-7B权重转换"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">2.3 Deepseek-7B权重转换</div></div><div class="info-2"><div class="info-item-1">Hg-Core权重转换huggingface开源权重准备 权重转换脚本123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118#!/bin/bashexport CUDA_VISIBLE_DEVICES=0export CUDA_DEVICE_MAX_CONNECTIONS=1START_TIME=$SECONDSMASTER_ADDR=localhostMASTER_PORT=6666MODEL_SIZE=7BHG_CKPT_PATH=/mnt/model/deepseek-ai/deepseek-llm-7b-baseMEGATRON_PATCH_...</div></div></div></a><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.4%20Deepseek-7B%E5%BE%AE%E8%B0%83%E9%80%82%E9%85%8D/" title="2.4 Deepseek-7B微调适配"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">2.4 Deepseek-7B微调适配</div></div><div class="info-2"><div class="info-item-1">微调物料及代码准备数据集准备&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets&#x2F;alpaca_zh-deepseek-train.json &#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets&#x2F;alpaca_zh-deepseek-valid.json  微调脚本12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910010110210310410510610710810911011111211311411511611711811912012112212312412512612...</div></div></div></a><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.2%20Deepseek-7B%E9%A2%84%E8%AE%AD%E7%BB%83%E9%80%82%E9%85%8D/" title="2.2 Deepseek-7B预训练适配"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">2.2 Deepseek-7B预训练适配</div></div><div class="info-2"><div class="info-item-1">预训练物料及代码准备Deepseek-7B的Tokenizer下载位置位于&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-ckpt  数据集准备位置位于&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets  pretrain_mcore_deepseek.sh预训练脚本1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011021031041051061071081091101111121131141151161171181191201211221231241251261271281291301311...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1.1-Qwen模型本地部署与单机单卡&#x2F;多卡训练"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.1-Qwen模型本地部署与单机单卡&#x2F;多卡训练</div></div><div class="info-2"><div class="info-item-1">一、V100环境部署  项目地址： https://github.com/QwenLM/Qwen  下载到本地git clone  https://github.com/QwenLM/Qwen.git   基础环境搭建conda create -n qwen python=3.10conda activate qwen  安装pytorchconda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia  安装依赖环境pip install -r requirements.txt   7B模型下载git clone [https://www.modelscope.cn/qwen/Qwen-7B-Chat.git](https://www.modelscope.cn/qwen/Qwen-7B-Chat.git)在使用sdk的python脚本下载权重时，需要pip安装modelscopepip install modelscope使用git clone发现权重未下载成功，使用mode...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.4-%E5%9F%BA%E4%BA%8Ek8s%E6%8B%89%E8%B5%B7Qwen%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E5%BE%AE%E8%B0%83/" title="1.4-基于k8s拉起Qwen模型的多机多卡微调"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.4-基于k8s拉起Qwen模型的多机多卡微调</div></div><div class="info-2"><div class="info-item-1">一、镜像准备 1. 查看镜像docker images 2. 修改镜像标签docker tag ec99659d9677 registry.paas/library/qwen:v3.0 3. 将镜像推至仓库docker push registry.paas/library/qwen:v3.0 4. 如果出现签名认证失败，需要修改docker守护进程配置文件vim /etc/docker/daemon.json增加如下配置： 123&#123;&quot;insecure-registries&quot;:[&quot;registry.paas&quot;]&#125; 重启dockersystemctl daemon-reload &amp;&amp; systemctl restart docker 5. 重新push至registry.paas&#x2F;library&#x2F;xxx:tags仓库二、修改配置文件 1. qwentest.yaml123456789101112131415161718192021222324252627282930313233343536...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wangxiangbo</div><div class="author-info-description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lyapunovxb"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%87%86%E5%A4%87"><span class="toc-number">2.</span> <span class="toc-text">代码准备</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%ADyaml"><span class="toc-number">2.1.</span> <span class="toc-text">断点续训yaml</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#setrank"><span class="toc-number">2.2.</span> <span class="toc-text">setrank</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#hostfile"><span class="toc-number">2.3.</span> <span class="toc-text">hostfile</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C%E5%AE%9E%E8%B7%B5"><span class="toc-number">3.</span> <span class="toc-text">节点故障实践</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%8B%89%E8%B5%B7"><span class="toc-number">3.1.</span> <span class="toc-text">训练拉起</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ckpt%E4%BF%9D%E5%AD%98"><span class="toc-number">3.2.</span> <span class="toc-text">ckpt保存</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C"><span class="toc-number">3.3.</span> <span class="toc-text">模拟节点故障</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%BB%AD%E8%AE%ADlog"><span class="toc-number">3.4.</span> <span class="toc-text">查看续训log</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text"></span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Llama2/A100%E9%9B%86%E7%BE%A46%E6%9C%BA48%E5%8D%A1-%E5%9F%BA%E4%BA%8Ek8s%E7%9A%84Colossal-AI%20llama2%2070B%E8%AE%AD%E7%BB%83%E6%93%8D%E4%BD%9C%E6%96%87%E6%A1%A3/" title="A100集群6机48卡-基于k8s的Colossal-AI llama2 70B训练操作文档"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="A100集群6机48卡-基于k8s的Colossal-AI llama2 70B训练操作文档"/></a><div class="content"><a class="title" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Llama2/A100%E9%9B%86%E7%BE%A46%E6%9C%BA48%E5%8D%A1-%E5%9F%BA%E4%BA%8Ek8s%E7%9A%84Colossal-AI%20llama2%2070B%E8%AE%AD%E7%BB%83%E6%93%8D%E4%BD%9C%E6%96%87%E6%A1%A3/" title="A100集群6机48卡-基于k8s的Colossal-AI llama2 70B训练操作文档">A100集群6机48卡-基于k8s的Colossal-AI llama2 70B训练操作文档</a><time datetime="2025-11-13T01:00:00.000Z" title="发表于 2025-11-13 09:00:00">2025-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.1%20Deepseek-7B%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86/" title="2.1 数据集处理"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2.1 数据集处理"/></a><div class="content"><a class="title" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.1%20Deepseek-7B%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86/" title="2.1 数据集处理">2.1 数据集处理</a><time datetime="2025-11-13T01:00:00.000Z" title="发表于 2025-11-13 09:00:00">2025-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.3%20Deepseek-7B%E6%9D%83%E9%87%8D%E8%BD%AC%E6%8D%A2/" title="2.3 Deepseek-7B权重转换"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2.3 Deepseek-7B权重转换"/></a><div class="content"><a class="title" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.3%20Deepseek-7B%E6%9D%83%E9%87%8D%E8%BD%AC%E6%8D%A2/" title="2.3 Deepseek-7B权重转换">2.3 Deepseek-7B权重转换</a><time datetime="2025-11-13T01:00:00.000Z" title="发表于 2025-11-13 09:00:00">2025-11-13</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By wangxiangbo</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><div id="global-aplayer"></div><script>
+  (function() {
+    var PLAYER_TAG = 'customGlobalAplayer';
+
+    function buildGlobalPlayer() {
+      if (!window.APlayer) return;
+
+      var container = document.getElementById('global-aplayer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'global-aplayer';
+        document.body.appendChild(container);
+      }
+      if (!container || typeof APlayer === 'undefined') return;
+
+      if (container.classList && !container.classList.contains('aplayer')) {
+        container.classList.add('aplayer');
+      }
+
+      if (window.customFixedAplayer) {
+        try {
+          window.customFixedAplayer.destroy();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      var ap = new APlayer({
+        container: container,
+        fixed: true,
+        autoplay: false,
+        mutex: true,
+        theme: '#ad7a86',
+        preload: 'auto',
+        lrcType: 3,
+        audio: [
+          {
+            name: '鼓楼',
+            artist: '赵雷',
+            url: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E9%BC%93%E6%A5%BC-%E8%B5%B5%E9%9B%B7.mp3',
+            cover: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E6%97%A0%E6%B3%95%E9%95%BF%E5%A4%A7.jpg',
+            lrc: '/music/鼓楼-赵雷.lrc'
+          },
+          {
+            name: '程艾影',
+            artist: '赵雷',
+            url: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E7%A8%8B%E8%89%BE%E5%BD%B1-%E8%B5%B5%E9%9B%B7.mp3',
+            cover: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E7%BD%B2%E5%89%8D%E8%A1%97%E5%B0%91%E5%B9%B4.jpg',
+            lrc: '/music/程艾影-赵雷.lrc'
+          }
+        ]
+      });
+
+      window.aplayers || (window.aplayers = []);
+      window.aplayers.push(ap);
+      window.customFixedAplayer = ap;
+    }
+
+    function initGlobalAplayer() {
+      if (!window.APlayer) {
+        setTimeout(initGlobalAplayer, 200);
+        return;
+      }
+      buildGlobalPlayer();
+    }
+
+    if (window.btf && typeof window.btf.addGlobalFn === 'function') {
+      window.btf.addGlobalFn('pjaxComplete', buildGlobalPlayer, PLAYER_TAG);
+    }
+
+    if (document.readyState === 'complete') {
+      initGlobalAplayer();
+    } else {
+      window.addEventListener('load', initGlobalAplayer, { once: true });
+    }
+  })();
+</script>
+<script>
+(function() {
+  // 存储键名
+  const STORAGE_KEY = 'aplayer_progress';
+  const STORAGE_PLAYING_KEY = 'aplayer_playing';
+  const STORAGE_URL_KEY = 'aplayer_url';
+  const STORAGE_INDEX_KEY = 'aplayer_index';
+  
+  // 获取播放器的音频 URL
+  function getAudioUrl(aplayer) {
+    if (!aplayer || !aplayer.audio) return null;
+    // 优先使用 audio.src
+    if (aplayer.audio.src) {
+      return aplayer.audio.src.split('?')[0]; // 移除查询参数以便比较
+    }
+    return null;
+  }
+  
+  // 保存播放进度（支持播放列表）
+  function saveProgress(aplayer) {
+    if (!aplayer || !aplayer.audio) return;
+    
+    const currentTime = aplayer.audio.currentTime;
+    const duration = aplayer.audio.duration;
+    const url = getAudioUrl(aplayer);
+    const isPlaying = !aplayer.audio.paused;
+    const currentIndex = aplayer.list && typeof aplayer.list.index === 'number'
+      ? aplayer.list.index
+      : 0;
+    
+    if (duration && duration > 0) {
+      localStorage.setItem(STORAGE_KEY, currentTime.toString());
+      localStorage.setItem(STORAGE_PLAYING_KEY, isPlaying.toString());
+      localStorage.setItem(STORAGE_INDEX_KEY, currentIndex.toString());
+      
+      // URL 仅用于调试或兼容旧数据
+      if (url) {
+        localStorage.setItem(STORAGE_URL_KEY, url);
+      }
+    }
+  }
+  
+  // 恢复播放进度（支持播放列表）
+  function restoreProgress(aplayer) {
+    if (!aplayer || !aplayer.audio) return;
+    
+    const savedProgress = parseFloat(localStorage.getItem(STORAGE_KEY) || '0');
+    const wasPlaying = localStorage.getItem(STORAGE_PLAYING_KEY) === 'true';
+    const savedIndex = parseInt(localStorage.getItem(STORAGE_INDEX_KEY) || '0', 10);
+    
+    if (!(savedProgress > 0)) return;
+    
+    // 如果有播放列表，先切换到之前的那一首
+    if (aplayer.list && typeof aplayer.list.switch === 'function' && !Number.isNaN(savedIndex)) {
+      try {
+        if (aplayer.list.index !== savedIndex) {
+          aplayer.list.switch(savedIndex);
+        }
+      } catch (e) {
+        // 切歌失败时忽略，继续按当前曲目恢复进度
+      }
+    }
+    
+    // 等待音频加载完成后恢复进度
+    const restore = () => {
+      if (aplayer.audio.duration > 0 && savedProgress < aplayer.audio.duration) {
+        aplayer.audio.currentTime = savedProgress;
+        // 如果之前是播放状态且当前是暂停状态，则继续播放
+        if (wasPlaying && aplayer.audio.paused) {
+          setTimeout(() => {
+            aplayer.play().catch(() => {
+              // 忽略自动播放被阻止的错误
+            });
+          }, 100);
+        }
+      }
+    };
+    
+    // 如果音频已经加载好，直接恢复
+    if (aplayer.audio.readyState >= 2) {
+      restore();
+    } else if (aplayer.audio.readyState >= 1) {
+      // 有元数据但可能还没加载完，等待 canplay
+      aplayer.audio.addEventListener('canplay', restore, { once: true });
+    } else {
+      // 还没加载，等待 loadedmetadata
+      aplayer.audio.addEventListener('loadedmetadata', function handler() {
+        if (aplayer.audio.readyState >= 2) {
+          restore();
+        } else {
+          aplayer.audio.addEventListener('canplay', restore, { once: true });
+        }
+        aplayer.audio.removeEventListener('loadedmetadata', handler);
+      }, { once: true });
+    }
+  }
+  
+  // 存储已初始化的播放器，避免重复绑定
+  let initializedPlayer = null;
+  let saveTimer = null;
+  
+  // 初始化 APlayer 进度保存功能
+  function initAplayerProgress() {
+    // 如果已经初始化过，先清理旧的事件监听器
+    if (initializedPlayer && initializedPlayer.audio) {
+      // 注意：由于我们使用了匿名函数，无法完全移除，但可以通过标记来避免重复执行
+      // 这里我们重新查找播放器，因为页面切换可能导致播放器重新创建
+    }
+    
+    // 等待 APlayer 初始化完成
+    const checkAplayer = setInterval(() => {
+      if (window.aplayers && window.aplayers.length > 0) {
+        clearInterval(checkAplayer);
+        
+        // 找到固定的播放器（通常是全局播放器）
+        const fixedPlayer = window.aplayers.find(ap => ap.options && ap.options.fixed);
+        if (fixedPlayer && fixedPlayer !== initializedPlayer) {
+          initializedPlayer = fixedPlayer;
+          
+          // 恢复播放进度（延迟一下确保音频已开始加载）
+          setTimeout(() => {
+            restoreProgress(fixedPlayer);
+          }, 300);
+          
+          // 监听时间更新，定期保存进度
+          fixedPlayer.audio.addEventListener('timeupdate', () => {
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+              saveProgress(fixedPlayer);
+            }, 1000); // 每秒保存一次
+          });
+          
+          // 监听播放/暂停状态变化
+          fixedPlayer.audio.addEventListener('play', () => {
+            saveProgress(fixedPlayer);
+          });
+          
+          fixedPlayer.audio.addEventListener('pause', () => {
+            saveProgress(fixedPlayer);
+          });
+          
+          // 监听音频结束，清除保存的进度
+          fixedPlayer.audio.addEventListener('ended', () => {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_URL_KEY);
+            localStorage.removeItem(STORAGE_PLAYING_KEY);
+          });
+        }
+      }
+    }, 100);
+    
+    // 10秒后停止检查，避免无限循环
+    setTimeout(() => clearInterval(checkAplayer), 10000);
+  }
+  
+  // 页面卸载前保存进度
+  window.addEventListener('beforeunload', () => {
+    if (initializedPlayer) {
+      saveProgress(initializedPlayer);
+    }
+  });
+  
+  // 页面隐藏时保存进度（移动端切换应用时）
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && initializedPlayer) {
+      saveProgress(initializedPlayer);
+    }
+  });
+  
+  // 页面加载完成后初始化进度保存功能
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAplayerProgress);
+  } else {
+    initAplayerProgress();
+  }
+  
+  // 如果使用 pjax，在页面切换后重新初始化
+  if (window.btf && window.btf.addGlobalFn) {
+    window.btf.addGlobalFn('pjaxComplete', initAplayerProgress, 'aplayerProgress');
+  }
+})();
+</script>
+- <script src="/js/layout7-gradient.js"></script>
+<script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>

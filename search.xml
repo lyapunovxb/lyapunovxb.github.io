@@ -42,6 +42,40 @@ git push origin develop --force-with-lease
       </tags>
   </entry>
   <entry>
+    <title>Git3_gitlab仓库代码提交流程</title>
+    <url>/2025/11/04/Git/Git3_gitlab%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[
+gitlab上fork主仓库，生成个人的远端仓库origin&#x2F;develop
+修改git提交用户配置为九天账号git config --global --listgit config --global user.name wangxiangbo_JTAGIgit config --global user.email wangxiangbo_JTAGI@cmss.chinamobile.com
+拉取个人的远端仓库git clone http://gitlab.cmss.com/wangxiangbo/CM_OPTIMUS.git 
+查看分支git branch -a
+查看远程仓库分支git branch -r
+通过个人的远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
+列出所有的远程仓库以及对应的 URLgit remote -v
+将远程仓库地址添加到本地Git仓库的远程仓库列表中，本地的upstream&#x2F;develop仓库会和gitlab远程仓库关联起来git remote add upstream http://gitlab.cmss.com/AGI/CM_OPTIMUS.git
+upstream&#x2F;develop远端仓库拉取最新的代码git fetch upstream
+将upstream&#x2F;develop远端仓库的最新代码合并到本地的develop分支中git merge upstream/develop
+将本地develop最新的代码推到个人的远端仓库origin&#x2F;develop中git push origin develop
+提交develop到origin&#x2F;develop代码之前，保证自己的本地个人的远端仓库origin&#x2F;develop和本地gitlab的远端仓库upstream&#x2F;develop保持一致再提交，防止后续origin&#x2F;develop合并打upstream&#x2F;develop上出现冲突。#本地代码修改后拉取最新代码#1.拉取源代码git fetch upstream #2.暂存本地修改的代码git stash#3.合并源代码到当前的develop仓库git merge upstream/develop#4.将本地修改的推送到远程的origin分支，使origin/develop和upstream/develop保持一致git push origin develop#5.将暂存的代码弹出来git stash pop
+souretree上add需要提交的代码
+提交add之后的代码git commit -v
+#修改下方的提交信息，第一行为提交描述信息deepseek-7B预训练Code Source From: Self CodeDescription: deepseek-7B预训练Jira: #CMOPTIMUS-1089市场项目编号（名称）：CM_OPTIMUS
+将提交完之后的代码合并到origin&#x2F;develop上git push origin develop
+gitlab中找的到自己仓库下CM_OPTIMUS
+找到Merge requests，然后点击开始一个合并
+然后选择自己的分支为develop，还有旁边的分支develop，然后点击最下方的merge即可。该操作是将自己个人远端的orgin&#x2F;develop仓库提交修改后的代码合并到gitlab远端的主仓库中（upstream&#x2F;develop已和其关联，并通过git fetch保持最新）选中自己刚刚提交到origin&#x2F;develop上的代码，合并到AGI&#x2F;CM_OPTIMUS的develop分支上在Write里添加合并人信息
+
+]]></content>
+      <categories>
+        <category>开发</category>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>开发</tag>
+        <tag>gitlab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>前端1_调用api接口的写法</title>
     <url>/2025/11/06/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF1_%E8%B0%83%E7%94%A8api%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%86%99%E6%B3%95/</url>
     <content><![CDATA[Get请求写法1. 看Parameters中是否有需要带参数，其中Authorization为授权认证的token可以不用考虑。1.1 若是没有其余的参数限定，那么SyncRequestFuncType&lt;请求参数类型,响应返回参数类型&gt;，第一个参数就为void或者undefined。返回类型可以使用any，等获取到响应参数之后，在对其通过Interface&#x2F;type进行明确。
@@ -89,6 +123,40 @@ export const sortVideos: SyncRequestFuncType&lt;string[], void&gt; = (params) =&
       <tags>
         <tag>前端</tag>
         <tag>Javascript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git2_gerrit仓库代码提交流程</title>
+    <url>/2025/11/04/Git/Git2_gerrit%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[
+生成个人密钥ssh-keygen -C wangxiangbo_JTAGI@cmss.chinamobile.com
+修改config文件，增加gerrit仓库配置，增加刚生成的个人密钥id_ed25519host gerritport 29418hostname gerrit.cmss.comuser wangxiangbo_JTAGIIdentityFile ~/.ssh/id_ed25519
+在gerrit中setting设置中，增加ssh的公钥，即id_ed25519.pub
+设置邮箱，邮箱名wangxiangbo@cmss.chinamobile.com为不带JTAGI后缀的邮箱。
+用ssh clone代码仓库git clone &quot;ssh://wangxiangbo_JTAGI@gerrit.cmss.com:29418/AGI/CM_OPTIMUS&quot; &amp;&amp; scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg &quot;CM_OPTIMUS/.git/hooks/&quot;
+查看分支git branch -a
+查看远端分支git branch -r
+通过远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
+修改代码后，add之后并commit提交git commit -v
+推送远端origin&#x2F;develop仓库git push origin HEAD:refs/for/develop
+在推送过程中会出现缺失 Change-Id 的错误gitdir=$(git rev-parse --git-dir); scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
+执行完毕后如果出现subsystem request failed on channel 0，则将-p修改为-Ogitdir=$(git rev-parse --git-dir); scp -O -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
+将本次commit提交的末尾加上Change-Id git commit --amend --no-edit
+再次pushgit push origin HEAD:refs/for/develop
+提交完成之后，打开gerrit，找到develop分支的gitweb
+选择review
+找到刚刚提交的代码
+点击add reviewer，评审人要最少要两个以上
+第一次之后提交代码步骤git pull origingit add xxxgit commit -v git push origin HEAD:refs/for/develop
+
+]]></content>
+      <categories>
+        <category>开发</category>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>开发</tag>
+        <tag>gerrit</tag>
       </tags>
   </entry>
   <entry>
@@ -142,16 +210,28 @@ hg上面下载模型pip install -U huggingface_hubhuggingface-cli download bigsc
       </tags>
   </entry>
   <entry>
-    <title>测试 Hexo 标签分类2</title>
-    <url>/2025/10/31/%E9%A1%B5%E9%9D%A2%E6%B5%8B%E8%AF%95/test%20copy/</url>
-    <content><![CDATA[这是文章正文。
+    <title>运维1_docker命令</title>
+    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[
+启动一个容器
+sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？
+docker ps -adocker start qwendocker exec -it 容器id bash
+
+拉取一个新镜像后，通过这个镜像创建一个容器。
+docker run -it --name qwen --gpus all 镜像名:镜像tags bash
+
+将此时qwen容器打成镜像
+docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
+
 ]]></content>
       <categories>
-        <category>测试</category>
+        <category>运维</category>
+        <category>docker</category>
       </categories>
       <tags>
-        <tag>测试2</tag>
-        <tag>hexo</tag>
+        <tag>运维</tag>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -175,6 +255,63 @@ kubectl通过ns获取所有的pods的详细信息kubectl get pods -n &lt;ns_name
       <tags>
         <tag>运维</tag>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试 Hexo 标签分类2</title>
+    <url>/2025/10/31/%E9%A1%B5%E9%9D%A2%E6%B5%8B%E8%AF%95/test%20copy/</url>
+    <content><![CDATA[这是文章正文。
+]]></content>
+      <categories>
+        <category>测试</category>
+      </categories>
+      <tags>
+        <tag>测试2</tag>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1.1-Qwen模型本地部署与单机单卡/多卡训练</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/</url>
+    <content><![CDATA[一、V100环境部署
+
+项目地址： https://github.com/QwenLM/Qwen
+
+下载到本地git clone  https://github.com/QwenLM/Qwen.git 
+
+基础环境搭建conda create -n qwen python=3.10conda activate qwen
+
+安装pytorchconda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+
+安装依赖环境pip install -r requirements.txt 
+
+7B模型下载git clone [https://www.modelscope.cn/qwen/Qwen-7B-Chat.git](https://www.modelscope.cn/qwen/Qwen-7B-Chat.git)在使用sdk的python脚本下载权重时，需要pip安装modelscopepip install modelscope使用git clone发现权重未下载成功，使用modelscope官方sdk脚本下载。将以下代码写入download.py文件中，并执行python download.py
+#模型下载from modelscope import snapshot_downloadmodel_dir = snapshot_download(&#x27;qwen/Qwen-7B-Chat&#x27;, cache_dir=&#x27;/opt/tmp/Qwen&#x27;, revision=&#x27;v1.1.9&#x27;)
+数据集下载进入modelscope下载数据集https://modelscope.cn/datasets/Robin021/DISC-Law-SFT/files
+
+数据格式处理数据集处理后会生成train_data_law.json文件head -n 20 train_data_law.json处理之后的数据格式如下：
+import json# 读取以.jsonl结尾的文件json_data = []with open(&#x27;/opt/tmp/Qwen/dataset/DISC-Law-SFT-Triplet-released.jsonl&#x27;, &#x27;r&#x27;, encoding=&#x27;utf-8&#x27;) as file:    for line in file:        data = json.loads(line)        json_data.append(data)# 待填入的模板template = []# 遍历json数据集for idx, data in enumerate(json_data[:]):    conversation = [        &#123;            &quot;from&quot;:&quot;user&quot;,            &quot;value&quot;: data[&quot;input&quot;]        &#125;,        &#123;            &quot;from&quot;: &quot;assistant&quot;,            &quot;value&quot;: data[&quot;output&quot;]        &#125;    ]    template.append(&#123;        &quot;id&quot;: f&quot;identity_&#123;idx&#125;&quot;,        &quot;conversations&quot;: conversation    &#125;)print(len(template))# 输出填充数据后的模板print(json.dumps(template[2], ensure_ascii=False, indent=2))# 将template写入到本地文件output_file_path = &quot;/opt/tmp/Qwen/train_data_law.json&quot;with open(output_file_path, &#x27;w&#x27;, encoding=&#x27;utf-8&#x27;) as f:    json.dump(template, f, ensure_ascii=False, indent=2)print(f&quot;处理好的数据已写入到本地文件: &#123;output_file_path&#125;&quot;)
+训练依赖安装deepspeed安装pip install &quot;peft&lt;0.8.0&quot; deepspeed
+
+修改模型微调脚本参数修改MODEL和DATA的路径，及per_device_train_batch_size
+#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1MODEL=&quot;/opt/tmp/Qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/opt/tmp/Qwen/train_data_law.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune/finetune_lora_single_gpu.sh [-m MODEL_PATH] [-d DATA_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneexport CUDA_VISIBLE_DEVICES=0python finetune.py \  --model_name_or_path $MODEL \  --data_path $DATA \  --bf16 False \  --output_dir output_qwen \  --num_train_epochs 5 \  --per_device_train_batch_size 2 \  --per_device_eval_batch_size 1 \  --gradient_accumulation_steps 8 \  --evaluation_strategy &quot;no&quot; \  --save_strategy &quot;steps&quot; \  --save_steps 100 \  --save_total_limit 10 \  --learning_rate 3e-4 \  --weight_decay 0.1 \  --adam_beta2 0.95 \  --warmup_ratio 0.01 \  --lr_scheduler_type &quot;cosine&quot; \  --logging_steps 1 \  --report_to &quot;none&quot; \  --model_max_length 512 \  --lazy_preprocess True \  --gradient_checkpointing \  --use_lora# If you use fp16 instead of bf16, you should use deepspeed# --fp16 True --deepspeed finetune/ds_config_zero2.json
+
+开启单机单卡训练bash finetune/finetune_lora_single_gpu.sh
+
+单机多卡训练（在分配的3号机器上执行）gpu显存利用情况
+
+
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>Nvidia</tag>
+        <tag>Qwen</tag>
+        <tag>V100</tag>
+        <tag>Deepspeed</tag>
       </tags>
   </entry>
   <entry>
@@ -1299,143 +1436,7 @@ XXX监控平台可以进一步监控机间网卡的通信带宽、机内单向�
         <tag>Nvidia</tag>
         <tag>Llama2</tag>
         <tag>A100</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于Mindformers的llama3.1模型微调</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Mindformers/llama3.1%E5%BE%AE%E8%B0%83/</url>
-    <content><![CDATA[启动容器docker run -dit --ipc=host --net=host \--name=wxb_mindformers \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/code:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/output:/job/output \-v /mnt/weight-1:/job/mnt \swr.cn-central-221.ovaijisuan.com/mindformers/mindformers1.3_mindspore2.4:20241114 \/bin/bash
-
-
-代码准备git clone https://gitee.com/mindspore/mindformers.git
-
-数据集python research/llama3/llama_preprocess.py \--dataset_type qa \--input_glob /job/data/alpaca/alpaca-data-conversation.json \--model_file /job/mnt/huggingface/llama-3-8b-hf \--seq_length 8192 \--output_file /job/data/alpaca
-
-权重转换python convert_weight.py --model llama --input_path /job/mnt/huggingface/llama-3-8b-hf --output_path /job/data/mindformers/llama3_8b_ckpt
-
-训练脚本seed: 0output_dir: &#x27;/job/output&#x27; # path to save checkpoint/strategyload_checkpoint: &#x27;/job/data/mindformers/llama3_8b_ckpt/&#x27;src_strategy_path_or_dir: &#x27;&#x27;auto_trans_ckpt: False  # If true, auto transform load_checkpoint to load in distributed modelonly_save_strategy: Falseresume_training: Falserun_mode: &#x27;finetune&#x27; # trainer configtrainer:  type: CausalLanguageModelingTrainer  model_name: &#x27;llama3_8b&#x27; # runner configrunner_config:  epochs: 2  batch_size: 1  sink_mode: True  sink_size: 2 # optimizeroptimizer:  type: FP32StateAdamWeightDecay  beta1: 0.9  beta2: 0.95  eps: 1.e-8 # lr sechdulelr_schedule:  type: CosineWithWarmUpLR  learning_rate: 1.e-5  lr_end: 0.0  warmup_ratio: 0.03  total_steps: -1 # -1 means it will load the total steps of the dataset # datasettrain_dataset: &amp;train_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;/job/data/alpaca/alpaca_llama3_8192/alpaca-fastchat8192.mindrecord&quot;    shuffle: True  input_columns: [&quot;input_ids&quot;,&quot;labels&quot;]  # &quot;input_ids&quot;, &quot;labels&quot; , labels are used in instruction finetune.  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: True  batch_size: 6  repeat: 1  numa_enable: False  prefetch_size: 1train_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *train_dataset# if True, do evaluate during the training process. if false, do nothing.# note that the task trainer should support _evaluate_in_training function.do_eval: False # eval dataseteval_dataset: &amp;eval_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;&quot;    shuffle: False  input_columns: [&quot;input_ids&quot;]  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: False  repeat: 1  numa_enable: False  prefetch_size: 1eval_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *eval_dataset use_parallel: True# parallel context configparallel:  parallel_mode: 1 # 0-data parallel, 1-semi-auto parallel, 2-auto parallel, 3-hybrid parallel  gradients_mean: False  enable_alltoall: False  full_batch: True  search_mode: &quot;sharding_propagation&quot;  enable_parallel_optimizer: True  strategy_ckpt_save_file: &quot;./ckpt_strategy.ckpt&quot;  parallel_optimizer_config:    gradient_accumulation_shard: False    parallel_optimizer_threshold: 64# default parallel of device num = 8 for Atlas 800T A2parallel_config:  data_parallel: 1  model_parallel: 4  pipeline_stage: 2  use_seq_parallel: False  micro_batch_num: 8  vocab_emb_dp: True  gradient_aggregation_group: 4# when model parallel is greater than 1, we can set micro_batch_interleave_num=2, that may accelerate the train process.micro_batch_interleave_num: 1 # recompute configrecompute_config:  recompute: True  select_recompute: False  parallel_optimizer_comm_recompute: True  mp_comm_recompute: True  recompute_slice_activation: True # callbackscallbacks:  - type: MFLossMonitor  - type: CheckpointMointor    prefix: &quot;llama3_8b&quot;    save_checkpoint_steps: 10000    integrated_save: False    async_save: False  - type: ObsMonitor # mindspore context init configcontext:  mode: 0 #0--Graph Mode; 1--Pynative Mode  device_target: &quot;Ascend&quot;  enable_graph_kernel: False  graph_kernel_flags: &quot;--disable_expand_ops=Softmax,Dropout --enable_parallel_fusion=true --reduce_fuse_depth=8 --enable_auto_tensor_inplace=true&quot;  max_call_depth: 10000  max_device_memory: &quot;26GB&quot;  save_graphs: False  save_graphs_path: &quot;./graph&quot;  device_id: 0  runtime_num_threads: 1 # model configmodel:  model_config:    type: LlamaConfig    batch_size: 1 # add for increase predict    seq_length: 8192    hidden_size: 4096    num_layers: 32    num_heads: 32    n_kv_heads: 8    vocab_size: 128256    intermediate_size: 14336    rms_norm_eps: 1.0e-5    bos_token_id: 128000    eos_token_id: 128001    pad_token_id: 128002    ignore_token_id: -100    compute_dtype: &quot;bfloat16&quot;    layernorm_compute_type: &quot;float32&quot;    softmax_compute_type: &quot;float32&quot;    rotary_dtype: &quot;float32&quot;    param_init_type: &quot;bfloat16&quot;    use_past: False    scaling_factor: 1.0    theta: 500000    extend_method: &quot;None&quot; # support &quot;None&quot;, &quot;PI&quot;, &quot;NTK&quot;    use_flash_attention: True # FA can accelerate training or finetune    offset: 0    fine_grain_interleave: 1    checkpoint_name_or_path: &quot;&quot;    repetition_penalty: 1    max_decode_length: 512    top_k: 3    top_p: 1    do_sample: False  arch:    type: LlamaForCausalLM # metricmetric:  type: PerplexityMetric # wrapper cell configrunner_wrapper:  type: MFTrainOneStepCell  scale_sense: 1.0  use_clip_grad: True eval_callbacks:  - type: ObsMonitor auto_tune: Falsefilepath_prefix: &#x27;./autotune&#x27;autotune_per_step: 10 profile: Falseprofile_start_step: 5profile_stop_step: 7init_start_profile: Trueprofile_communication: Trueprofile_memory: Truelayer_scale: Falselayer_decay: 0.65lr_scale_factor: 256 # aiccremote_save_url: &quot;Please input obs url on AICC platform.&quot;
-
-训练拉起
-git
- clone https://gitee.com/mindspore/mindformers.gitgit
- clone https://gitee.com/mindspore/mindformers.git
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>昇腾</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>昇腾</tag>
-        <tag>910B</tag>
-        <tag>Mindformers</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>运维1_docker命令</title>
-    <url>/2025/11/04/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E7%BB%B4/%E8%BF%90%E7%BB%B41_docker%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[
-启动一个容器
-sudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-启动一个容器后，又通过exit关闭。发现docker ps没有了，该如何重新启动这个qwen容器？
-docker ps -adocker start qwendocker exec -it 容器id bash
-
-拉取一个新镜像后，通过这个镜像创建一个容器。
-docker run -it --name qwen --gpus all 镜像名:镜像tags bash
-
-将此时qwen容器打成镜像
-docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
-
-]]></content>
-      <categories>
-        <category>运维</category>
-        <category>docker</category>
-      </categories>
-      <tags>
-        <tag>运维</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>1.1-Qwen模型本地部署与单机单卡/多卡训练</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/</url>
-    <content><![CDATA[一、V100环境部署
-
-项目地址： https://github.com/QwenLM/Qwen
-
-下载到本地git clone  https://github.com/QwenLM/Qwen.git 
-
-基础环境搭建conda create -n qwen python=3.10conda activate qwen
-
-安装pytorchconda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
-
-安装依赖环境pip install -r requirements.txt 
-
-7B模型下载git clone [https://www.modelscope.cn/qwen/Qwen-7B-Chat.git](https://www.modelscope.cn/qwen/Qwen-7B-Chat.git)在使用sdk的python脚本下载权重时，需要pip安装modelscopepip install modelscope使用git clone发现权重未下载成功，使用modelscope官方sdk脚本下载。将以下代码写入download.py文件中，并执行python download.py
-#模型下载from modelscope import snapshot_downloadmodel_dir = snapshot_download(&#x27;qwen/Qwen-7B-Chat&#x27;, cache_dir=&#x27;/opt/tmp/Qwen&#x27;, revision=&#x27;v1.1.9&#x27;)
-数据集下载进入modelscope下载数据集https://modelscope.cn/datasets/Robin021/DISC-Law-SFT/files
-
-数据格式处理数据集处理后会生成train_data_law.json文件head -n 20 train_data_law.json处理之后的数据格式如下：
-import json# 读取以.jsonl结尾的文件json_data = []with open(&#x27;/opt/tmp/Qwen/dataset/DISC-Law-SFT-Triplet-released.jsonl&#x27;, &#x27;r&#x27;, encoding=&#x27;utf-8&#x27;) as file:    for line in file:        data = json.loads(line)        json_data.append(data)# 待填入的模板template = []# 遍历json数据集for idx, data in enumerate(json_data[:]):    conversation = [        &#123;            &quot;from&quot;:&quot;user&quot;,            &quot;value&quot;: data[&quot;input&quot;]        &#125;,        &#123;            &quot;from&quot;: &quot;assistant&quot;,            &quot;value&quot;: data[&quot;output&quot;]        &#125;    ]    template.append(&#123;        &quot;id&quot;: f&quot;identity_&#123;idx&#125;&quot;,        &quot;conversations&quot;: conversation    &#125;)print(len(template))# 输出填充数据后的模板print(json.dumps(template[2], ensure_ascii=False, indent=2))# 将template写入到本地文件output_file_path = &quot;/opt/tmp/Qwen/train_data_law.json&quot;with open(output_file_path, &#x27;w&#x27;, encoding=&#x27;utf-8&#x27;) as f:    json.dump(template, f, ensure_ascii=False, indent=2)print(f&quot;处理好的数据已写入到本地文件: &#123;output_file_path&#125;&quot;)
-训练依赖安装deepspeed安装pip install &quot;peft&lt;0.8.0&quot; deepspeed
-
-修改模型微调脚本参数修改MODEL和DATA的路径，及per_device_train_batch_size
-#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1MODEL=&quot;/opt/tmp/Qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# See the section for finetuning in README for more information.DATA=&quot;/opt/tmp/Qwen/train_data_law.json&quot;function usage() &#123;    echo &#x27;Usage: bash finetune/finetune_lora_single_gpu.sh [-m MODEL_PATH] [-d DATA_PATH]&#x27;&#125;while [[ &quot;$1&quot; != &quot;&quot; ]]; do    case $1 in        -m | --model )            shift            MODEL=$1            ;;        -d | --data )            shift            DATA=$1            ;;        -h | --help )            usage            exit 0            ;;        * )            echo &quot;Unknown argument $&#123;1&#125;&quot;            exit 1            ;;    esac    shiftdoneexport CUDA_VISIBLE_DEVICES=0python finetune.py \  --model_name_or_path $MODEL \  --data_path $DATA \  --bf16 False \  --output_dir output_qwen \  --num_train_epochs 5 \  --per_device_train_batch_size 2 \  --per_device_eval_batch_size 1 \  --gradient_accumulation_steps 8 \  --evaluation_strategy &quot;no&quot; \  --save_strategy &quot;steps&quot; \  --save_steps 100 \  --save_total_limit 10 \  --learning_rate 3e-4 \  --weight_decay 0.1 \  --adam_beta2 0.95 \  --warmup_ratio 0.01 \  --lr_scheduler_type &quot;cosine&quot; \  --logging_steps 1 \  --report_to &quot;none&quot; \  --model_max_length 512 \  --lazy_preprocess True \  --gradient_checkpointing \  --use_lora# If you use fp16 instead of bf16, you should use deepspeed# --fp16 True --deepspeed finetune/ds_config_zero2.json
-
-开启单机单卡训练bash finetune/finetune_lora_single_gpu.sh
-
-单机多卡训练（在分配的3号机器上执行）gpu显存利用情况
-
-
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>NVIDIA</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>Nvidia</tag>
-        <tag>Qwen</tag>
-        <tag>V100</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>1.2-Qwen模型镜像制作</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</url>
-    <content><![CDATA[由于新机器挂载文件存储速度非常慢，通过dockerfile文件来直接生成镜像非常慢，所以本镜像在自己的V100云主机中进行打包。
-1. 首先docker pull拉取一个ubuntu基础环境https://hub.docker.com/r/nvidia/cuda/tags?page=11&page_size&#x3D;&amp;name&#x3D;&amp;ordering&#x3D;docker pull nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-2. 安装nvidia-container-toolkit，使docker可以调用宿主机gpu资源2.1 下载nvidia-container-toolkit distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &amp;&amp; \ curl -s -L [https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list](https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list) | sed &#39;s#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g&#39; | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-2.2 安装nvidia-container-toolkit  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit
-2.3 添加nvidia-docker源  curl -s -L [https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list](https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list) |   sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-2.4 更新并重新执行安装  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit如果执行过程中报W: GPG error: https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/amd64  InRelease: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY DDCAE044F796ECB0，则需要确认你的系统是否信任NVIDIA的GPG密钥。如果没有，你需要导入它。可以通过以下命令导入GPG密钥：curl -s [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo apt-key add -
-2.5 完成 nvidia-container-toolkit 的安装之后，我们继续执行 nvidia-ctk runtime configure 命令，为 Docker 添加 nvidia 这个运行时。完成后，我们的应用就能在容器中使用显卡资源了  sudo nvidia-ctk runtime configure --runtime=docker
-  
-2.6 重启docker  sudo systemctl restart docker
-2.7 查看是否安装成功  dpkg -l | grep nvidia-container-toolkit
-  
-3. 拉取基础镜像成功后，创建一个docker容器docker imagessudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04exit
-4. 退出容器后，将本地跑同的qwen模型代码&#x2F;权重&#x2F;数据集&#x2F;环境cp到创建的qwen镜像中docker cp /opt/tmp/Qwen/ 02649afd9710:/qwen
-5. 重启docker，exec执行docker ps -adocker start qwendocker exec -it 02649afd9710 bash
-6. 因为想在容器中执行自身的python环境，不借用宿主机的环境，所以需要单独再安装conda、pytorch等环境。7. 安装完基础环境后，需要安装qwen模型的依赖pip install -r requirements.txt
-8. 没有vim编辑器还需安装vimapt-get updateapt-get install -y vim
-9. deepspeed安装pip install &quot;peft&lt;0.8.0&quot; deepspeed
-10. 此时在qwen容器中执行训练脚本，拉起训练。bash finetune/finetune_lora_single_gpu.sh
-11. 将此时qwen容器打成镜像docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
-12. 将打好的镜像转成tar包，供新机器解压使用docker save -o qwen-7b.tar qwen-7b:v1.0
-13. 加载tar镜像, 使用load进行从tar文件导出镜像docker load -i qwen-7b.tar
-14. 由于新机器挂载文件存储的原因，镜像解压速度太慢，于是打算将打好的qwen镜像push到阿里云个人仓库中，在新机器中直接pull该镜像。15. 将镜像推送到Registrydocker login --username=aliyun9599911612 registry.cn-shanghai.aliyuncs.comdocker tag 37c7b97b67f6 registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0docker push registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
-16. 在3号机器中，拉取该镜像docker pull registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
-17. 通过该镜像，run一个容器docker run -it --name qwen --gpus all registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0 bash
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>NVIDIA</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>Nvidia</tag>
-        <tag>Qwen</tag>
-        <tag>V100</tag>
+        <tag>Colossal-AI</tag>
       </tags>
   </entry>
   <entry>
@@ -1468,6 +1469,7 @@ import json# 读取以.jsonl结尾的文件json_data = []with open(&#x27;/opt/tm
         <tag>Nvidia</tag>
         <tag>Qwen</tag>
         <tag>V100</tag>
+        <tag>Deepspeed</tag>
       </tags>
   </entry>
   <entry>
@@ -1495,86 +1497,7 @@ d. 解决完之后，重新查看shm的共享内存大小，此时已经变为�
         <tag>Nvidia</tag>
         <tag>Qwen</tag>
         <tag>V100</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于Modellink的llama2-7b和Mistral-7b模型微调</title>
-    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Modellink/llama2-7B+Mistral-7B/</url>
-    <content><![CDATA[基于docker的mistral-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
-
-权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
-
-python  tools/checkpoint/convert_ckpt.py \    --model-type GPT \    --loader llama2_hf \    --saver megatron \    --load-dir /job/mnt/huggingface/mistral-7b-hf/ \    --save-dir /job/data/megatron/mistral-7b-tp4-pp2 \    --tokenizer-model /job/mnt/huggingface/mistral-7b-hf/tokenizer.model \    --target-tensor-parallel-size 4 \    --target-pipeline-parallel-size 2
-
-
-数据集下载sudo wget https://hf-mirror.com/datasets/silk-road/alpaca-data-gpt4-chinese/resolve/main/Alpaca_data_gpt4_zh.jsonl
-
-处理python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/mistral/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/mistral-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
-
-
-处理完成
-
-微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/mistral/Alpaca_finetune/&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/mistral-7b-hf&quot;CKPT_SAVE_DIR=&quot;/job/output/mistral_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/mistral-7b-tp4-pp2/&quot;TP=4PP=2NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --sliding-window 4096 \    --num-layers $&#123;NUM_LAYERS&#125; \    --hidden-size 4096 \    --ffn-hidden-size 14336 \    --num-attention-heads 32 \    --group-query-attention \    --num-query-groups 8 \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path $&#123;TOKENIZER_MODEL&#125; \    --seq-length 32768 \    --max-position-embeddings 32768 \    --micro-batch-size 1 \    --global-batch-size 32 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 1000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --use-fused-swiglu \    --use-rotary-position-embeddings \    --use-fused-rotary-pos-emb \    --use-mc2 \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --overlap-grad-reduce \    --load $&#123;CKPT_LOAD_DIR&#125; \    --save $&#123;CKPT_SAVE_DIR&#125; \    --bf16 \    --finetune \    --is-instruction-dataset \    --log-throughput \    --recompute-granularity full \    --recompute-method block \    --recompute-num-layers 32&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_mistral_7B.log
-
-拉起训练
-基于docker的llama2-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
-
-权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
-
-python  tools/checkpoint/convert_ckpt.py \       --model-type GPT \       --loader llama2_hf \       --saver megatron \       --target-tensor-parallel-size 8 \       --target-pipeline-parallel-size 1 \       --load-dir /job/mnt/huggingface/Llama-2-7b-hf// \       --save-dir /job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1/ \       --tokenizer-model /job/mnt/huggingface/Llama-2-7b-hf/tokenizer.json
-
-
-数据集python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/llama2/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/Llama-2-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
-
-
-
-微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/llama2/Alpaca_finetune&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/Llama-2-7b-hf/&quot;CKPT_SAVE_DIR=&quot;/job/output/llama2_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1&quot;TP=8PP=1NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --num-layers 32 \    --hidden-size 4096 \    --ffn-hidden-size 11008 \    --num-attention-heads 32 \    --tokenizer-type Llama2Tokenizer \    --tokenizer-model $&#123;TOKENIZER_MODEL&#125; \    --seq-length 4096 \    --max-position-embeddings 4096 \    --micro-batch-size 1 \    --global-batch-size 256 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 5000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --use-fused-swiglu \    --use-fused-rotary-pos-emb \    --overlap-grad-reduce \    --bf16&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_llama2_7B.log
-
-拉起训练
-]]></content>
-      <categories>
-        <category>模型训练调优</category>
-        <category>昇腾</category>
-      </categories>
-      <tags>
-        <tag>模型训练调优</tag>
-        <tag>昇腾</tag>
-        <tag>910B</tag>
-        <tag>Mindformers</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git2_gerrit仓库代码提交流程</title>
-    <url>/2025/11/04/Git/Git2_gerrit%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[
-生成个人密钥ssh-keygen -C wangxiangbo_JTAGI@cmss.chinamobile.com
-修改config文件，增加gerrit仓库配置，增加刚生成的个人密钥id_ed25519host gerritport 29418hostname gerrit.cmss.comuser wangxiangbo_JTAGIIdentityFile ~/.ssh/id_ed25519
-在gerrit中setting设置中，增加ssh的公钥，即id_ed25519.pub
-设置邮箱，邮箱名wangxiangbo@cmss.chinamobile.com为不带JTAGI后缀的邮箱。
-用ssh clone代码仓库git clone &quot;ssh://wangxiangbo_JTAGI@gerrit.cmss.com:29418/AGI/CM_OPTIMUS&quot; &amp;&amp; scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg &quot;CM_OPTIMUS/.git/hooks/&quot;
-查看分支git branch -a
-查看远端分支git branch -r
-通过远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
-修改代码后，add之后并commit提交git commit -v
-推送远端origin&#x2F;develop仓库git push origin HEAD:refs/for/develop
-在推送过程中会出现缺失 Change-Id 的错误gitdir=$(git rev-parse --git-dir); scp -p -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
-执行完毕后如果出现subsystem request failed on channel 0，则将-p修改为-Ogitdir=$(git rev-parse --git-dir); scp -O -P 29418 wangxiangbo_JTAGI@gerrit.cmss.com:hooks/commit-msg $&#123;gitdir&#125;/hooks/
-将本次commit提交的末尾加上Change-Id git commit --amend --no-edit
-再次pushgit push origin HEAD:refs/for/develop
-提交完成之后，打开gerrit，找到develop分支的gitweb
-选择review
-找到刚刚提交的代码
-点击add reviewer，评审人要最少要两个以上
-第一次之后提交代码步骤git pull origingit add xxxgit commit -v git push origin HEAD:refs/for/develop
-
-]]></content>
-      <categories>
-        <category>开发</category>
-        <category>git</category>
-      </categories>
-      <tags>
-        <tag>开发</tag>
-        <tag>gerrit</tag>
+        <tag>Deepspeed</tag>
       </tags>
   </entry>
   <entry>
@@ -2174,40 +2097,325 @@ qlora在拉起训练时，需要对模型权重进行INT-4量化，会损失掉�
         <tag>Nvidia</tag>
         <tag>Qwen</tag>
         <tag>V100</tag>
+        <tag>Deepspeed</tag>
       </tags>
   </entry>
   <entry>
-    <title>Git3_gitlab仓库代码提交流程</title>
-    <url>/2025/11/04/Git/Git3_gitlab%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[
-gitlab上fork主仓库，生成个人的远端仓库origin&#x2F;develop
-修改git提交用户配置为九天账号git config --global --listgit config --global user.name wangxiangbo_JTAGIgit config --global user.email wangxiangbo_JTAGI@cmss.chinamobile.com
-拉取个人的远端仓库git clone http://gitlab.cmss.com/wangxiangbo/CM_OPTIMUS.git 
-查看分支git branch -a
-查看远程仓库分支git branch -r
-通过个人的远端origin&#x2F;develop仓库，创建一个本地develop开发分支git checkout -b develop origin/develop
-列出所有的远程仓库以及对应的 URLgit remote -v
-将远程仓库地址添加到本地Git仓库的远程仓库列表中，本地的upstream&#x2F;develop仓库会和gitlab远程仓库关联起来git remote add upstream http://gitlab.cmss.com/AGI/CM_OPTIMUS.git
-upstream&#x2F;develop远端仓库拉取最新的代码git fetch upstream
-将upstream&#x2F;develop远端仓库的最新代码合并到本地的develop分支中git merge upstream/develop
-将本地develop最新的代码推到个人的远端仓库origin&#x2F;develop中git push origin develop
-提交develop到origin&#x2F;develop代码之前，保证自己的本地个人的远端仓库origin&#x2F;develop和本地gitlab的远端仓库upstream&#x2F;develop保持一致再提交，防止后续origin&#x2F;develop合并打upstream&#x2F;develop上出现冲突。#本地代码修改后拉取最新代码#1.拉取源代码git fetch upstream #2.暂存本地修改的代码git stash#3.合并源代码到当前的develop仓库git merge upstream/develop#4.将本地修改的推送到远程的origin分支，使origin/develop和upstream/develop保持一致git push origin develop#5.将暂存的代码弹出来git stash pop
-souretree上add需要提交的代码
-提交add之后的代码git commit -v
-#修改下方的提交信息，第一行为提交描述信息deepseek-7B预训练Code Source From: Self CodeDescription: deepseek-7B预训练Jira: #CMOPTIMUS-1089市场项目编号（名称）：CM_OPTIMUS
-将提交完之后的代码合并到origin&#x2F;develop上git push origin develop
-gitlab中找的到自己仓库下CM_OPTIMUS
-找到Merge requests，然后点击开始一个合并
-然后选择自己的分支为develop，还有旁边的分支develop，然后点击最下方的merge即可。该操作是将自己个人远端的orgin&#x2F;develop仓库提交修改后的代码合并到gitlab远端的主仓库中（upstream&#x2F;develop已和其关联，并通过git fetch保持最新）选中自己刚刚提交到origin&#x2F;develop上的代码，合并到AGI&#x2F;CM_OPTIMUS的develop分支上在Write里添加合并人信息
+    <title>1.2-Qwen模型镜像制作</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</url>
+    <content><![CDATA[由于新机器挂载文件存储速度非常慢，通过dockerfile文件来直接生成镜像非常慢，所以本镜像在自己的V100云主机中进行打包。
+1. 首先docker pull拉取一个ubuntu基础环境https://hub.docker.com/r/nvidia/cuda/tags?page=11&page_size&#x3D;&amp;name&#x3D;&amp;ordering&#x3D;docker pull nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+2. 安装nvidia-container-toolkit，使docker可以调用宿主机gpu资源2.1 下载nvidia-container-toolkit distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &amp;&amp; \ curl -s -L [https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list](https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list) | sed &#39;s#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g&#39; | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+2.2 安装nvidia-container-toolkit  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit
+2.3 添加nvidia-docker源  curl -s -L [https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list](https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list) |   sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+2.4 更新并重新执行安装  sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-container-toolkit如果执行过程中报W: GPG error: https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/amd64  InRelease: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY DDCAE044F796ECB0，则需要确认你的系统是否信任NVIDIA的GPG密钥。如果没有，你需要导入它。可以通过以下命令导入GPG密钥：curl -s [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo apt-key add -
+2.5 完成 nvidia-container-toolkit 的安装之后，我们继续执行 nvidia-ctk runtime configure 命令，为 Docker 添加 nvidia 这个运行时。完成后，我们的应用就能在容器中使用显卡资源了  sudo nvidia-ctk runtime configure --runtime=docker
+  
+2.6 重启docker  sudo systemctl restart docker
+2.7 查看是否安装成功  dpkg -l | grep nvidia-container-toolkit
+  
+3. 拉取基础镜像成功后，创建一个docker容器docker imagessudo docker run -it --name qwen --gpus all nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04exit
+4. 退出容器后，将本地跑同的qwen模型代码&#x2F;权重&#x2F;数据集&#x2F;环境cp到创建的qwen镜像中docker cp /opt/tmp/Qwen/ 02649afd9710:/qwen
+5. 重启docker，exec执行docker ps -adocker start qwendocker exec -it 02649afd9710 bash
+6. 因为想在容器中执行自身的python环境，不借用宿主机的环境，所以需要单独再安装conda、pytorch等环境。7. 安装完基础环境后，需要安装qwen模型的依赖pip install -r requirements.txt
+8. 没有vim编辑器还需安装vimapt-get updateapt-get install -y vim
+9. deepspeed安装pip install &quot;peft&lt;0.8.0&quot; deepspeed
+10. 此时在qwen容器中执行训练脚本，拉起训练。bash finetune/finetune_lora_single_gpu.sh
+11. 将此时qwen容器打成镜像docker commit -a &quot;wangxiangbo&quot; -m &quot;qwen 7B&quot; 02649afd9710 qwen-7b:v1.0
+12. 将打好的镜像转成tar包，供新机器解压使用docker save -o qwen-7b.tar qwen-7b:v1.0
+13. 加载tar镜像, 使用load进行从tar文件导出镜像docker load -i qwen-7b.tar
+14. 由于新机器挂载文件存储的原因，镜像解压速度太慢，于是打算将打好的qwen镜像push到阿里云个人仓库中，在新机器中直接pull该镜像。15. 将镜像推送到Registrydocker login --username=aliyun9599911612 registry.cn-shanghai.aliyuncs.comdocker tag 37c7b97b67f6 registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0docker push registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
+16. 在3号机器中，拉取该镜像docker pull registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0
+17. 通过该镜像，run一个容器docker run -it --name qwen --gpus all registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:v1.0 bash
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>Nvidia</tag>
+        <tag>Qwen</tag>
+        <tag>V100</tag>
+        <tag>Deepspeed</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2.1 数据集处理</title>
+    <url>/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.1%20Deepseek-7B%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[下载初始数据集
+下载WuDaoCorpora2.0开源数据集到&#x2F;mnt&#x2F;workspace&#x2F;llama3-datasets工作目录下
+
+wget https://atp-modelzoo.oss-cn-hangzhou.aliyuncs.com/release/datasets/WuDaoCorpus2.0_base_sample.tgztar zxvf WuDaoCorpus2.0_base_sample.tgz 
+
+Megatron-LM预训练数据清洗mmap数据是一种预先执行tokenize处理的数据格式，可以极大减少训练微调过程中等待数据读入的时间，当数据量极大时，优势显著。
+#! /bin/bashset -ex# 请在此处设置原始数据所在路径data_dir=/mnt/users/wangxiangbo/dataset/WuDaoCorpus2.0_base_sample#开始数据清洗流程dataset_dir=$(dirname $data_dir)mkdir -p $&#123;dataset_dir&#125;/cleaned_wudao_datasetcd $&#123;dataset_dir&#125;/cleaned_wudao_datasetwget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama2-codes/preprocess_wudao2.py# 此处与上一节不同，增加了key参数设为textpython3 preprocess_wudao2.py -i $&#123;data_dir&#125; -o $&#123;dataset_dir&#125;/cleaned_wudao_dataset -k text -p 32# 合并清洗后的数据mkdir $&#123;dataset_dir&#125;/wudaocd $&#123;dataset_dir&#125;/wudaofind $&#123;dataset_dir&#125;/cleaned_wudao_dataset -name &quot;*.json&quot; -exec cat &#123;&#125; + &gt; $&#123;dataset_dir&#125;/wudao/merged_wudao_cleaned.jsonrm -rf $&#123;dataset_dir&#125;/cleaned_wudao_dataset
+
+脚本执行完成后，会得到一个合并的json数据集格式
+
+执行下方的处理数据脚本#! /bin/bashSTART_TIME=$SECONDSMEGATRON_PATCH_PATH=/data/codeMEGATRON_PATH=$&#123;MEGATRON_PATCH_PATH&#125;/Megatron-LMexport PYTHONPATH=$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATCH_PATH&#125;:$PYTHONPATHinput_data_dir=/mnt/dataset/wudao/merged_wudao_cleaned.jsontokenizer=DeepseekTokenizerjson_keys=textoutput_data_dir=/data/code/temp/deepseek/deepseek-datasetsload_dir=/data/code/temp/deepseek/deepseek-ckptTOKENIZER_PATH=/data/code/temp/deepseek/deepseek-ckptINPUT=&quot;$&#123;input_data_dir&#125;&quot;if [ $tokenizer = &quot;Qwen2Tokenizer&quot; ]; then  python preprocess_data_megatron.py \  --input $&#123;INPUT&#125; \  --output-prefix $&#123;output_data_dir&#125;/mmap_qwen2_datasets \  --patch-tokenizer-type Qwen2Tokenizer \  --json-keys $&#123;json_keys&#125; \  --load $&#123;load_dir&#125; \  --workers 2 \  --partitions 2 \  --keep-sequential-samples \  --append-eodelif [ $tokenizer = &quot;DeepSeekV2Tokenizer&quot; ]; then  python preprocess_data_megatron.py \  --input $&#123;INPUT&#125; \  --output-prefix $&#123;output_data_dir&#125;/mmap_deepseekv2_datasets \  --patch-tokenizer-type DeepSeekV2Tokenizer \  --json-keys $&#123;json_keys&#125; \  --load $&#123;load_dir&#125; \  --workers 8 \  --partitions 1 \  --keep-sequential-samples \  --append-eodelif [ $tokenizer = &quot;LLamaTokenizer&quot; ]; then  python preprocess_data_megatron.py \  --tokenizer-model $TOKENIZER_PATH \  --input $&#123;INPUT&#125; \  --output-prefix $&#123;output_data_dir&#125;/mmap_llama_datasets \  --patch-tokenizer-type LLamaTokenizer \  --load $&#123;load_dir&#125; \  --workers 16 \  --partitions 1 \  --keep-sequential-samples \  --append-eodelif [ $tokenizer = &quot;DeepseekTokenizer&quot; ]; then  python preprocess_data_megatron.py \  --tokenizer-model $TOKENIZER_PATH \  --input $&#123;INPUT&#125; \  --output-prefix $&#123;output_data_dir&#125;/mmap_deepseek_datasets \  --patch-tokenizer-type LLamaTokenizer \  --load $&#123;load_dir&#125; \  --workers 16 \  --partitions 1 \  --keep-sequential-samples \  --append-eodelif [ $tokenizer = &quot;LLama2Tokenizer&quot; ]; then  python preprocess_data_megatron.py \  --tokenizer-model $TOKENIZER_PATH \  --extra-vocab-size 0 \  --input $&#123;INPUT&#125; \  --output-prefix $&#123;output_data_dir&#125;/mmap_llama2_datasets \  --patch-tokenizer-type LLama2Tokenizer \  --load $&#123;load_dir&#125; \  --workers 16 \  --partitions 1 \  --keep-sequential-samples \  --append-eodelif [ $tokenizer = &quot;LLama3Tokenizer&quot; ]; then  python preprocess_data_megatron.py \  --input $&#123;INPUT&#125; \  --output-prefix $&#123;output_data_dir&#125;/mmap_llama3_datasets \  --patch-tokenizer-type LLama3Tokenizer \  --load $&#123;load_dir&#125; \  --workers 16 \  --partitions 1 \  --keep-sequential-samples \  --append-eodfiELAPSED_TIME=$(($SECONDS - $START_TIME))echo &quot;$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec&quot;
+
+在python preprocess_data_megatron.py中，加入DeepseekTokenizer，此外还需要在&#x2F;data&#x2F;code&#x2F;megatron_patch&#x2F;tokenizer&#x2F;init.py中加入DeepseekTokenizer配置。
+
+
+数据处理完成
 
 ]]></content>
       <categories>
-        <category>开发</category>
-        <category>git</category>
+        <category>模型适配</category>
+        <category>NVIDIA</category>
       </categories>
       <tags>
-        <tag>开发</tag>
-        <tag>gitlab</tag>
+        <tag>Nvidia</tag>
+        <tag>V100</tag>
+        <tag>模型适配</tag>
+        <tag>Deepseek</tag>
+        <tag>Megatron-LM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2.3 Deepseek-7B权重转换</title>
+    <url>/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.3%20Deepseek-7B%E6%9D%83%E9%87%8D%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[Hg-Core权重转换huggingface开源权重准备
+权重转换脚本#!/bin/bashexport CUDA_VISIBLE_DEVICES=0export CUDA_DEVICE_MAX_CONNECTIONS=1START_TIME=$SECONDSMASTER_ADDR=localhostMASTER_PORT=6666MODEL_SIZE=7BHG_CKPT_PATH=/mnt/model/deepseek-ai/deepseek-llm-7b-baseMEGATRON_PATCH_PATH=/data/code/MEGATRON_PATH=$&#123;MEGATRON_PATCH_PATH&#125;/Megatron-LMexport PYTHONPATH=$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATCH_PATH&#125;:$PYTHONPATHSOURCE_CKPT_PATH=/mnt/model/deepseek-ai/deepseek-llm-7b-baseTARGET_CKPT_PATH=/mnt/model/deepseek-ai/deepseek-llm-7b-coreTP=4PP=1EXTRA_VOCAB_SIZE=2400NUM_EXPERTS=0EXPERTS_TOPK=0EP=0NUM_EXPERT_SPLITS=0mg2hf=falseif [ $MODEL_SIZE = 7B ]; thenNUM_LAYERS=30HIDDEN_SIZE=4096NUM_ATTN_HEADS=32INTERMEDIATE_SIZE=11008NUM_KV_HEADS=32VOCAB_SIZE=102400ROPE_THETA=10000RMS_NORM_EPS=1e-6gqa_options=&quot;&quot;fiif [ $NUM_EXPERT_SPLITS -gt 0 ]; thenINTERMEDIATE_SIZE=$(( $&#123;INTERMEDIATE_SIZE&#125; / $&#123;NUM_EXPERT_SPLITS&#125;))fiif [ $NUM_EXPERTS -gt 0 ]; then    expert_options=&quot;                --moe-router-topk $&#123;EXPERTS_TOPK&#125; \                --num-experts $&#123;NUM_EXPERTS&#125; \                --expert-model-parallel-size 1 \                --target_expert_model_parallel_size $&#123;EP&#125; \                --num_expert_split_size $&#123;NUM_EXPERT_SPLITS&#125; \    &quot;fiif [ $mg2hf = true ]; then    convert_options=&quot;                --convert_checkpoint_from_megatron_to_transformers    &quot;elif [ $mg2hf = false ]; then    convert_options=&quot;&quot;fiDISTRIBUTED_ARGS=&quot;--nproc_per_node 1 --nnodes 1 --node_rank 0 --master_addr $MASTER_ADDR --master_port $MASTER_PORT&quot;if [ $MODEL_SIZE != 70B ]; thentorchrun $&#123;DISTRIBUTED_ARGS&#125; hf2mcore.py \    --load_path $&#123;SOURCE_CKPT_PATH&#125; \    --save_path $&#123;TARGET_CKPT_PATH&#125; \    --tokenizer-model $&#123;HG_CKPT_PATH&#125; \    --huggingface_model_path $&#123;HG_CKPT_PATH&#125; \    --megatron-path $&#123;MEGATRON_PATH&#125; \    --target_tensor_model_parallel_size $&#123;TP&#125; \    --target_pipeline_model_parallel_size $&#123;PP&#125; \    --micro-batch-size 1 \    --fp16 \    --swiglu \    --num-layers $&#123;NUM_LAYERS&#125; \    --hidden-size $&#123;HIDDEN_SIZE&#125; \    --ffn-hidden-size $&#123;INTERMEDIATE_SIZE&#125; \    --norm-epsilon $&#123;RMS_NORM_EPS&#125;\    --num-attention-heads $&#123;NUM_ATTN_HEADS&#125; \    --max-position-embeddings 4096 \    --seq-length 1 \    --no-async-tensor-model-parallel-allreduce \    --patch-tokenizer-type DeepseekTokenizer \    --extra-vocab-size $&#123;EXTRA_VOCAB_SIZE&#125; \    --untie-embeddings-and-output-weights \    --no-rope-fusion \    --use-rotary-position-embeddings \    --rotary-base $&#123;ROPE_THETA&#125; \    --transformer-impl transformer_engine \    --disable-bias-linear \    --normalization RMSNorm \    --use-mcore-models \    --attention-dropout 0.0 \    --hidden-dropout 0.0 \    $&#123;expert_options&#125; \    $&#123;convert_options&#125; \    $&#123;gqa_options&#125;elsepython hf2mcore_70b.py \  --load $&#123;HG_CKPT_PATH&#125; \  --megatron-path $&#123;MEGATRON_PATH&#125; \  --load_path $&#123;SOURCE_CKPT_PATH&#125; \  --save_path $&#123;TARGET_CKPT_PATH&#125; \  --target_params_dtype bf16 \  --target_tensor_model_parallel_size $&#123;TP&#125; \  --target_pipeline_model_parallel_size $&#123;PP&#125; \$&#123;convert_options&#125; \fiELAPSED_TIME=$(($SECONDS - $START_TIME))echo &quot;$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec&quot;
+
+tokenizer配置在&#x2F;data&#x2F;code&#x2F;megatron_patch&#x2F;tokenizer&#x2F;init.py中加入Deepseek配置
+elif args.patch_tokenizer_type == &#x27;DeepseekTokenizer&#x27;:        from megatron.core.datasets.megatron_tokenizer import MegatronTokenizer        class _DeepseekTokenizer(MegatronTokenizer):            def __init__(self, tokenizer_path, extra_vocab_size):                super().__init__(tokenizer_path)                self.tokenizer = AutoTokenizer.from_pretrained(                    tokenizer_path,                    padding_side=&quot;right&quot;,                    use_fast=False,                    trust_remote_code=True,                )                self.extra_vocab_size = extra_vocab_size            def __call__(self, text, return_tensors=None,                         padding=None, max_length=None, truncation=None, add_special_tokens=True):                return self.tokenizer(text, return_tensors=return_tensors, padding=padding,                        max_length=max_length, truncation=truncation, add_special_tokens=add_special_tokens)            @property            def vocab_size(self):                return self.tokenizer.vocab_size + self.extra_vocab_size            @property            def vocab(self):                return self.tokenizer.encoder            @property            def inv_vocab(self):                return self.tokenizer.decoder            def tokenize(self, text):                return self.tokenizer.encode(text)            def detokenize(self, token_ids):                return self.tokenizer.decode(token_ids)            @property            def eod(self):                return self.tokenizer.eos_token_id            @property            def eos_token(self):                return self.tokenizer.eos_token            @property            def pad_token_id(self):                return self.tokenizer.pad_token_id            @property            def eos_token_id(self):                return self.tokenizer.eos_token_id        tokenizer = _DeepseekTokenizer(args.tokenizer_model, args.extra_vocab_size)        # tokenizer = _DeepseekTokenizer(args.load, args.extra_vocab_size)        args.padded_vocab_size = tokenizer.vocab_size
+
+hf2mcore.py修改在&#x2F;data&#x2F;code&#x2F;toolkits&#x2F;model_checkpoints_convertor&#x2F;deepseek_core&#x2F;hf2mcore.py中修改导包位置
+
+执行转换脚本，转换流程
+
+转换结束，得到core权重
+core权重的推理结果验证core权重推理结果
+huggingface权重推理结果
+]]></content>
+      <categories>
+        <category>模型适配</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>Nvidia</tag>
+        <tag>V100</tag>
+        <tag>模型适配</tag>
+        <tag>Deepseek</tag>
+        <tag>Megatron-LM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2.4 Deepseek-7B微调适配</title>
+    <url>/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.4%20Deepseek-7B%E5%BE%AE%E8%B0%83%E9%80%82%E9%85%8D/</url>
+    <content><![CDATA[微调物料及代码准备数据集准备&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets&#x2F;alpaca_zh-deepseek-train.json
+&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets&#x2F;alpaca_zh-deepseek-valid.json
+
+微调脚本#!/bin/bashexport NCCL_P2P_DISABLE=1#export NCCL_DEBUG=INFOexport NCCL_SOCKET_IFNAME=eth0export GLOO_SOCKET_IFNAME=eth0export CUDA_DEVICE_MAX_CONNECTIONS=1export CUDA_VISIBLE_DEVICES=0,1,2,3MEGATRON_PATCH_PATH=/data/codeMEGATRON_PATH=$&#123;MEGATRON_PATCH_PATH&#125;/Megatron-LMexport PYTHONPATH=$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATCH_PATH&#125;:$PYTHONPATHNNODES=2NODE_RANK=0GPUS_PER_NODE=4MASTER_ADDR=192.168.0.65MASTER_PORT=8889DISTRIBUTED_ARGS=&quot;--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT&quot;MODEL_SIZE=7BBATCH_SIZE=1GLOBAL_BATCH_SIZE=8 LR=1e-5MIN_LR=1e-6SEQ_LEN=1024PAD_LEN=1024EXTRA_VOCAB_SIZE=2400PR=fp16TP=4PP=1AC=selDO=trueFL=falseSP=trueTE=trueMOE=falseSAVE_INTERVAL=1000DATASET_PATH=/data/code/temp/deepseek/deepseek-datasets/alpaca_zh-deepseek-train.jsonVALID_DATASET_PATH=/data/code/temp/deepseek/deepseek-datasets/alpaca_zh-deepseek-valid.jsonPRETRAIN_CHECKPOINT_PATH=/data/code/temp/deepseek/deepseek-ckptTOKENIZER_PATH=/data/code/temp/deepseek/deepseek-ckptTRAIN_TOKENS=100000000   WARMUP_TOKENS=10000OUTPUT_BASEPATH=/data/code/temp/output/deepseek/finetune_outputif [ $MODEL_SIZE = 7B ]; thenNUM_LAYERS=30HIDDEN_SIZE=4096NUM_ATTN_HEADS=32INTERMEDIATE_SIZE=11008MAX_POSITION_EMBEDDINGS=4096gqa_options=&quot;&quot;fiif [ $AC = full ]; then    activation_checkpoint_options=&quot; \		    --recompute-method uniform \		    --recompute-granularity full&quot;elif [ $AC = sel ]; then    activation_checkpoint_options=&quot; \        --recompute-activations&quot;elif [ $AC = none ]; then    activation_checkpoint_options=&quot; \                    &quot;fiif [ $PR = fp16 ]; then    pr_options=&quot; \		    --fp16 \            --apply-query-key-layer-scaling&quot;    export NVTE_APPLY_QK_LAYER_SCALING=1elif [ $PR = bf16 ]; then    pr_options=&quot; \        --bf16&quot;elif [ $PR = fp8 ]; then    pr_options=&quot; \        --bf16 \        --fp8-hybrid \        --fp8-amax-compute-algo max \        --fp8-amax-history-len 1024 \        --transformer-impl transformer_engine&quot;fiif [ $DO = true ]; then    do_options=&quot; \		    --use-distributed-optimizer&quot;elif [ $DO = false ]; then    do_options=&quot; \                    &quot;fiif [ $FL = true ]; then    flash_options=&quot; \		    --use-flash-attn&quot;elif [ $FL = false ]; then    flash_options=&quot; \                    &quot;fiif [ $TE = true ]; then    te_options=&quot; \		    --transformer-impl transformer_engine&quot;elif [ $TE = false ]; then    te_options=&quot; \                    &quot;fiif [ $MOE = true ]; then    moe_options=&quot; \		    --moe-router-topk 1 \		    --num-experts 4 \		    --moe-aux-loss-coeff 1e-2 \		    --expert-model-parallel-size 2&quot;elif [ $MOE = false ]; then    moe_options=&quot; \                    &quot;fiif [ $SP = true ] &amp;&amp; [ $TP -gt 1 ]; then    sp_options=&quot; \		    --sequence-parallel&quot;elif [ $SP = false ]; then    sp_options=&quot; \                    &quot;fiif [ $PRETRAIN_CHECKPOINT_PATH != none ]; then    load_options=&quot; \            --load $PRETRAIN_CHECKPOINT_PATH&quot;fiTRAIN_ITERS=$(( $&#123;TRAIN_TOKENS&#125; / $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))LR_WARMUP_ITERS=$(( $&#123;WARMUP_TOKENS&#125;  / $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))LR_DECAY_ITERS=$(( $&#123;TRAIN_TOKENS&#125; /  $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))# LR_DECAY_ITERS=$(($&#123;TRAIN_ITERS&#125; - $&#123;LR_WARMUP_ITERS&#125;))NAME=&quot;$&#123;ENV&#125;-finetune-mcore-deepseek-$&#123;MODEL_SIZE&#125;-lr-$&#123;LR&#125;-bs-$&#123;BATCH_SIZE&#125;-seqlen-$&#123;SEQ_LEN&#125;-pr-$&#123;PR&#125;-tp-$&#123;TP&#125;-pp-$&#123;PP&#125;-ac-$&#123;AC&#125;-do-$&#123;DO&#125;-sp-$&#123;SP&#125;-tt-$&#123;TRAIN_TOKENS&#125;-wt-$&#123;WARMUP_ITERS&#125;&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/log/&quot;current_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)TENSORBOARD_DIR=&quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/$&#123;NAME&#125;_$&#123;current_time&#125;&quot;mkdir -p $&#123;TENSORBOARD_DIR&#125;SAVED_PRETRAIN_CHECKPOINT_PATH=&quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/$&#123;NAME&#125;&quot;megatron_options=&quot;  \        --tokenizer-model $&#123;TOKENIZER_PATH&#125; \        --save $&#123;SAVED_PRETRAIN_CHECKPOINT_PATH&#125; \        --split 99,1,0 \        --train-data-path $&#123;DATASET_PATH&#125; \        --valid-data-path $&#123;VALID_DATASET_PATH&#125; \        --test-data-path $&#123;VALID_DATASET_PATH&#125; \        --lr $&#123;LR&#125; \        --min-lr $&#123;MIN_LR&#125; \        --lr-decay-style linear \        --adam-beta1 0.9 \        --adam-beta2 0.95 \        --weight-decay 0.1 \        --clip-grad 1.0 \        --init-method-std 0.006 \        --dataloader-type cyclic \        --lr-decay-iters $&#123;LR_DECAY_ITERS&#125; \        --lr-warmup-iters $&#123;LR_WARMUP_ITERS&#125; \        --train-iters $&#123;TRAIN_ITERS&#125; \        --micro-batch-size $&#123;BATCH_SIZE&#125; \        --global-batch-size $&#123;GLOBAL_BATCH_SIZE&#125; \        --num-layers $&#123;NUM_LAYERS&#125; \        --hidden-size $&#123;HIDDEN_SIZE&#125; \        --num-attention-heads $&#123;NUM_ATTN_HEADS&#125; \        --ffn-hidden-size $&#123;INTERMEDIATE_SIZE&#125; \        --seq-length $&#123;SEQ_LEN&#125; \        --max-position-embeddings $&#123;MAX_POSITION_EMBEDDINGS&#125; \        --max-padding-length $&#123;PAD_LEN&#125; \        --log-interval 1 \        --eval-interval 10000 \        --eval-iters 10 \        --save-interval $&#123;SAVE_INTERVAL&#125; \        --tensorboard-queue-size 1 \        --tensorboard-dir $&#123;TENSORBOARD_DIR&#125; \        --log-timers-to-tensorboard \        --log-batch-size-to-tensorboard \        --log-validation-ppl-to-tensorboard \        --tensor-model-parallel-size $&#123;TP&#125; \        --pipeline-model-parallel-size $&#123;PP&#125; \        --no-load-optim \        --no-load-rng \        --num-workers 8 \        --seed 1234 \        --extra-vocab-size $&#123;EXTRA_VOCAB_SIZE&#125; \        --patch-tokenizer-type DeepseekTokenizer \        --dataset LLama-Pretrain-Raw \        --swiglu \        --normalization RMSNorm \        --use-rotary-position-embeddings \        --no-rope-fusion \        --position-embedding-type rope \        --untie-embeddings-and-output-weights \        --disable-bias-linear \        --use-mcore-models \        --rotary-base 10000 \        --attention-dropout 0.0 \        --hidden-dropout 0.0 \        --norm-epsilon 1e-05 \        --eod-mask-loss \        --log-throughput \        --loss-scale 2048              &quot;        # --loss-scale 2048  LOG_SAVE=&quot;/data/code/temp/output/deepseek/finetune_output/log/&quot;$&#123;current_time&#125;-deepseek-finetune-$&#123;NODE_RANK&#125;.log&quot;&quot; run_cmd=&quot;torchrun $DISTRIBUTED_ARGS /data/code/examples/deepseek_core/pretrain_mcore_deepseek.py $&#123;megatron_options&#125; $&#123;pr_options&#125; $&#123;load_options&#125; $&#123;te_options&#125; $&#123;activation_checkpoint_options&#125; $&#123;do_options&#125; $&#123;flash_options&#125; $&#123;sp_options&#125; $&#123;gqa_options&#125; $&#123;moe_options&#125; &gt; $&#123;LOG_SAVE&#125; 2&gt;&amp;1&quot;echo $&#123;run_cmd&#125;eval $&#123;run_cmd&#125;set +x
+
+微调yamlapiVersion: apps/v1kind: DaemonSetmetadata:  name: deepseek-core  namespace: deepseekspec:  selector:    matchLabels:      app: deepseek-core  template:    metadata:      labels:        app: deepseek-core    spec:      hostNetwork: true      nodeSelector:        deepseek: deepseek-7B      containers:        - name: deepseek          image: registry.paas/library/megatron-lm:v1          imagePullPolicy: IfNotPresent          resources:            limits:              nvidia.com/gpu: 4            requests:              nvidia.com/gpu: 4          command:            - &quot;/bin/bash&quot;            - &quot;-c&quot;            - |              cd /data/code/temp/conf/deepseek_core/finetune &amp;&amp;              bash setRank.sh &amp;&amp;              cd /data/ &amp;&amp;              bash finetune_mcore_deepseek.sh          securityContext:            privileged: true          volumeMounts:            - mountPath: /data/code              name: code            - mountPath: /etc/localtime              name: localtime            - mountPath: /dev/shm              name: dshm            - name: weight              mountPath: /data/code/temp/deepseek/deepseek-ckpt/      volumes:        - name: code          hostPath:            path: /mnt/users/lihai/distribute/core/megatron-core        - name: weight          hostPath:            path: /mnt/users/wangxiangbo/model/deepseek-ai/deepseek-llm-7b-core        - name: localtime          hostPath:            path: /etc/localtime        - name: dshm          emptyDir:            medium: Memory            sizeLimit: 20G
+
+setrank#!/bin/bashorigin_shell=&quot;/data/code/examples/deepseek_core/finetune_mcore_deepseek.sh&quot;conf_dir=&quot;/data/code/temp/conf/&quot;local_dir=&quot;/data/&quot;shell_name=finetune_mcore_deepseek.sh## 复制脚本到/workspace下cp $origin_shell $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$conf_dir&quot;hostfile-23)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)# 初始化ranknode_rank=-1# 遍历数组for i in &quot;$&#123;!ips[@]&#125;&quot;; do    # 使用tr命令去除空白字符    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        node_rank=$i        break    fidoneif [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
+
+多机多卡拉起测试
+
+
+
+
+断点续训测试loss曲线对比hugging-patch权重转换patch转换脚本#!/bin/bashset -eSTART_TIME=$SECONDSMEGATRON_PATH=/data/code/export PYTHONPATH=$PYTHONPATH:$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATH&#125;/Megatron-LM-231007SOURCE_CKPT_PATH=/mnt/deepseek-ai/deepseek-llm-7b-baseTARGET_CKPT_PATH=/mnt/deepseek-ai/deepseek-llm-7b-patchTP=4PP=1MN=llama-7b #llama-7b, llama-13b, llama-30b, llama-65b, llama2-7b, llama2-13b, llama2-70bEXTRA_VOCAB_SIZE=2400mg2hf=falseif [ $mg2hf = true ]; then    do_options=&quot;                --convert_checkpoint_from_megatron_to_transformers    &quot;elif [ $mg2hf = false ]; then    do_options=&quot;&quot;fipython hf2megatron.py \    --load_path $&#123;SOURCE_CKPT_PATH&#125; \    --save_path $&#123;TARGET_CKPT_PATH&#125; \    --target_params_dtype fp16 \    --megatron-path $&#123;MEGATRON_PATH&#125; \    --target_tensor_model_parallel_size $&#123;TP&#125; \    --target_pipeline_model_parallel_size $&#123;PP&#125; \    --model_name $&#123;MN&#125; \    --extra_num_vocabs $&#123;EXTRA_VOCAB_SIZE&#125; \$&#123;do_options&#125;ELAPSED_TIME=$(($SECONDS - $START_TIME))echo &quot;$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec&quot;
+
+patch权重转换过程
+得到转成patch的权重
+patch框架微调代码准备patch的微调yamlapiVersion: apps/v1kind: DaemonSetmetadata:  name: deepseek-core  namespace: deepseekspec:  selector:    matchLabels:      app: deepseek-core  template:    metadata:      labels:        app: deepseek-core    spec:      hostNetwork: true      nodeSelector:        deepseek: deepseek-7B      containers:        - name: deepseek          image: registry.paas/library/megatron-lm:v1          imagePullPolicy: IfNotPresent          resources:            limits:              nvidia.com/gpu: 4            requests:              nvidia.com/gpu: 4          command:            - &quot;/bin/bash&quot;            - &quot;-c&quot;            - |              cd /data/code/examples/deepseek/conf &amp;&amp;              bash setRank.sh &amp;&amp;              cd /data/ &amp;&amp;              bash finetune_patch_deepseek.sh          securityContext:            privileged: true          volumeMounts:            - mountPath: /data/code              name: code            - mountPath: /etc/localtime              name: localtime            - mountPath: /dev/shm              name: dshm            - name: weight              mountPath: /data/code/examples/deepseek/ckpt/      volumes:        - name: code          hostPath:            path: /mnt/users/wangxiangbo/Pai-Megatron-Patch        - name: weight          hostPath:            path: /mnt/users/wangxiangbo/model/deepseek-ai/deepseek-llm-7b-patch        - name: localtime          hostPath:            path: /etc/localtime        - name: dshm          emptyDir:            medium: Memory            sizeLimit: 20G
+
+patch的微调脚本#!/bin/bash#sh run_pretrain_megatron_deepseek.sh dsw /workspace/Pai-Megatron-Patch 7B 1 8 1e-5 1e-6 2048 2048 0 bf16 1 1 sel true true true false 100000 /mnt/deepseek-datasets/wudao_llamabpe_text_document /mnt/deepseek-ckpts/Llama-2-7b-hf-to-mg-tp1-pp1/ 10000000000 100000000 /mnt/output_patch_testexport NCCL_P2P_DISABLE=1#export NCCL_DEBUG=INFOexport NCCL_SOCKET_IFNAME=eth0export GLOO_SOCKET_IFNAME=eth0export CUDA_DEVICE_MAX_CONNECTIONS=1export CUDA_VISIBLE_DEVICES=0,1,2,3MEGATRON_PATCH_PATH=/data/code MEGATRON_PATH=$&#123;MEGATRON_PATCH_PATH&#125;/Megatron-LM-231007export PYTHONPATH=$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATCH_PATH&#125;:$PYTHONPATHNNODES=2NODE_RANK=0GPUS_PER_NODE=4MASTER_ADDR=192.168.0.65MASTER_PORT=8889DISTRIBUTED_ARGS=&quot;--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT&quot;MODEL_SIZE=7BBATCH_SIZE=1GLOBAL_BATCH_SIZE=8LR=1e-5MIN_LR=1e-6SEQ_LEN=1024PAD_LEN=1024EXTRA_VOCAB_SIZE=4800PR=fp16TP=4PP=1AC=selDO=trueFL=falseSP=trueTE=falseSAVE_INTERVAL=1000DATASET_PATH=/data/code/examples/deepseek/dataset/alpaca_zh-deepseek-train.jsonVALID_DATASET_PATH=/data/code/examples/deepseek/dataset/alpaca_zh-deepseek-valid.jsonPRETRAIN_CHECKPOINT_PATH=/data/code/examples/deepseek/ckptTRAIN_ITERS=10000LR_WARMUP_ITERS=0OUTPUT_BASEPATH=/data/code/examples/deepseek/output/finetune_outputif [ $MODEL_SIZE = 7B ]; thenNUM_LAYERS=30HIDDEN_SIZE=4096NUM_ATTN_HEADS=32INTERMEDIATE_SIZE=11008gqa_options=&quot;&quot;fiif [ $AC = full ]; then    activation_checkpoint_options=&quot; \		    --recompute-method uniform \		    --recompute-granularity full \            --recompute-num-layers $&#123;NUM_LAYERS&#125;&quot;elif [ $AC = sel ]; then    activation_checkpoint_options=&quot; \        --recompute-activations&quot;elif [ $AC = none ]; then    activation_checkpoint_options=&quot; \                    &quot;fiif [ $PR = fp16 ]; then    pr_options=&quot; \		    --fp16&quot;elif [ $PR = bf16 ]; then    pr_options=&quot; \        --bf16&quot;elif [ $PR = fp8 ]; then    pr_options=&quot; \        --bf16        --fp8-hybrid \        --fp8-amax-compute-algo max \        --fp8-amax-history-len 1024 \        --transformer-impl transformer_engine&quot;fiif [ $DO = true ]; then    do_options=&quot; \		    --use-distributed-optimizer&quot;elif [ $DO = false ]; then    do_options=&quot; \                    &quot;fiif [ $FL = true ]; then    flash_options=&quot; \		    --use-flash-attn&quot;elif [ $FL = false ]; then    flash_options=&quot; \                    &quot;fiif [ $TE = true ]; then    te_options=&quot; \		    --transformer-impl transformer_engine&quot;elif [ $TE = false ]; then    te_options=&quot; \                    &quot;fiif [ $SP = true ] &amp;&amp; [ $TP -gt 1 ]; then    sp_options=&quot; \		    --sequence-parallel&quot;elif [ $SP = false ]; then    sp_options=&quot; \                    &quot;fiif [ $PRETRAIN_CHECKPOINT_PATH != none ]; then    load_options=&quot; \            --load $PRETRAIN_CHECKPOINT_PATH&quot;fiLR_DECAY_ITERS=$(( $&#123;TRAIN_ITERS&#125; - $&#123;LR_WARMUP_ITERS&#125;))NAME=&quot;$&#123;ENV&#125;-finetune-patch-deepseek-$&#123;MODEL_SIZE&#125;-lr-$&#123;LR&#125;-bs-$&#123;BATCH_SIZE&#125;-seqlen-$&#123;SEQ_LEN&#125;-pr-$&#123;PR&#125;-tp-$&#123;TP&#125;-pp-$&#123;PP&#125;-ac-$&#123;AC&#125;-do-$&#123;DO&#125;-sp-$&#123;SP&#125;-tt-$&#123;TRAIN_TOKENS&#125;-wt-$&#123;WARMUP_TOKENS&#125;&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/log/&quot;current_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)TENSORBOARD_DIR=&quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/$&#123;NAME&#125;_$&#123;current_time&#125;&quot;mkdir -p $&#123;TENSORBOARD_DIR&#125;SAVED_PRETRAIN_CHECKPOINT_PATH=&quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/$&#123;NAME&#125;&quot;megatron_options=&quot;  \        --save $&#123;SAVED_PRETRAIN_CHECKPOINT_PATH&#125; \        --split 99,1,0 \        --train-data-path $&#123;DATASET_PATH&#125; \        --valid-data-path $&#123;VALID_DATASET_PATH&#125; \        --test-data-path $&#123;VALID_DATASET_PATH&#125; \        --lr $&#123;LR&#125; \        --min-lr $&#123;MIN_LR&#125; \        --lr-decay-style linear \        --adam-beta1 0.9 \        --adam-beta2 0.95 \        --weight-decay 0.1 \        --clip-grad 1.0 \        --init-method-std 0.006 \        --dataloader-type cyclic \        --lr-decay-iters $&#123;LR_DECAY_ITERS&#125; \        --lr-warmup-iters $&#123;LR_WARMUP_ITERS&#125; \        --train-iters $&#123;TRAIN_ITERS&#125; \        --micro-batch-size $&#123;BATCH_SIZE&#125; \        --global-batch-size $&#123;GLOBAL_BATCH_SIZE&#125; \        --num-layers $&#123;NUM_LAYERS&#125; \        --hidden-size $&#123;HIDDEN_SIZE&#125; \        --num-attention-heads $&#123;NUM_ATTN_HEADS&#125; \        --ffn-hidden-size $&#123;INTERMEDIATE_SIZE&#125; \        --seq-length $&#123;SEQ_LEN&#125; \        --max-position-embeddings $&#123;SEQ_LEN&#125; \        --log-interval 1 \        --eval-interval 10000 \        --eval-iters 10 \        --save-interval $&#123;SAVE_INTERVAL&#125; \        --tensorboard-queue-size 1 \        --tensorboard-dir $&#123;TENSORBOARD_DIR&#125; \        --log-timers-to-tensorboard \        --log-batch-size-to-tensorboard \        --log-validation-ppl-to-tensorboard \        --tensor-model-parallel-size $&#123;TP&#125; \        --pipeline-model-parallel-size $&#123;PP&#125; \        --dataset LLama-Pretrain-Raw \        --no-save-optim \        --no-load-optim \        --no-load-rng \        --num-workers 8 \        --seed 1234 \        --max-padding-length $&#123;PAD_LEN&#125; \        --extra-vocab-size $&#123;EXTRA_VOCAB_SIZE&#125; \        --patch-tokenizer-type LLamaTokenizer \        --swiglu \        --normalization RMSNorm \        --use-llama2-rotary-position-embeddings \        --position-embedding-type rope \        --untie-embeddings-and-output-weights \        --rotary-base 10000 \        --rotary-scale-factor 4 \        --loss-scale 2048 \        --disable-bias-linear        &quot;LOG_SAVE=&quot;/data/code/examples/deepseek/output/finetune_output/log/&quot;$&#123;current_time&#125;-deepseek-patch-$&#123;NODE_RANK&#125;.log&quot;&quot; run_cmd=&quot;torchrun $DISTRIBUTED_ARGS /data/code/examples/llama2/pretrain_megatron_llama.py $&#123;megatron_options&#125; $&#123;pr_options&#125; $&#123;load_options&#125; $&#123;te_options&#125; $&#123;activation_checkpoint_options&#125; $&#123;do_options&#125; $&#123;flash_options&#125; $&#123;sp_options&#125; $&#123;gqa_options&#125; &gt; $&#123;LOG_SAVE&#125; 2&gt;&amp;1&quot;echo $&#123;run_cmd&#125;eval $&#123;run_cmd&#125;set +x
+
+patch的微调setrank#!/bin/bashorigin_shell=&quot;/data/code/examples/deepseek/finetune_patch_deepseek.sh&quot;conf_dir=&quot;/data/code/examples/deepseek/conf/&quot;local_dir=&quot;/data/&quot;shell_name=finetune_patch_deepseek.sh## 复制脚本到/workspace下cp $origin_shell $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$conf_dir&quot;hostfile)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)# 初始化ranknode_rank=-1# 遍历数组for i in &quot;$&#123;!ips[@]&#125;&quot;; do    # 使用tr命令去除空白字符    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        node_rank=$i        break    fidoneif [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
+
+patch框架微调测试
+
+]]></content>
+      <categories>
+        <category>模型适配</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>Nvidia</tag>
+        <tag>V100</tag>
+        <tag>模型适配</tag>
+        <tag>Deepseek</tag>
+        <tag>Megatron-LM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2.2 Deepseek-7B预训练适配</title>
+    <url>/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.2%20Deepseek-7B%E9%A2%84%E8%AE%AD%E7%BB%83%E9%80%82%E9%85%8D/</url>
+    <content><![CDATA[预训练物料及代码准备Deepseek-7B的Tokenizer下载位置位于&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-ckpt
+
+数据集准备位置位于&#x2F;data&#x2F;code&#x2F;temp&#x2F;deepseek&#x2F;deepseek-datasets
+
+pretrain_mcore_deepseek.sh预训练脚本export NCCL_P2P_DISABLE=1export NCCL_DEBUG=INFOexport NCCL_SOCKET_IFNAME=eth0export GLOO_SOCKET_IFNAME=eth0export CUDA_DEVICE_MAX_CONNECTIONS=1export CUDA_VISIBLE_DEVICES=0,1,2,3MEGATRON_PATCH_PATH=/data/code MEGATRON_PATH=$&#123;MEGATRON_PATCH_PATH&#125;/Megatron-LMexport PYTHONPATH=$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATCH_PATH&#125;:$PYTHONPATHNNODES=2NODE_RANK=0GPUS_PER_NODE=4MASTER_ADDR=192.168.0.22MASTER_PORT=29500DISTRIBUTED_ARGS=&quot;--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT&quot;MODEL_SIZE=7BBATCH_SIZE=1GLOBAL_BATCH_SIZE=8LR=1e-5MIN_LR=1e-6SEQ_LEN=1024PAD_LEN=1024EXTRA_VOCAB_SIZE=0PR=fp16TP=4PP=1AC=selDO=trueFL=falseSP=trueTE=trueMOE=falseSAVE_INTERVAL=1000DATASET_PATH=/data/code/temp/deepseek/deepseek-datasets/mmap_deepseek_datasets_text_document#PRETRAIN_CHECKPOINT_PATH=noneTOKENIZER_PATH=/data/code/temp/deepseek/deepseek-ckptTRAIN_TOKENS=10000000WARMUP_TOKENS=0OUTPUT_BASEPATH=/data/code/temp/output/deepseek/pretrain_outputif [ $MODEL_SIZE = 7B ]; thenNUM_LAYERS=32HIDDEN_SIZE=4096NUM_ATTN_HEADS=32INTERMEDIATE_SIZE=11008MAX_POSITION_EMBEDDINGS=4096gqa_options=&quot;&quot;fiif [ $AC = full ]; then    activation_checkpoint_options=&quot; \		    --recompute-method uniform \		    --recompute-granularity full&quot;elif [ $AC = sel ]; then    activation_checkpoint_options=&quot; \        --recompute-activations&quot;elif [ $AC = none ]; then    activation_checkpoint_options=&quot; \    &quot;fiif [ $PR = fp16 ]; then    pr_options=&quot; \		    --fp16 \            --apply-query-key-layer-scaling&quot;    export NVTE_APPLY_QK_LAYER_SCALING=1elif [ $PR = bf16 ]; then    pr_options=&quot; \        --bf16&quot;elif [ $PR = fp8 ]; then    pr_options=&quot; \        --bf16 \        --fp8-hybrid \        --fp8-amax-compute-algo max \        --fp8-amax-history-len 1024 \        --transformer-impl transformer_engine&quot;fiif [ $DO = true ]; then    do_options=&quot; \		    --use-distributed-optimizer&quot;elif [ $DO = false ]; then    do_options=&quot; \                    &quot;fiif [ $FL = true ]; then    flash_options=&quot; \		    --use-flash-attn&quot;elif [ $FL = false ]; then    flash_options=&quot; \                    &quot;fiif [ $TE = true ]; then    te_options=&quot; \		    --transformer-impl transformer_engine&quot;elif [ $TE = false ]; then    te_options=&quot; \                    &quot;fiif [ $MOE = true ]; then    moe_options=&quot; \		    --moe-router-topk 1 \		    --num-experts 4 \		    --expert-model-parallel-size 2&quot;elif [ $MOE = false ]; then    moe_options=&quot; \                    &quot;fiif [ $SP = true ] &amp;&amp; [ $TP -gt 1 ]; then    sp_options=&quot; \		    --sequence-parallel&quot;elif [ $SP = false ]; then    sp_options=&quot; \                    &quot;fiif [ $PRETRAIN_CHECKPOINT_PATH != none ]; then    load_options=&quot; \            --load $PRETRAIN_CHECKPOINT_PATH&quot;fiTRAIN_ITERS=$(( $&#123;TRAIN_TOKENS&#125; / $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))LR_WARMUP_ITERS=$(( $&#123;WARMUP_TOKENS&#125;  / $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))LR_DECAY_ITERS=$(( $&#123;TRAIN_TOKENS&#125; /  $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))NAME=&quot;$&#123;ENV&#125;-pretrain-mcore-deepseek-$&#123;MODEL_SIZE&#125;-lr-$&#123;LR&#125;-bs-$&#123;BATCH_SIZE&#125;-seqlen-$&#123;SEQ_LEN&#125;-pr-$&#123;PR&#125;-tp-$&#123;TP&#125;-pp-$&#123;PP&#125;-ac-$&#123;AC&#125;-do-$&#123;DO&#125;-sp-$&#123;SP&#125;-moe-$&#123;MOE&#125;-tt-$&#123;TRAIN_TOKENS&#125;-wt-$&#123;WARMUP_TOKENS&#125;&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/log/&quot;current_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)TENSORBOARD_DIR=&quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/$&#123;NAME&#125;_$&#123;current_time&#125;&quot;mkdir -p $&#123;TENSORBOARD_DIR&#125;SAVED_PRETRAIN_CHECKPOINT_PATH=&quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/$&#123;NAME&#125;&quot;megatron_options=&quot;  \        --tokenizer-model $TOKENIZER_PATH \        --save $&#123;SAVED_PRETRAIN_CHECKPOINT_PATH&#125; \        --data-path $&#123;DATASET_PATH&#125; \        --lr $&#123;LR&#125; \        --min-lr $&#123;MIN_LR&#125; \        --lr-decay-style linear \        --adam-beta1 0.9 \        --adam-beta2 0.95 \        --weight-decay 0.1 \        --clip-grad 1.0 \        --init-method-std 0.006 \        --attention-dropout 0.0 \        --hidden-dropout 0.0  \        --lr-decay-iters $&#123;LR_DECAY_ITERS&#125; \        --lr-warmup-iters $&#123;LR_WARMUP_ITERS&#125; \        --train-iters $&#123;TRAIN_ITERS&#125; \        --split 99,1,0 \        --micro-batch-size $&#123;BATCH_SIZE&#125; \        --global-batch-size $&#123;GLOBAL_BATCH_SIZE&#125; \        --num-layers $&#123;NUM_LAYERS&#125; \        --hidden-size $&#123;HIDDEN_SIZE&#125; \        --num-attention-heads $&#123;NUM_ATTN_HEADS&#125; \        --ffn-hidden-size $&#123;INTERMEDIATE_SIZE&#125; \        --seq-length $&#123;SEQ_LEN&#125; \        --max-position-embeddings $&#123;MAX_POSITION_EMBEDDINGS&#125; \        --max-padding-length $&#123;PAD_LEN&#125; \        --log-throughput \        --log-interval 1 \        --eval-interval 10000 \        --eval-iters 10 \        --save-interval $&#123;SAVE_INTERVAL&#125; \        --tensorboard-queue-size 1 \        --tensorboard-dir $&#123;TENSORBOARD_DIR&#125; \        --log-timers-to-tensorboard \        --log-batch-size-to-tensorboard \        --log-validation-ppl-to-tensorboard \        --tensor-model-parallel-size $&#123;TP&#125; \        --pipeline-model-parallel-size $&#123;PP&#125; \        --no-load-optim \        --no-load-rng \        --num-workers 8 \        --seed 1234 \        --extra-vocab-size $&#123;EXTRA_VOCAB_SIZE&#125; \        --patch-tokenizer-type DeepseekTokenizer \        --dataset LLama-Pretrain-Idxmap \        --swiglu \        --normalization RMSNorm \        --norm-epsilon 1e-05 \        --use-rotary-position-embeddings \        --no-rope-fusion \        --position-embedding-type rope \        --untie-embeddings-and-output-weights \        --disable-bias-linear \        --rotary-base 10000 \        --use-mcore-models         &quot;LOG_SAVE=&quot;/data/code/temp/output/deepseek/pretrain_output/log/&quot;$&#123;current_time&#125;-deepseek-$&#123;NODE_RANK&#125;.log&quot;&quot; run_cmd=&quot;torchrun $DISTRIBUTED_ARGS pretrain_mcore_deepseek.py $&#123;megatron_options&#125; $&#123;pr_options&#125; $&#123;load_options&#125; $&#123;te_options&#125; $&#123;activation_checkpoint_options&#125; $&#123;do_options&#125; $&#123;flash_options&#125; $&#123;sp_options&#125; $&#123;gqa_options&#125; $&#123;moe_options&#125; &gt; $&#123;LOG_SAVE&#125; 2&gt;&amp;1&quot;echo $&#123;run_cmd&#125;eval $&#123;run_cmd&#125;set +x
+
+pretrain_mcore_deepseek.py训练代码# Copyright (c) 2023 Alibaba PAI and Nvidia Megatron-LM Team.## Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);# you may not use this file except in compliance with the License.# You may obtain a copy of the License at##     http://www.apache.org/licenses/LICENSE-2.0## Unless required by applicable law or agreed to in writing, software# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.# See the License for the specific language governing permissions and# limitations under the License.import osimport torchfrom torch import Tensorfrom functools import partialfrom typing import Unionfrom megatron import get_argsfrom megatron import get_timersfrom megatron.core import mpu, tensor_parallelfrom megatron.core.enums import ModelTypeimport megatron.modelfrom megatron.utils import (    get_batch_on_this_tp_rank,    get_batch_on_this_cp_rank,    average_losses_across_data_parallel_group)from megatron.core.datasets.blended_megatron_dataset_builder import BlendedMegatronDatasetBuilderfrom megatron.training import pretrainfrom megatron.core.datasets.gpt_dataset import GPTDatasetConfigfrom megatron.core.datasets.gpt_dataset import GPTDataset# from megatron.core.models.gpt import GPTModelfrom megatron.core.transformer.spec_utils import import_modulefrom megatron.arguments import core_transformer_config_from_argsfrom megatron_patch.model.deepseek_core.model import GPTModelfrom megatron_patch.data import build_pretrain_dataset_from_originalfrom megatron_patch.data.utils import get_batch_on_this_tp_rank_originalfrom megatron_patch.tokenizer import get_tokenizer, build_tokenizerfrom megatron_patch.arguments import get_patch_argsfrom megatron_patch.model.deepseek_core.transformer_config import DeepseekTransformerConfigfrom megatron_patch.model.deepseek_core.layer_specs import get_gpt_layer_with_transformer_engine_specimport torch._dynamotorch._dynamo.config.suppress_errors = Truedef model_provider(    pre_process=True, post_process=True) -&gt; Union[GPTModel, megatron.model.GPTModel]:    &quot;&quot;&quot;Builds the model.    If you set the use_mcore_models to True, it will return the mcore GPT model and if not the legacy GPT model.    Args:        pre_process (bool, optional): Set to true if you need to compute embedings. Defaults to True.        post_process (bool, optional): Set to true if you need to want to compute output logits/loss. Defaults to True.    Returns:        Union[GPTModel, megatron.model.GPTModel]: The returned model    &quot;&quot;&quot;    args = get_args()    build_tokenizer(args)    config = core_transformer_config_from_args(args, DeepseekTransformerConfig)    #config = core_transformer_config_from_args(get_args())    if args.use_mcore_models:        if args.spec is not None:            transformer_layer_spec = import_module(args.spec)        else:            transformer_layer_spec = get_gpt_layer_with_transformer_engine_spec(args.num_experts, args.moe_grouped_gemm)        model = GPTModel(            config=config,            transformer_layer_spec=transformer_layer_spec,            vocab_size=args.padded_vocab_size,            max_sequence_length=args.max_position_embeddings,            pre_process=pre_process,            post_process=post_process,            fp16_lm_cross_entropy=args.fp16_lm_cross_entropy,            parallel_output=True,            share_embeddings_and_output_weights=not args.untie_embeddings_and_output_weights,            position_embedding_type=args.position_embedding_type,            rotary_percent=args.rotary_percent,            rotary_base=args.rotary_base,        )    return modeldef get_batch(data_iterator):    &quot;&quot;&quot;Generate a batch.&quot;&quot;&quot;    # TODO: this is pretty hacky, find a better way    if (not mpu.is_pipeline_first_stage()) and (not mpu.is_pipeline_last_stage()):        return None, None, None, None, None    args = get_args()    if &quot;-Raw&quot; in args.dataset:        # get batches based on the TP rank you are on        batch = get_batch_on_this_tp_rank_original(data_iterator)        # slice batch along sequence dimension for context parallelism        batch = get_batch_on_this_cp_rank(batch)    elif &quot;-Idxmap&quot; in args.dataset:        # get batches based on the TP rank you are on        batch = get_batch_on_this_tp_rank(data_iterator)        # slice batch along sequence dimension for context parallelism        batch = get_batch_on_this_cp_rank(batch)    else:        raise ValueError(&quot;please set correct --dataset &quot;)    return batch.values()def loss_func(loss_mask: Tensor, output_tensor: Tensor):    &quot;&quot;&quot;Loss function.    Args:        loss_mask (Tensor): Used to mask out some portions of the loss        output_tensor (Tensor): The tensor with the losses    &quot;&quot;&quot;    args = get_args()    losses = output_tensor.float()    loss_mask = loss_mask.view(-1).float()    if args.context_parallel_size &gt; 1:        loss = torch.cat([torch.sum(losses.view(-1) * loss_mask).view(1), loss_mask.sum().view(1)])        torch.distributed.all_reduce(loss, group=mpu.get_context_parallel_group())        loss = loss[0] / loss[1]    else:        loss = torch.sum(losses.view(-1) * loss_mask) / loss_mask.sum()    # Check individual rank losses are not NaN prior to DP all-reduce.    if args.check_for_nan_in_loss_and_grad:        global_rank = torch.distributed.get_rank()        assert not loss.isnan(), (            f&#x27;Rank &#123;global_rank&#125;: found NaN in local forward loss calculation. &#x27;            f&#x27;Device: &#123;torch.cuda.current_device()&#125;, node: &#123;os.uname()[1]&#125;&#x27;        )    # Reduce loss for logging.    averaged_loss = average_losses_across_data_parallel_group([loss])    return loss * args.context_parallel_size, &#123;&#x27;lm loss&#x27;: averaged_loss[0]&#125;def forward_step(data_iterator, model):    &quot;&quot;&quot;Forward step.&quot;&quot;&quot;    timers = get_timers()    # Get the batch.    timers(&#x27;batch-generator&#x27;, log_level=2).start()    tokens, labels, loss_mask, attention_mask, position_ids = get_batch(        data_iterator)    timers(&#x27;batch-generator&#x27;).stop()    output_tensor = model(tokens, position_ids, attention_mask,                          labels=labels)    return output_tensor, partial(loss_func, loss_mask)def is_dataset_built_on_rank():    return (mpu.is_pipeline_first_stage() or mpu.is_pipeline_last_stage()) and mpu.get_tensor_model_parallel_rank() == 0def core_gpt_dataset_config_from_args(args):    tokenizer = get_tokenizer()    return GPTDatasetConfig(        is_built_on_rank=is_dataset_built_on_rank,        random_seed=args.seed,        sequence_length=args.seq_length,        blend=args.data_path,        split=args.split,        path_to_cache=args.data_cache_path,        reset_attention_mask=args.reset_attention_mask,        eod_mask_loss=args.eod_mask_loss,        eod_id=tokenizer.eod    )def train_valid_test_datasets_provider(train_val_test_num_samples):    &quot;&quot;&quot;Build train, valid, and test datasets.&quot;&quot;&quot;    args = get_args()    if &quot;-Raw&quot; in args.dataset:                train_ds, valid_ds, test_ds = \                                    build_pretrain_dataset_from_original(args.dataset)    else:        train_ds, valid_ds, test_ds = BlendedMegatronDatasetBuilder(            GPTDataset,            train_val_test_num_samples,            core_gpt_dataset_config_from_args(args)        ).build()    return train_ds, valid_ds, test_dsif __name__ == &quot;__main__&quot;:    train_valid_test_datasets_provider.is_distributed = True    pretrain(        train_valid_test_datasets_provider,        model_provider,        ModelType.encoder_or_decoder,        forward_step,        extra_args_provider=get_patch_args,    )
+
+在&#x2F;data&#x2F;code&#x2F;megatron_patch&#x2F;model在加入deepseek_core的相关配置
+DeepseekTokenizer配置在&#x2F;data&#x2F;code&#x2F;megatron_patch&#x2F;tokenizer&#x2F;init.py下加入DeepseekTokenizer配置
+elif args.patch_tokenizer_type == &#x27;DeepseekTokenizer&#x27;:        from megatron.core.datasets.megatron_tokenizer import MegatronTokenizer        class _DeepseekTokenizer(MegatronTokenizer):            def __init__(self, tokenizer_path, extra_vocab_size):                super().__init__(tokenizer_path)                self.tokenizer = AutoTokenizer.from_pretrained(                    tokenizer_path,                    padding_side=&quot;right&quot;,                    use_fast=False,                    trust_remote_code=True,                )                self.extra_vocab_size = extra_vocab_size            def __call__(self, text, return_tensors=None,                         padding=None, max_length=None, truncation=None, add_special_tokens=True):                return self.tokenizer(text, return_tensors=return_tensors, padding=padding,                        max_length=max_length, truncation=truncation, add_special_tokens=add_special_tokens)            @property            def vocab_size(self):                return self.tokenizer.vocab_size + self.extra_vocab_size            @property            def vocab(self):                return self.tokenizer.encoder            @property            def inv_vocab(self):                return self.tokenizer.decoder            def tokenize(self, text):                return self.tokenizer.encode(text)            def detokenize(self, token_ids):                return self.tokenizer.decode(token_ids)            @property            def eod(self):                return self.tokenizer.eos_token_id            @property            def eos_token(self):                return self.tokenizer.eos_token            @property            def pad_token_id(self):                return self.tokenizer.pad_token_id            @property            def eos_token_id(self):                return self.tokenizer.eos_token_id        tokenizer = _DeepseekTokenizer(args.tokenizer_model, args.extra_vocab_size)        args.padded_vocab_size = tokenizer.vocab_size
+
+启动预训练k8s的yamlapiVersion: apps/v1kind: DaemonSetmetadata:  name: deepseek-core  namespace: deepseekspec:  selector:    matchLabels:      app: deepseek-core  template:    metadata:      labels:        app: deepseek-core    spec:      hostNetwork: true      nodeSelector:        deepseek: deepseek-7B        containers:      - name: deepseek        image: registry.paas/cmss/nemo:24.05_v1.1        imagePullPolicy: IfNotPresent        resources:         limits:           nvidia.com/gpu: 4         requests:           nvidia.com/gpu: 4        command:              - &quot;/bin/bash&quot;              - &quot;-c&quot;              - |                cd /data/code/temp/conf/deepseek_core/pretrain &amp;&amp;                bash setRank.sh &amp;&amp;                cd /data/ &amp;&amp;                bash pretrain_mcore_deepseek.sh        securityContext:          privileged: true        volumeMounts:        - mountPath: /data/code          name: code           - mountPath: /etc/localtime          name: localtime        - mountPath: /dev/shm          name: dshm      volumes:      - name: code        hostPath:          path: /mnt/users/lihai/distribute/core/megatron-core      - name: localtime        hostPath:          path: /etc/localtime      - name: dshm        emptyDir:          medium: Memory          sizeLimit: 20G
+
+setRank.sh#!/bin/bashorigin_shell=&quot;/data/code/examples/deepseek_core/pretrain_mcore_deepseek.sh&quot;conf_dir=&quot;/data/code/temp/conf/&quot;local_dir=&quot;/data/&quot;shell_name=pretrain_mcore_deepseek.sh## 复制脚本到/workspace下cp $origin_shell $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$conf_dir&quot;hostfile-67)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)# 初始化ranknode_rank=-1# 遍历数组for i in &quot;$&#123;!ips[@]&#125;&quot;; do    # 使用tr命令去除空白字符    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        node_rank=$i        break    fidoneif [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
+
+多机多卡拉起测试
+
+
+
+断点续训测试loss曲线对比实验patch框架训练代码准备patch的预训练yamlapiVersion: apps/v1kind: DaemonSetmetadata:  name: deepseek-core  namespace: deepseekspec:  selector:    matchLabels:      app: deepseek-core  template:    metadata:      labels:        app: deepseek-core    spec:      hostNetwork: true      nodeSelector:        deepseek: deepseek-7B      containers:        - name: deepseek          image: registry.paas/library/megatron-lm:v1          imagePullPolicy: IfNotPresent          resources:            limits:              nvidia.com/gpu: 4            requests:              nvidia.com/gpu: 4          command:            - &quot;/bin/bash&quot;            - &quot;-c&quot;            - |              cd /data/code/examples/deepseek/conf &amp;&amp;               bash setRank-patch.sh &amp;&amp;              cd /data/ &amp;&amp;              bash pretrain_patch_deepseek.sh          securityContext:            privileged: true          volumeMounts:            - mountPath: /data/code              name: code            - mountPath: /etc/localtime              name: localtime            - mountPath: /dev/shm              name: dshm      volumes:        - name: code          hostPath:            path: /mnt/users/wangxiangbo/Pai-Megatron-Patch        - name: localtime          hostPath:            path: /etc/localtime        - name: dshm          emptyDir:            medium: Memory            sizeLimit: 20G
+
+patch的预训练脚本#!/bin/bash#sh run_pretrain_megatron_deepseek.sh dsw /workspace/Pai-Megatron-Patch 7B 1 8 1e-5 1e-6 2048 2048 0 bf16 1 1 sel true true true false 100000 /mnt/deepseek-datasets/wudao_llamabpe_text_document /mnt/deepseek-ckpts/Llama-2-7b-hf-to-mg-tp1-pp1/ 10000000000 100000000 /mnt/output_patch_testexport NCCL_P2P_DISABLE=1#export NCCL_DEBUG=INFOexport NCCL_SOCKET_IFNAME=eth0export GLOO_SOCKET_IFNAME=eth0export CUDA_DEVICE_MAX_CONNECTIONS=1export CUDA_VISIBLE_DEVICES=0,1,2,3MEGATRON_PATCH_PATH=/data/code MEGATRON_PATH=$&#123;MEGATRON_PATCH_PATH&#125;/Megatron-LM-231007export PYTHONPATH=$&#123;MEGATRON_PATH&#125;:$&#123;MEGATRON_PATCH_PATH&#125;:$PYTHONPATHNNODES=2NODE_RANK=0GPUS_PER_NODE=4MASTER_ADDR=192.168.0.22MASTER_PORT=8889DISTRIBUTED_ARGS=&quot;--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT&quot;MODEL_SIZE=7BBATCH_SIZE=1GLOBAL_BATCH_SIZE=8LR=1e-5MIN_LR=1e-6SEQ_LEN=1024PAD_LEN=1024EXTRA_VOCAB_SIZE=0PR=fp16TP=4PP=1AC=selDO=trueFL=falseSP=trueTE=falseSAVE_INTERVAL=1000DATASET_PATH=/data/code/examples/deepseek/dataset/wudao_deepseekbpe_text_documentPRETRAIN_CHECKPOINT_PATH=/data/code/examples/deepseek/ckptTRAIN_TOKENS=10000000WARMUP_TOKENS=0OUTPUT_BASEPATH=/data/code/examples/deepseek/output/pretrain_outputif [ $MODEL_SIZE = 7B ]; thenNUM_LAYERS=30HIDDEN_SIZE=4096NUM_ATTN_HEADS=32INTERMEDIATE_SIZE=11008gqa_options=&quot;&quot;fiif [ $AC = full ]; then    activation_checkpoint_options=&quot; \		    --recompute-method uniform \		    --recompute-granularity full&quot;elif [ $AC = sel ]; then    activation_checkpoint_options=&quot; \        --recompute-activations&quot;elif [ $AC = none ]; then    activation_checkpoint_options=&quot; \                    &quot;fiif [ $PR = fp16 ]; then    pr_options=&quot; \		    --fp16&quot;elif [ $PR = bf16 ]; then    pr_options=&quot; \        --bf16&quot;elif [ $PR = fp8 ]; then    pr_options=&quot; \        --bf16        --fp8-hybrid \        --fp8-amax-compute-algo max \        --fp8-amax-history-len 1024 \        --transformer-impl transformer_engine&quot;fiif [ $DO = true ]; then    do_options=&quot; \		    --use-distributed-optimizer&quot;elif [ $DO = false ]; then    do_options=&quot; \                    &quot;fiif [ $FL = true ]; then    flash_options=&quot; \		    --use-flash-attn&quot;elif [ $FL = false ]; then    flash_options=&quot; \                    &quot;fiif [ $TE = true ]; then    te_options=&quot; \		    --transformer-impl transformer_engine&quot;elif [ $TE = false ]; then    te_options=&quot; \                    &quot;fiif [ $SP = true ] &amp;&amp; [ $TP -gt 1 ]; then    sp_options=&quot; \		    --sequence-parallel&quot;elif [ $SP = false ]; then    sp_options=&quot; \                    &quot;fiif [ $PRETRAIN_CHECKPOINT_PATH != none ]; then    load_options=&quot; \            --load $PRETRAIN_CHECKPOINT_PATH&quot;fiTRAIN_ITERS=$(( $&#123;TRAIN_TOKENS&#125; / $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))LR_WARMUP_ITERS=$(( $&#123;WARMUP_TOKENS&#125;  / $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))LR_DECAY_ITERS=$(( $&#123;TRAIN_TOKENS&#125; /  $&#123;GLOBAL_BATCH_SIZE&#125; / $&#123;SEQ_LEN&#125; ))NAME=&quot;$&#123;ENV&#125;-pretrain-patch-deepseek-$&#123;MODEL_SIZE&#125;-lr-$&#123;LR&#125;-bs-$&#123;BATCH_SIZE&#125;-seqlen-$&#123;SEQ_LEN&#125;-pr-$&#123;PR&#125;-tp-$&#123;TP&#125;-pp-$&#123;PP&#125;-ac-$&#123;AC&#125;-do-$&#123;DO&#125;-sp-$&#123;SP&#125;-tt-$&#123;TRAIN_TOKENS&#125;-wt-$&#123;WARMUP_TOKENS&#125;&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/&quot;mkdir -p &quot;$&#123;OUTPUT_BASEPATH&#125;/log/&quot;current_time=$(date &quot;+%Y.%m.%d-%H.%M.%S&quot;)TENSORBOARD_DIR=&quot;$&#123;OUTPUT_BASEPATH&#125;/tensorboard/$&#123;NAME&#125;_$&#123;current_time&#125;&quot;mkdir -p $&#123;TENSORBOARD_DIR&#125;SAVED_PRETRAIN_CHECKPOINT_PATH=&quot;$&#123;OUTPUT_BASEPATH&#125;/checkpoint/$&#123;NAME&#125;&quot;megatron_options=&quot;  \        --save $&#123;SAVED_PRETRAIN_CHECKPOINT_PATH&#125; \        --split 99,1,0 \        --train-data-path $&#123;DATASET_PATH&#125;        --lr $&#123;LR&#125; \        --min-lr $&#123;MIN_LR&#125; \        --lr-decay-style linear \        --adam-beta1 0.9 \        --adam-beta2 0.95 \        --weight-decay 0.1 \        --clip-grad 1.0 \        --init-method-std 0.006 \        --lr-decay-iters $&#123;LR_DECAY_ITERS&#125; \        --lr-warmup-iters $&#123;LR_WARMUP_ITERS&#125; \        --train-iters $&#123;TRAIN_ITERS&#125; \        --micro-batch-size $&#123;BATCH_SIZE&#125; \        --global-batch-size $&#123;GLOBAL_BATCH_SIZE&#125; \        --num-layers $&#123;NUM_LAYERS&#125; \        --hidden-size $&#123;HIDDEN_SIZE&#125; \        --num-attention-heads $&#123;NUM_ATTN_HEADS&#125; \        --ffn-hidden-size $&#123;INTERMEDIATE_SIZE&#125; \        --seq-length $&#123;SEQ_LEN&#125; \        --max-position-embeddings $&#123;SEQ_LEN&#125; \        --log-interval 1 \        --eval-interval 10000 \        --eval-iters 10 \        --save-interval $&#123;SAVE_INTERVAL&#125; \        --tensorboard-queue-size 1 \        --tensorboard-dir $&#123;TENSORBOARD_DIR&#125; \        --log-timers-to-tensorboard \        --log-batch-size-to-tensorboard \        --log-validation-ppl-to-tensorboard \        --tensor-model-parallel-size $&#123;TP&#125; \        --pipeline-model-parallel-size $&#123;PP&#125; \        --dataset LLama-Pretrain-Idxmap \        --no-load-optim \        --no-load-rng \        --num-workers 8 \        --seed 1234 \        --max-padding-length $&#123;PAD_LEN&#125; \        --extra-vocab-size $&#123;EXTRA_VOCAB_SIZE&#125; \        --patch-tokenizer-type LLamaTokenizer \        --swiglu \        --normalization RMSNorm \        --use-llama2-rotary-position-embeddings \        --position-embedding-type rope \        --untie-embeddings-and-output-weights \        --rotary-base 10000 \        --rotary-scale-factor 4 \        --loss-scale 16384 \        --disable-bias-linear        &quot;#--no-query-key-layer-scaling \#/data/code/examples/llama2/pretrain_megatron_llama.pyLOG_SAVE=&quot;/data/code/examples/deepseek/output/pretrain_output/log/&quot;$&#123;current_time&#125;-deepseek-patch-$&#123;NODE_RANK&#125;.log&quot;&quot; run_cmd=&quot;torchrun $DISTRIBUTED_ARGS /data/code/examples/llama2/pretrain_megatron_llama.py $&#123;megatron_options&#125; $&#123;pr_options&#125; $&#123;load_options&#125; $&#123;te_options&#125; $&#123;activation_checkpoint_options&#125; $&#123;do_options&#125; $&#123;flash_options&#125; $&#123;sp_options&#125; $&#123;gqa_options&#125; &gt; $&#123;LOG_SAVE&#125; 2&gt;&amp;1&quot;echo $&#123;run_cmd&#125;eval $&#123;run_cmd&#125;set +x
+
+patch的预训练setrank#!/bin/bashorigin_shell=&quot;/data/code/examples/deepseek/pretrain_patch_deepseek.sh&quot;conf_dir=&quot;/data/code/examples/deepseek/conf/&quot;local_dir=&quot;/data/&quot;shell_name=pretrain_patch_deepseek.sh## 复制脚本到/workspace下cp $origin_shell $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$conf_dir&quot;hostfile)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)# 初始化ranknode_rank=-1# 遍历数组for i in &quot;$&#123;!ips[@]&#125;&quot;; do    # 使用tr命令去除空白字符    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        node_rank=$i        break    fidoneif [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
+
+patch框架预训练测试
+
+
+
+]]></content>
+      <categories>
+        <category>模型适配</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>Nvidia</tag>
+        <tag>V100</tag>
+        <tag>模型适配</tag>
+        <tag>Deepseek</tag>
+        <tag>Megatron-LM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基于Modellink的llama2-7b和Mistral-7b模型微调</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Modellink/llama2-7B+Mistral-7B/</url>
+    <content><![CDATA[基于docker的mistral-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
+
+权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
+
+python  tools/checkpoint/convert_ckpt.py \    --model-type GPT \    --loader llama2_hf \    --saver megatron \    --load-dir /job/mnt/huggingface/mistral-7b-hf/ \    --save-dir /job/data/megatron/mistral-7b-tp4-pp2 \    --tokenizer-model /job/mnt/huggingface/mistral-7b-hf/tokenizer.model \    --target-tensor-parallel-size 4 \    --target-pipeline-parallel-size 2
+
+
+数据集下载sudo wget https://hf-mirror.com/datasets/silk-road/alpaca-data-gpt4-chinese/resolve/main/Alpaca_data_gpt4_zh.jsonl
+
+处理python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/mistral/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/mistral-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
+
+
+处理完成
+
+微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/mistral/Alpaca_finetune/&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/mistral-7b-hf&quot;CKPT_SAVE_DIR=&quot;/job/output/mistral_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/mistral-7b-tp4-pp2/&quot;TP=4PP=2NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --sliding-window 4096 \    --num-layers $&#123;NUM_LAYERS&#125; \    --hidden-size 4096 \    --ffn-hidden-size 14336 \    --num-attention-heads 32 \    --group-query-attention \    --num-query-groups 8 \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path $&#123;TOKENIZER_MODEL&#125; \    --seq-length 32768 \    --max-position-embeddings 32768 \    --micro-batch-size 1 \    --global-batch-size 32 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 1000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --use-fused-swiglu \    --use-rotary-position-embeddings \    --use-fused-rotary-pos-emb \    --use-mc2 \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --overlap-grad-reduce \    --load $&#123;CKPT_LOAD_DIR&#125; \    --save $&#123;CKPT_SAVE_DIR&#125; \    --bf16 \    --finetune \    --is-instruction-dataset \    --log-throughput \    --recompute-granularity full \    --recompute-method block \    --recompute-num-layers 32&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_mistral_7B.log
+
+拉起训练
+基于docker的llama2-7B微调容器挂载sudo docker run -dit --ipc=host --net=host \--name=modellink_wxb \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/modellink/code/Modellink:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/modellink/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/modellink/output:/job/output \-v /mnt/weight-1:/job/mnt \registry.paas/cmss/modellink-cann8.0-torch2.1-mindspeed-0.7:v1.0 \/bin/bash
+
+权重转换# 修改 ascend-toolkit 路径source /usr/local/Ascend/ascend-toolkit/set_env.sh
+
+python  tools/checkpoint/convert_ckpt.py \       --model-type GPT \       --loader llama2_hf \       --saver megatron \       --target-tensor-parallel-size 8 \       --target-pipeline-parallel-size 1 \       --load-dir /job/mnt/huggingface/Llama-2-7b-hf// \       --save-dir /job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1/ \       --tokenizer-model /job/mnt/huggingface/Llama-2-7b-hf/tokenizer.json
+
+
+数据集python tools/preprocess_data.py \    --input /job/data/dataset/mistral/Alpaca_data_gpt4_zh.jsonl \    --output-prefix /job/data/dataset/llama2/Alpaca_finetune/ \    --tokenizer-type PretrainedFromHF \    --tokenizer-name-or-path /job/mnt/huggingface/Llama-2-7b-hf/ \    --append-eod \    --tokenizer-not-use-fast \    --handler-name GeneralInstructionHandler \    --workers 4
+
+
+
+微调微调脚本#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1export PYTORCH_NPU_ALLOC_CONF=expandable_segments:TrueGPUS_PER_NODE=8MASTER_ADDR=localhostMASTER_PORT=6006NNODES=1NODE_RANK=0WORLD_SIZE=$(($GPUS_PER_NODE * $NNODES))DISTRIBUTED_ARGS=&quot;    --nproc_per_node $GPUS_PER_NODE \    --nnodes $NNODES \    --node_rank $NODE_RANK \    --master_addr $MASTER_ADDR \    --master_port $MASTER_PORT&quot;echo &quot;NODE_RANK $&#123;NODE_RANK&#125;&quot;DATA_PATH=&quot;/job/data/dataset/llama2/Alpaca_finetune&quot;TOKENIZER_MODEL=&quot;/job/mnt/huggingface/Llama-2-7b-hf/&quot;CKPT_SAVE_DIR=&quot;/job/output/llama2_ckpt/&quot;CKPT_LOAD_DIR=&quot;/job/data/megatron/llama-2-7b-hf-v0.1-tp8-pp1&quot;TP=8PP=1NUM_LAYERS=32GPT_ARGS=&quot;    --tensor-model-parallel-size $&#123;TP&#125; \    --pipeline-model-parallel-size $&#123;PP&#125; \    --sequence-parallel \    --num-layers 32 \    --hidden-size 4096 \    --ffn-hidden-size 11008 \    --num-attention-heads 32 \    --tokenizer-type Llama2Tokenizer \    --tokenizer-model $&#123;TOKENIZER_MODEL&#125; \    --seq-length 4096 \    --max-position-embeddings 4096 \    --micro-batch-size 1 \    --global-batch-size 256 \    --make-vocab-size-divisible-by 1 \    --lr 1.25e-6 \    --train-iters 5000 \    --lr-decay-style cosine \    --untie-embeddings-and-output-weights \    --disable-bias-linear \    --attention-dropout 0.0 \    --init-method-std 0.01 \    --hidden-dropout 0.0 \    --position-embedding-type rope \    --normalization RMSNorm \    --use-fused-rmsnorm \    --swiglu \    --use-flash-attn \    --no-masked-softmax-fusion \    --attention-softmax-in-fp32 \    --min-lr 1.25e-7 \    --weight-decay 1e-1 \    --lr-warmup-fraction 0.01 \    --clip-grad 1.0 \    --adam-beta1 0.9 \    --initial-loss-scale 65536 \    --adam-beta2 0.95 \    --no-gradient-accumulation-fusion \    --no-load-optim \    --no-load-rng \    --use-distributed-optimizer \    --use-fused-swiglu \    --use-fused-rotary-pos-emb \    --overlap-grad-reduce \    --bf16&quot;DATA_ARGS=&quot;    --data-path $DATA_PATH  \    --split 100,0,0 \&quot;OUTPUT_ARGS=&quot;    --log-interval 1 \    --save-interval 1000 \    --eval-interval 1000 \    --eval-iters 0 \&quot;torchrun $DISTRIBUTED_ARGS ../pretrain_gpt.py \  $GPT_ARGS \  $DATA_ARGS \  $OUTPUT_ARGS \  --distributed-backend nccl \  | tee /job/output/logs/train_llama2_7B.log
+
+拉起训练
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>昇腾</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>昇腾</tag>
+        <tag>910B</tag>
+        <tag>Mindformers</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2.5 pytorchjob+eki断点续训</title>
+    <url>/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.5%20pytorchjob+eki%E6%96%AD%E7%82%B9%E7%BB%AD%E8%AE%AD/</url>
+    <content><![CDATA[环境准备pytorchjob训练环境已由小组同事搭建完成
+
+代码准备断点续训yaml需要注意的是，不能设定自定义的namespace，需要在default下启动pod
+apiVersion: &quot;ai.cmss.chinamobile.com/v1alpha1&quot;kind: PyTorchJobmetadata:  name: deepseek-core  labels:    service: deepseek-corespec:  nprocPerNode: &quot;4&quot;  pytorchReplicaSpecs:    Master:      replicas: 1      template:        metadata:          labels:            app: ckpt        spec:          nodeSelector:            model-ckpt: deepseek-master          restartPolicy: Always          hostNetwork: true          dnsPolicy: ClusterFirstWithHostNet          affinity:            podAntiAffinity:              requiredDuringSchedulingIgnoredDuringExecution:                - labelSelector:                    matchExpressions:                      - key: app                        operator: In                        values:                          - ckpt                  topologyKey: &quot;kubernetes.io/hostname&quot;          containers:            - name: pytorch              image: registry.paas/library/megatron-lm:v1              imagePullPolicy: IfNotPresent              securityContext:                capabilities:                  add:                    - SYS_ADMIN              resources:                limits:                  nvidia.com/gpu: 4 # Request access to all GPU                requests:                  nvidia.com/gpu: 4              env:                - name: OMP_NUM_THREADS                  value: &quot;4&quot;              command:                - &quot;/bin/bash&quot;                - &quot;-c&quot;                - |                  cd /data/code/temp/conf/deepseek_core/pretrain &amp;&amp;                  bash SetRank.sh &amp;&amp;                  cd /data/ &amp;&amp;                  bash pretrain_ckpt_deepseek.sh              volumeMounts:                - mountPath: /data/code                  readOnly: false                  name: code                - name: shm-volume                  mountPath: /dev/shm                - name: pod-gpu-resources                  mountPath: /tmp                  readOnly: false          volumes:            - name: code              hostPath:                path: /mnt/users/lihai/distribute/core/megatron-core            - name: shm-volume              emptyDir:                medium: Memory                sizeLimit: 1G            - name: pod-gpu-resources              hostPath:                path: /var/lib/kubelet/pod-resources          schedulerName: ai-scheduler    Worker:      replicas: 1      restartPolicy: OnFailure      template:        metadata:          labels:            app: ckpt        spec:          nodeSelector:            model-ckpt: deepseek-worker          restartPolicy: Always          hostNetwork: true          dnsPolicy:            ClusterFirstWithHostNet            #affinty:            #podAntiAffinity:            # requiredDuringSchedulingIgnoredDuringExecution:            # - labelSelector:            #     matchExpressions:            #     - key: app            #       operator: In            #       values:            #       - ckpt            #   topologyKey: &quot;kubernetes.io/hostname&quot;          containers:            - name: pytorch              image: registry.paas/library/megatron-lm:v1              imagePullPolicy: IfNotPresent              # workingDir: /workspace/model/glm3/chatglm3/finetune_demo              securityContext:                capabilities:                  add:                    - SYS_ADMIN              resources:                limits:                  nvidia.com/gpu: 4 # Request access to all GPU                requests:                  nvidia.com/gpu: 4              env:                - name: OMP_NUM_THREADS                  value: &quot;4&quot;              command:                - &quot;/bin/bash&quot;                - &quot;-c&quot;                - |                  cd /data/code/temp/conf/deepseek_core/pretrain &amp;&amp;                  bash SetRank.sh &amp;&amp;                  cd /data/ &amp;&amp;                  bash pretrain_ckpt_deepseek.sh              volumeMounts:                - mountPath: /data/code                  readOnly: false                  name: code                - name: shm-volume                  mountPath: /dev/shm                - name: pod-gpu-resources                  mountPath: /tmp                  readOnly: false          volumes:            - name: code              hostPath:                path: /mnt/users/lihai/distribute/core/megatron-core                type: Directory            - name: shm-volume              emptyDir:                medium: Memory                sizeLimit: 1G            - name: pod-gpu-resources              hostPath:                path: /var/lib/kubelet/pod-resources          schedulerName: ai-scheduler
+
+setrank#!/bin/bashorigin_shell=&quot;/data/code/examples/deepseek_core/pretrain_ckpt_deepseek.sh&quot;conf_dir=&quot;/data/code/temp/conf/&quot;local_dir=&quot;/data/&quot;shell_name=pretrain_ckpt_deepseek.sh## 复制脚本到/workspace下cp $origin_shell $local_dir## 读取hostfilereadarray -t ips &lt; &lt;(grep -vE &#x27;^[[:space:]]*$&#x27; &quot;$conf_dir&quot;hostfile-236)## 获取rank0 IPrank0_ip=$(echo &quot;$&#123;ips[0]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)nodes=$&#123;#ips[@]&#125;## 获取hostfile中配置的IP前缀## 使用cut提取IP地址的前三个数字部分ip_prefix=$(echo &quot;$&#123;ips[0]&#125;&quot; | cut -d &#x27;.&#x27; -f 1-3)## 获取本机IPip=$(hostname -I | grep -oE &quot;$ip_prefix\.[0-9]+&quot;)# 初始化ranknode_rank=-1# 打印调试信息echo &quot;本机IP: $ip&quot;echo &quot;rank0 IP: $rank0_ip&quot;echo &quot;所有节点IP: $&#123;ips[@]&#125;&quot;# 遍历数组# for i in &quot;$&#123;!ips[@]&#125;&quot;; do#     # 使用tr命令去除空白字符#     clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)#     if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then#         node_rank=$i#         break#     fi# done# TODO 测试断点续训for i in &quot;$&#123;!ips[@]&#125;&quot;; do    clean_string=$(echo &quot;$&#123;ips[$i]&#125;&quot; | tr -d &#x27;[:space:]&#x27;)    if [[ &quot;$clean_string&quot; == &quot;$ip&quot; ]]; then        if [[ &quot;$ip&quot; == &quot;$rank0_ip&quot; ]]; then            node_rank=0        else            node_rank=1        fi        break    fidone# 打印调试信息echo &quot;设置的NODE_RANK: $node_rank&quot;if [ $node_rank -ne -1 ]; then    ## 修改脚本中MASTER_ADDR    sed -i &quot;s/^MASTER_ADDR=.*/MASTER_ADDR=$rank0_ip/&quot; $local_dir$shell_name    ## 修改NNODES    # sed -i &quot;s/^NNODES=.*/NNODES=$nodes/&quot; $local_dir$shell_name    ## 修改NODE_RANK    sed -i &quot;s/^NODE_RANK=.*/NODE_RANK=$node_rank/&quot; $local_dir$shell_namefi
+
+hostfile多机节点故障需要选取3个节点来模拟，其中2台用来拉起训练，之后模拟其中1台发生故障，之后再调度到另一个备用机器上继续训练。
+其中将192.168.0.65作为master节点，192.168.0.20和192.168.0.63作为worker节点。
+192.168.0.65192.168.0.20192.168.0.63
+
+节点故障实践训练拉起kubectl apply -f deepseek-ckpt.yamlkubectl get node -owidekubectl get pod -owide
+
+
+可以看出训练再在master节点192.168.0.65和worker节点192.168.0.63上拉起。
+
+ckpt保存持续训练，并在interval50步保存ckpt信息，之后继续训练
+
+
+模拟节点故障进入192.168.0.63机器，模拟节点故障，停掉k8s服务
+systemctl stop kubelet
+
+
+停掉后在k8s的master节点查看node状态，是否为NotReady
+
+此时192.168.0.63已经出现故障，再去查看拉起训练的pod信息
+由于192.168.0.63出现故障，pytorchjob会根据hostfile的节点信息，再重新尝试调度到另外的机器上192.168.0.20，可以看出在192.168.0.20重新进行了Init、PodInitializing、Running的过程。
+
+
+查看续训log
+
+至此，节点故障断点续训实践完成。
+模拟完成后，重新将192.168.0.63节点恢复
+systemctl start kubelet
+
+
+]]></content>
+      <categories>
+        <category>模型适配</category>
+        <category>NVIDIA</category>
+      </categories>
+      <tags>
+        <tag>Nvidia</tag>
+        <tag>V100</tag>
+        <tag>模型适配</tag>
+        <tag>Deepseek</tag>
+        <tag>Megatron-LM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基于Mindformers的llama3.1模型微调</title>
+    <url>/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/%E6%98%87%E8%85%BE/Mindformers/llama3.1%E5%BE%AE%E8%B0%83/</url>
+    <content><![CDATA[启动容器docker run -dit --ipc=host --net=host \--name=wxb_mindformers \--device=/dev/davinci0 \--device=/dev/davinci1 \--device=/dev/davinci2 \--device=/dev/davinci3 \--device=/dev/davinci4 \--device=/dev/davinci5 \--device=/dev/davinci6 \--device=/dev/davinci7 \--device=/dev/davinci_manager \--device=/dev/devmm_svm \--device=/dev/hisi_hdc \-v /etc/ascend_install.info:/etc/ascend_install.info \-v /etc/hccn.conf:/etc/hccn.conf \-v /etc/localtime:/etc/localtime \-v /var/log/npu/:/usr/slog \-v /usr/local/sbin/npu-smi:/usr/local/sbin/npu-smi \-v /usr/local/Ascend/driver:/usr/local/Ascend/driver \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/code:/job/code \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/data:/job/data \-v /reason-sharedata/training_inference/wangxiangbo/mindformers/output:/job/output \-v /mnt/weight-1:/job/mnt \swr.cn-central-221.ovaijisuan.com/mindformers/mindformers1.3_mindspore2.4:20241114 \/bin/bash
+
+
+代码准备git clone https://gitee.com/mindspore/mindformers.git
+
+数据集python research/llama3/llama_preprocess.py \--dataset_type qa \--input_glob /job/data/alpaca/alpaca-data-conversation.json \--model_file /job/mnt/huggingface/llama-3-8b-hf \--seq_length 8192 \--output_file /job/data/alpaca
+
+权重转换python convert_weight.py --model llama --input_path /job/mnt/huggingface/llama-3-8b-hf --output_path /job/data/mindformers/llama3_8b_ckpt
+
+训练脚本seed: 0output_dir: &#x27;/job/output&#x27; # path to save checkpoint/strategyload_checkpoint: &#x27;/job/data/mindformers/llama3_8b_ckpt/&#x27;src_strategy_path_or_dir: &#x27;&#x27;auto_trans_ckpt: False  # If true, auto transform load_checkpoint to load in distributed modelonly_save_strategy: Falseresume_training: Falserun_mode: &#x27;finetune&#x27; # trainer configtrainer:  type: CausalLanguageModelingTrainer  model_name: &#x27;llama3_8b&#x27; # runner configrunner_config:  epochs: 2  batch_size: 1  sink_mode: True  sink_size: 2 # optimizeroptimizer:  type: FP32StateAdamWeightDecay  beta1: 0.9  beta2: 0.95  eps: 1.e-8 # lr sechdulelr_schedule:  type: CosineWithWarmUpLR  learning_rate: 1.e-5  lr_end: 0.0  warmup_ratio: 0.03  total_steps: -1 # -1 means it will load the total steps of the dataset # datasettrain_dataset: &amp;train_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;/job/data/alpaca/alpaca_llama3_8192/alpaca-fastchat8192.mindrecord&quot;    shuffle: True  input_columns: [&quot;input_ids&quot;,&quot;labels&quot;]  # &quot;input_ids&quot;, &quot;labels&quot; , labels are used in instruction finetune.  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: True  batch_size: 6  repeat: 1  numa_enable: False  prefetch_size: 1train_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *train_dataset# if True, do evaluate during the training process. if false, do nothing.# note that the task trainer should support _evaluate_in_training function.do_eval: False # eval dataseteval_dataset: &amp;eval_dataset  data_loader:    type: MindDataset    dataset_dir: &quot;&quot;    shuffle: False  input_columns: [&quot;input_ids&quot;]  num_parallel_workers: 8  python_multiprocessing: False  drop_remainder: False  repeat: 1  numa_enable: False  prefetch_size: 1eval_dataset_task:  type: CausalLanguageModelDataset  dataset_config: *eval_dataset use_parallel: True# parallel context configparallel:  parallel_mode: 1 # 0-data parallel, 1-semi-auto parallel, 2-auto parallel, 3-hybrid parallel  gradients_mean: False  enable_alltoall: False  full_batch: True  search_mode: &quot;sharding_propagation&quot;  enable_parallel_optimizer: True  strategy_ckpt_save_file: &quot;./ckpt_strategy.ckpt&quot;  parallel_optimizer_config:    gradient_accumulation_shard: False    parallel_optimizer_threshold: 64# default parallel of device num = 8 for Atlas 800T A2parallel_config:  data_parallel: 1  model_parallel: 4  pipeline_stage: 2  use_seq_parallel: False  micro_batch_num: 8  vocab_emb_dp: True  gradient_aggregation_group: 4# when model parallel is greater than 1, we can set micro_batch_interleave_num=2, that may accelerate the train process.micro_batch_interleave_num: 1 # recompute configrecompute_config:  recompute: True  select_recompute: False  parallel_optimizer_comm_recompute: True  mp_comm_recompute: True  recompute_slice_activation: True # callbackscallbacks:  - type: MFLossMonitor  - type: CheckpointMointor    prefix: &quot;llama3_8b&quot;    save_checkpoint_steps: 10000    integrated_save: False    async_save: False  - type: ObsMonitor # mindspore context init configcontext:  mode: 0 #0--Graph Mode; 1--Pynative Mode  device_target: &quot;Ascend&quot;  enable_graph_kernel: False  graph_kernel_flags: &quot;--disable_expand_ops=Softmax,Dropout --enable_parallel_fusion=true --reduce_fuse_depth=8 --enable_auto_tensor_inplace=true&quot;  max_call_depth: 10000  max_device_memory: &quot;26GB&quot;  save_graphs: False  save_graphs_path: &quot;./graph&quot;  device_id: 0  runtime_num_threads: 1 # model configmodel:  model_config:    type: LlamaConfig    batch_size: 1 # add for increase predict    seq_length: 8192    hidden_size: 4096    num_layers: 32    num_heads: 32    n_kv_heads: 8    vocab_size: 128256    intermediate_size: 14336    rms_norm_eps: 1.0e-5    bos_token_id: 128000    eos_token_id: 128001    pad_token_id: 128002    ignore_token_id: -100    compute_dtype: &quot;bfloat16&quot;    layernorm_compute_type: &quot;float32&quot;    softmax_compute_type: &quot;float32&quot;    rotary_dtype: &quot;float32&quot;    param_init_type: &quot;bfloat16&quot;    use_past: False    scaling_factor: 1.0    theta: 500000    extend_method: &quot;None&quot; # support &quot;None&quot;, &quot;PI&quot;, &quot;NTK&quot;    use_flash_attention: True # FA can accelerate training or finetune    offset: 0    fine_grain_interleave: 1    checkpoint_name_or_path: &quot;&quot;    repetition_penalty: 1    max_decode_length: 512    top_k: 3    top_p: 1    do_sample: False  arch:    type: LlamaForCausalLM # metricmetric:  type: PerplexityMetric # wrapper cell configrunner_wrapper:  type: MFTrainOneStepCell  scale_sense: 1.0  use_clip_grad: True eval_callbacks:  - type: ObsMonitor auto_tune: Falsefilepath_prefix: &#x27;./autotune&#x27;autotune_per_step: 10 profile: Falseprofile_start_step: 5profile_stop_step: 7init_start_profile: Trueprofile_communication: Trueprofile_memory: Truelayer_scale: Falselayer_decay: 0.65lr_scale_factor: 256 # aiccremote_save_url: &quot;Please input obs url on AICC platform.&quot;
+
+训练拉起
+git
+ clone https://gitee.com/mindspore/mindformers.gitgit
+ clone https://gitee.com/mindspore/mindformers.git
+]]></content>
+      <categories>
+        <category>模型训练调优</category>
+        <category>昇腾</category>
+      </categories>
+      <tags>
+        <tag>模型训练调优</tag>
+        <tag>昇腾</tag>
+        <tag>910B</tag>
+        <tag>Mindformers</tag>
       </tags>
   </entry>
   <entry>
