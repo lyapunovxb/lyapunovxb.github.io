@@ -1,0 +1,85 @@
+/*
+  Name:     Monokai-inspired Dark Theme (for black blog background)
+  Based on: Monokai by Wes Bos / highlight.js
+  Adapted for: #article-container figure.highlight
+*/
+
+:root {
+    --hl-color: #f8f8f2;            /* 主文本色：浅灰白 */
+    --hl-bg: #1e1e1e;               /* 背景色：深灰黑（非纯黑，更舒适） */
+    --hltools-bg: #2d2d2d;          /* 工具栏背景 */
+    --hltools-color: #f8f8f2;       /* 工具栏文字 */
+    --hlnumber-bg: #1e1e1e;         /* 行号背景（与主背景一致） */
+    --hlnumber-color: #606060;      /* 行号颜色：柔和灰 */
+    --hlscrollbar-bg: #ff79c6;      /* 滚动条高亮色（可选，用 Monokai 粉）*/
+    --hlexpand-bg: #ff79c6;         /* 展开按钮色 */
+  }
+  
+  #article-container figure.highlight .hljs {
+    display: block;
+    overflow-x: auto;
+    background: #1e1e1e;
+    color: #f8f8f2;
+    padding: 0.5em;
+  }
+  
+  /* Monokai-inspired syntax colors */
+  .hljs-comment,
+  .hljs-quote {
+    color: #6272a4; /* 淡蓝灰，比原 Monokai 更柔和 */
+  }
+  
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-function,
+  .hljs-operator {
+    color: #ff79c6; /* 粉红：关键字、函数 */
+  }
+  
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: #50fa7b; /* 亮绿：变量、类名、ID */
+  }
+  
+  .hljs-string,
+  .hljs-symbol,
+  .hljs-bullet,
+  .hljs-addition {
+    color: #f1fa8c; /* 黄色：字符串、符号 */
+  }
+  
+  .hljs-number,
+  .hljs-literal,
+  .hljs-params,
+  .hljs-type,
+  .hljs-built_in,
+  .hljs-builtin-name {
+    color: #bd93f9; /* 紫色：数字、类型、内建 */
+  }
+  
+  .hljs-attribute,
+  .hljs-title,
+  .hljs-section {
+    color: #8be9fd; /* 天蓝：属性、标题 */
+  }
+  
+  .hljs-tag,
+  .hljs-regexp,
+  .hljs-meta {
+    color: #ffb86c; /* 橙色：标签、正则 */
+  }
+  
+  .hljs-deletion {
+    color: #ff5555; /* 红色：删除（diff） */
+  }
+  
+  .hljs-emphasis {
+    font-style: italic;
+  }
+  
+  .hljs-strong {
+    font-weight: bold;
+  }
