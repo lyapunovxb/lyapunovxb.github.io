@@ -1,0 +1,893 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>tulu3论文解读 | Lyapunovxb's Blog</title><meta name="author" content="wangxiangbo"><meta name="copyright" content="wangxiangbo"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="语言模型的后训练可以改进其性能并解锁新技能，为了缩小开源方法在这方面通常落后于专有闭源技术这一差距，研究者推出了TÜLU3，一个完全开源的高级后训练模型系列，包括其数据、代码和训练方法。基于Llama 3.1基础模型，TÜLU3的表现优于多个知名模型，如Llama 3.1、Qwen 2.5、Mistral等，并且在某些方面甚至超过了GPT-4o-mini和Claude 3.5-Haiku这样的闭源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tulu3论文解读">
+<meta property="og:url" content="https://lyapunovxb.github.io/2026/01/08/LLM/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/tulu3%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Lyapunovxb&#39;s Blog">
+<meta property="og:description" content="语言模型的后训练可以改进其性能并解锁新技能，为了缩小开源方法在这方面通常落后于专有闭源技术这一差距，研究者推出了TÜLU3，一个完全开源的高级后训练模型系列，包括其数据、代码和训练方法。基于Llama 3.1基础模型，TÜLU3的表现优于多个知名模型，如Llama 3.1、Qwen 2.5、Mistral等，并且在某些方面甚至超过了GPT-4o-mini和Claude 3.5-Haiku这样的闭源">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg">
+<meta property="article:published_time" content="2026-01-08T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-09T06:01:45.221Z">
+<meta property="article:author" content="wangxiangbo">
+<meta property="article:tag" content="NVIDIA">
+<meta property="article:tag" content="V100">
+<meta property="article:tag" content="论文解读">
+<meta property="article:tag" content="tulu3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "tulu3论文解读",
+  "url": "https://lyapunovxb.github.io/2026/01/08/LLM/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/tulu3%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/",
+  "image": "https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg",
+  "datePublished": "2026-01-08T01:00:00.000Z",
+  "dateModified": "2026-01-09T06:01:45.221Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "wangxiangbo",
+      "url": "https://lyapunovxb.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar2.jpg"><link rel="canonical" href="https://lyapunovxb.github.io/2026/01/08/LLM/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/tulu3%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'tulu3论文解读',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/self/dark.css"><link rel="stylesheet" href="/self/layout7-gradient.css"><style>#footer { background-color: transparent !important; } [data-theme="dark"] #footer:before { background-color: transparent !important; }</style><style>#nav #menus { position: absolute; left: 50%; transform: translateX(-50%); } #nav #blog-info { flex: 0 0 auto; }</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakana-widget@2.7.1/lib/sakana.min.css"><style>#sakana-widget { position: fixed; bottom: 50px; right: 50px; z-index: 9999; } #sakana-widget .sakana-widget-app { overflow: visible !important; } #sakana-widget .sakana-widget-img { height: 200px !important; background-size: contain !important; }</style><style>#page-header.full_page::before { background: linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.25) 100%) !important; }</style><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">28</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/bg3.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lyapunovxb's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">tulu3论文解读</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">tulu3论文解读</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-09T06:01:45.221Z" title="更新于 2026-01-09 14:01:45">2026-01-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/">论文解读</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/tulu3/">tulu3</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>语言模型的后训练可以改进其性能并解锁新技能，为了缩小开源方法在这方面通常落后于专有闭源技术这一差距，研究者推出了TÜLU3，一个完全开源的高级后训练模型系列，包括其数据、代码和训练方法。基于Llama 3.1基础模型，TÜLU3的表现优于多个知名模型，如Llama 3.1、Qwen 2.5、Mistral等，并且在某些方面甚至超过了GPT-4o-mini和Claude 3.5-Haiku这样的闭源模型。TÜLU3采用**监督微调(SFT)、直接偏好优化(DPO)<strong>以及一种</strong>新的可验证奖励强化学习(RLVR)**方法进行训练。此外，还建立了一个全面的多任务评估框架，涵盖了开发与未见测试、标准基准及对现有开源数据集的大规模清理。最后，项目提供了模型权重、示例、数据集、工具包、训练代码和详细报告，以便他人复制结果并将这些技术应用于更广泛的领域。</p>
+<p><a target="_blank" rel="noopener" href="https://huggingface.co/allenai/Llama-3.1-Tulu-3-70B">TÜLU3 70B</a></p>
+<p><a target="_blank" rel="noopener" href="https://huggingface.co/allenai/Llama-3.1-Tulu-3-8B">TÜLU3 8B</a></p>
+<p><a target="_blank" rel="noopener" href="https://huggingface.co/collections/allenai/tulu-3-datasets-673b8df14442393f7213f372">TÜLU3 Data</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/allenai/open-instruct">TÜLU3 Code</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/allenai/olmes">TÜLU3 Eval</a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p><em>“正如骆驼与商队中的其他骆驼分担负担一样，智者也会分享他们的见解，以减轻无知的负担。” –</em> TÜLU3产生的谚语。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733899427791-c9d0b79b-aaf6-4478-9be4-c71d0dc178a8.png" alt="图 1 TÜLU3 recipe概述。这包括：针对一般和目标能力的数据管理、训练策略以及用于开发和最终评估阶段的标准化评估套件。"></p>
+<p>为了缩小开源式和闭源式后训练之间的差距，作者们推出了这是一系列开源的先进后训练模型，以及所有数据、训练方法、代码、基础设施和评估框架。</p>
+<p>为了构建 TÜLU3，作者们确定了一组后训练需要改进的核心技能（例如推理、数学、编码、安全、精确遵循指令、知识回忆等），并建立了一个评估框架，以建立明确的绩效目标并指导模型在一系列开发和未见过的任务上的改进。TÜLU3受益匪浅，它充分利用了公开可用的开源数据，在各个训练阶段生成多样化、特定技能的合成数据，并根据作者们的评估套件积极地净化这些数据。</p>
+<p>TÜLU3训练Recipe涉及多个阶段，每个阶段都以之前的模型为基础，并侧重于不同类型的数据——即监督微调的快速完成实例、偏好调整以及强化学习的可验证奖励。作者们的方法有助于识别技能缺陷并改进数据组合、方法和参数，确保在整个训练过程中核心技能的平衡表现。通过严格、有原则的实验，作者们确定了监督微调的最佳数据组合，从而得出 TÜLU3SFT 检查点。利用偏好调整方面的最新进展，作者们随后通过比较 TÜLU3SFT 完成情况与其他语言模型的输出，使用精心策划的策略偏好数据来训练模型。此外，作者们引入了一个新的最终微调阶段——可验证奖励的强化学习 (RLVR)——它采用了一种新颖的 RL 目标，旨在增强特定技能，具有可验证的答案，例如数学和精确的指令。</p>
+<p>作者们表现最佳的方案产生的 TÜLU3模型的表现优于同等规模的最先进的后训练开源权重模型，例如 Llama 3.1 Instruct、Qwen2.5 Instruct 或 Mistral-Instruct，并且在 70B 规模下，TÜLU可与 Claude 3.5 Haiku 和 GPT-4o mini 等闭源提供商的产品相媲美。</p>
+<p>闭源模型版本：GPT-3.5-Turbo-0125、GPT-4o-mini-2024-07-18、Claude 3.5 Haiku 20241022</p>
+<p>总而言之，TÜLU3代表了一系列最先进的开源语言模型，具有现代的后训练框架、完全开源的数据 TÜLU3D ATA 、评估 TÜLU3E VAL 、训练代码 TÜLU3C ODE 和开发Recipe TÜLU3R ECIPE 。以下是 TÜLU开发的一些关键贡献：</p>
+<ul>
+<li>为评估、净化和Recipe设计提供广泛的指导和工具，</li>
+<li>扩展的、新的合成教学数据集，</li>
+<li>使用基于策略的生成来扩展偏好数据，</li>
+<li>具有可验证奖励的强化学习，这是一种基于 RL 的方法，只有在模型的完成被验证为正确时才会获得奖励，</li>
+<li>先进的基础设施、细节和代码，以促进大型模型的成功实施</li>
+</ul>
+<p>作者们的工作成果是完全开源的语言模型微调pipeline。作者们发布了在 Llama 3.1 基础版本基础上训练的最终模型，其中包含中间检查点、训练数据、训练代码和评估代码（发布的完整工件列表见表 1）。借助所有发布的资源，其他人可以采用开源的基础模型并对其进行微调，以在任何感兴趣的任务上实现高性能，为复杂、多目标和多阶段训练方案中的后训练研究奠定基础。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1734059834134-cf6cc423-eac6-4aaf-8d27-c088c6d206fa.png" alt="表 1 中间检查点、训练数据、训练代码和评估代码"></p>
+<h1 id="TULU3-Overview"><a href="#TULU3-Overview" class="headerlink" title="TÜLU3  Overview"></a>TÜLU3  Overview</h1><p>表 2：TÜLU3 EVAL由开发和隐藏的分割组成，用于评估核心技能。借助 TÜLU3 EVAL ，作者们发布了统一的标准化评估套件和工具包，用于根据基准对训练数据进行净化。下标显示了作者们用于评估的指标。TÜLU3 Safety 是安全评估的集合，详情请参阅第 7.2.1 节。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1734059964094-89a71f4c-d505-4577-b6ab-3f5a05bfe9d7.png" alt="表 2 TÜLU3 EVAL 发布了统一的标准化评估套件和工具包"></p>
+<p>TÜLU3突破了后训练研究的界限，缩小了开源式和闭源式微调方法之间的差距。借助 TÜLU3，作者们希望发现开源社区的哪些路径将取得成功，哪些路径不会（通过报告负面结果）。这是一个复杂的训练过程，将专有方法的部分细节与新技术和成熟的学术研究相结合。mdelname 3 成功的关键因素在于仔细的数据管理、严格的实验和评估、创新的方法和改进的训练基础设施。作者们遵循系统的指导方针，通过创建开发和测试集进行评估，对这一过程进行科学评估，并对公开可用的数据集进行仔细的净化。开源后训练的TÜLU3 不仅仅是一个工件，而是一套全面的数据和工具，旨在推动前沿技术的发展。通过公开分享作者们的数据、Recipe和发现，作者们旨在使社区能够探索新的和创新的后训练方法。</p>
+<h2 id="TULU3-Data"><a href="#TULU3-Data" class="headerlink" title="TÜLU3 Data"></a>TÜLU3 Data</h2><p>核心技能TÜLU3 的工作首先确定了开源的后训练方法经常落后的关键领域，这些领域是通用语言模型所需的能力。表 3 概述了作者们旨在增强的核心能力以及为涵盖这些技能而选择的评估基准。在 TÜLU3 中，作者们专注于知识回忆、推理、数学、编码、指令遵循、一般聊天和安全等核心技能。</p>
+<p>作者们通过从公共数据中获取数据并综合整理数据来整理和收集 TÜLU3D ATA以针对这些核心技能。作者们在训练的不同阶段使用各种数据格式。表 6 概述了用于训练作者们模型的数据集集合，更多详细信息请参见第 3 节。</p>
+<h2 id="TULU3-Evaluation"><a href="#TULU3-Evaluation" class="headerlink" title="TÜLU3  Evaluation"></a>TÜLU3  Evaluation</h2><p>作者们的后训练方法取得成功的一个关键因素是建立明确的绩效目标和评估工具，以指导这些阶段的改进。借助 TÜLU3E VAL ，作者们发布了统一的标准化评估套件和工具包，以指导开发和评估最终模型并根据评估基准净化训练数据。</p>
+<p>作者们的框架包括一个用于可重复评估的开源评估工具包（第 7.1 节）、一套用于评估指令调整模型中核心技能的套件（具有单独开发（第 7.2 节）和保留评估（第 7.3 节），以及一组基于作者们对各种模型的实验在作者们的评估套件上进行评估的推荐设置。这两种划分都涵盖了所有已识别的技能。至关重要的是，作者们没有检查作者们未见集上的分数</p>
+<h2 id="TULU3-Recipe"><a href="#TULU3-Recipe" class="headerlink" title="TÜLU3  Recipe"></a>TÜLU3  Recipe</h2><p>在本节中，作者们概述了 TÜLU3 Recipe  ，以获得最先进的后训练模型。作者们在预训练语言模型的基础上通过四阶段后训练Recipe生成 TÜLU3模型（见图 1）。TÜLU3RECIPE是一个先进的多阶段训练pipeline，结合了强化学习中的新算法进步、尖端基础设施和严格的实验，以整理数据并优化各个训练阶段的数据组合、方法和参数。在所有阶段，作者们使用精心选择的评估套件来衡量模型性能。阶段如下：</p>
+<ul>
+<li><strong>第 1 阶段：数据管理 (§3)，</strong>作者们管理各种Prompts，以分配到多个优化阶段。作者们创建新的合成Prompts，或者在可用时从现有数据集中获取源Prompts，以针对特定功能。作者们确保Prompts不会受到作者们的评估套件 TÜLU3 EVAL 的污染。</li>
+<li><strong>第 2 阶段：监督微调 (§4)，</strong>作者们对精心挑选的Prompts和完成内容进行监督微调 (SFT)。通过彻底的实验，在作者们的评估框架的指导下，确定最终的 SFT 数据和训练超参数，以增强目标核心技能，而不会显著影响其他技能的表现。</li>
+<li><strong>第 3 阶段：偏好调整 (§5)，</strong>作者们将偏好调整（特别是 DPO）应用于新整理的基于策略的合成偏好数据（从选定的Prompts以及非策略数据中生成）。与 SFT 阶段一样，作者们通过彻底的实验确定最佳偏好数据组合，发现哪些格式的数据、方法或超参数可以带来改进。</li>
+<li><strong>第 4 阶段：具有可验证奖励的强化学习（§6）</strong>，作者们引入了一个新的基于 RL 的后训练阶段，该阶段使用可验证奖励而不是奖励模型来训练模型，这在传统 RLHF PPO 训练中很常见。作者们选择具有可验证结果的任务，例如数学问题解决，并且仅在模型的生成被验证为正确时才提供奖励。然后作者们使用 RL 来训练这些奖励。</li>
+</ul>
+<p>作者们的 TÜLU3流程的主要贡献在于改进了数据、方法、基础设施和严格的评估。作者们流程的关键要素包括：</p>
+<ul>
+<li><strong>数据质量、来源和规模（§3）</strong>作者们通过仔细调查可用的开源数据集、分析其来源并对其进行净化，以及策划针对核心技能的合成Prompts来获得Prompts。为了确保有效性，作者们进行了彻底的实验来研究它们对作者们的开发评估套件的影响。</li>
+<li>**创建多技能 SFT 数据集(§4.1) **通过对各种数据mixtures进行多轮监督微调，改进了“一般”和“特定技能”类别中Prompts的分布。例如，为了提高数学推理能力，作者们首先通过创建数学专业模型在评估套件中建立上限，然后混合数据以使一般模型更接近这个上限。</li>
+<li><strong>整理基于策略的偏好数据集(§5.2)</strong> 作者们开发了基于策略的数据整理流程来扩展作者们的偏好数据集生成。具体来说，作者们从 TÜLU3-SFT 和其他模型中为给定的Prompts生成回答，并通过它们的成对比较获得偏好标签。作者们的方法扩展并改进了 Cui 等人提出的基于策略的偏好数据生成方法 [2023]。通过精心选择偏好数据，作者们获得了 354,192 个用于偏好调整的实例，在一系列任务中表现出显著的改进。</li>
+<li>**偏好调整算法设计(§5.4) **作者们试验了几种偏好调整算法，并观察到使用长度归一化的直接偏好优化可以提高性能。作者们在实验中优先考虑简单性和效率，并在整个开发过程和训练最终模型时使用长度归一化的 DPO，而不是对基于 PPO 的方法进行成本更高的研究。</li>
+<li>**具有可验证奖励的技能特定强化学习(§6) **作者们采用一种新方法，利用标准强化学习范式来针对可以根据真实结果（例如数学）进行评估的技能。作者们将此算法称为具有可验证奖励的强化学习 (RLVR)；如果完成成功，它将获得恒定的奖励值。作者们的结果表明，RLVR 可以提高 GSM8K、MATH 和 IFEval 性能。</li>
+<li><strong>强化学习的训练基础设施（§6.3）</strong>作者们实施了异步 RL 设置：作者们通过 vLLM 高效运行 LLM 推理，同时学习者同时执行梯度更新。作者们的 RL 代码库也具有高度可扩展性，可以训练 70B RLVR 策略模型。</li>
+<li><strong>评估框架：TÜLU3EVAL（§7）</strong>除了评估最终模型之外，作者们的评估框架是一个开源的评估工具包，旨在通过精心挑选的评估套件和净化工具来指导开发进度。</li>
+</ul>
+<h2 id="Evaluation-and-Results"><a href="#Evaluation-and-Results" class="headerlink" title="Evaluation and Results"></a>Evaluation and Results</h2><p>在整个工作过程中报告分数时，作者们使用表 3 中确定的指标；分数越高越好。在计算整体性能时，作者们只是对所有评估取平均分数，对每个评估一视同仁。在作者们的开发评估套件中，在 Llama 3 基础模型上训练的 TÜLU3的表现优于其大小类别中的所有其他开源权重模型。与闭源模型相比，TÜLU370B 甚至超越了 GPT-3.5-Turbo-0125 或 GPT-4o-mini-2024-07-18 等闭源模型，同时接近 Claude 3.5 Haiku 20241022 的性能。表 3显示了在 80 亿和 700 亿个参数的 Llama 3 上训练的 TÜLU3与它们大小类别中的领先模型的总结。表 4 显示了 8B 版本按训练阶段的性能细分，表 5 显示了 70B 版本按训练阶段的性能细分。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733899395302-1cf556db-dbd8-4d7d-930e-245a85c8966e.png" alt="表 3 TÜLU3 EVAL suite上 8B 和 70B 模型的结果概览。每个基准上每种模型大小表现最佳的模型以粗体显示。TÜLU3 的表现优于相同大小的最先进的后训练开放权重模型，并超越了 Claude Haiku、GPT-3.5 Turbo 和 GPT-4o Mini。 封闭模型版本：GPT-3.5-Turbo-0125、GPT-4o-mini-2024-07-18、Claude 3.5 Haiku 20241022"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733899601980-166453fb-b02f-45df-92f4-dcea7ab31db1.png" alt="表 4 TÜLU3 结果与同类 8B 模型的比较总结。每个基准上表现最佳的模型 （即每行）以粗体显示。TÜLU3-8B 的表现明显优于之前最先进的 8B 模型。各个检查点的进展凸显了训练的每个阶段在提高核心技能方面的贡献。许多最低值（例如 BigBenchHard）是由于未遵循评估所需的少样本格式或其他重复性错误造成的 - 有关更多详细信息，请参阅§7。"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733899628835-9acdbbe7-316a-48b3-89eb-127fd828fd56.png" alt="表 5 TÜLU3 结果与同类 70B 模型的比较总结。每个基准上表现最佳的模型 （即在每一行）以粗体显示。TÜLU3-70B 的表现明显优于之前最先进的 70B 模型。各个检查点的进展凸显了训练的每个阶段对提高核心技能的贡献。Nemotron Llama 3.1 70B 是表中唯一一个从另一个后训练模型（在本例中为 Llama 3.1 70B Instruct）微调的模型，而其他模型则来自各自的基础模型。"></p>
+<h1 id="TULU3-Data-1"><a href="#TULU3-Data-1" class="headerlink" title="TÜLU3 Data"></a>TÜLU3 Data</h1><p> Prompts代表用户与模型交互的各种方式，是所有后训练阶段的重要组成部分。作者们精心挑选了数百万个Prompts作为 TÜLU3后训练Recipe的起点。从这些Prompts中选择了用于下一阶段训练的数据。表 6 总结了这些Prompts的关键信息。在本节中，作者们描述了作者们的Prompts策划过程和净化工作，以确保作者们的评估不会泄露在这些Prompts中。在以下部分中，作者们将描述如何使用Prompts进行监督微调 §4 和偏好调整 §5。</p>
+<h2 id="Prompt-拓展"><a href="#Prompt-拓展" class="headerlink" title="Prompt 拓展"></a>Prompt 拓展</h2><p>为了瞄准所需的核心技能，作者们从具有明确来源的公开数据集中挑选出一组多样化、高质量的Prompts，并综合生成Prompts以填补任何空白。</p>
+<h3 id="从公共数据集获取数据"><a href="#从公共数据集获取数据" class="headerlink" title="从公共数据集获取数据"></a>从公共数据集获取数据</h3><p>自作者们发布 TÜLU2 以来，社区见证了大量工作为后期训练创建数据集，包括监督微调和偏好调整。TÜLU3旨在整合和扩展这些资源以构建更强大的模型。作者们从对公共数据集的广泛调查开始这一过程，包括由专职人员注释的数据集、来自真实用户的数据集以及与模型合成的数据集。然后，作者们手动审查每个数据集，并根据以下考虑因素进行选择。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733901190484-e64749a8-54e0-4097-ae3d-df8bafb1b86e.png" alt="表 6 tulu3 Prompt数据样本摘要，α标记为污染，↓为在原始数据集上进行缩减采样，↑为上采样。"></p>
+<h3 id="针对目标技能进行合成"><a href="#针对目标技能进行合成" class="headerlink" title="针对目标技能进行合成"></a>针对目标技能进行合成</h3><p>为了满足对多样化和特定技能数据集日益增长的需求，作者们采用了合成数据生成作为补充方法。合成数据生成已成为人工编写数据的一种有前途的替代方案，因为它更容易获取、可针对不同目的进行定制，并且反映了底层模型的丰富知识 [Dubey et al., 2024]。然而，大规模生成多样化和高质量的数据并非易事，因为 LM 很容易陷入重复的模式或模式，称为“模式崩溃”。为了确保生成的多样性，作者们遵循 Chan 等人 [2024] 中最近采用的角色驱动方法来生成合成数据。关键思想是使用不同的角色（例如，“专注于神经网络的机器学习研究人员”）和数据合成Prompts（例如，“创建编码问题”）来引导 LLM 合成具有相应视角的数据。具体来说，作者们以 Persona Hub [Chan et al., 2024] 中的 ∼250K 个角色为条件，生成针对特定技能（例如精确遵循指令、数学和编码）的Prompts。</p>
+<ul>
+<li><strong>精确的指令遵循，</strong>精确的指令遵循是指遵循自然语言中可验证的指令（例如“写 3 段话”）的能力，这些指令可以通过启发式方法自动验证。作者们使用角色驱动的方法综合生成可验证指令，涵盖 IFEval 基准中定义的 25 种不同约束类型。更具体地说，作者们首先为每个约束手动编写 1-2 个示例指令（用作seedPrompts。然后，作者们使用例如单词数来生成新指令），从而得到总共33 条可验证指令，作者们给出了数据合成Prompts、角色和单个可验证指令作为示例。</li>
+<li><strong>数学和编码，</strong>作者们采用类似的角色驱动方法来综合生成各种数学单词和编码问题。数学问题包括需要高等数学技能的问题以及小学问题。对于编码，作者们生成入门到中级程序员都可以解决的 Python 编程问题。与精确的指令遵循不同，作者们零样本Prompts GPT-4o 生成特定于给定角色输入的独特问题。生成问题后，作者们生成多步骤使用 GPT-4o 编写数学解决方案，使用 claude-3-5-sonnet 编写 Python 程序。</li>
+<li><strong>不合规和安全</strong>，随着作者们增强模型有效协助用户的能力，确保它们能够可靠地拒绝不安全查询并适当处理细微和超出范围的查询至关重要。</li>
+</ul>
+<h2 id="Prompt-清洗"><a href="#Prompt-清洗" class="headerlink" title="Prompt  清洗"></a>Prompt  清洗</h2><p>在拓展作者们的训练组合时，一个重要的考虑因素是训练集和评估集之间可能存在重叠。作者们按如下方式量化这种重叠，并根据需要从作者们的训练组合中删除实例，以防止测试集污染。</p>
+<ul>
+<li><strong>匹配方法。</strong>作者们尝试了全字符串、n-gram 和基于嵌入的匹配，发现 n-gram 匹配产生了最有用的结果——虽然基于嵌入的方法原则上可以识别由于释义而产生的非平凡污染 [Yang et al., 2023]，但作者们发现很难区分单纯的分布相似性和实际的释义。此外，使用 n-gram 匹配的部分表面重叠成功地识别了污染的情况，其中实例略有不同，例如数学问题仅数字不同。</li>
+<li><strong>识别匹配实例。</strong>由于训练数据集中的补全通常使用语言模型重新生成，因此作者们选择仅计算Prompts中的重叠（或更一般地计算多轮对话中的用户轮次）。</li>
+<li><strong>去污。</strong> 如果训练集中的任何实例数量与作者们开发和未见套件中的任何评估中超过 2% 的实例重叠，则作者们认为该训练集受到污染。作者们会删除所有受到未见评估污染的训练集。对于受到开发评估污染的训练集，如果这样做不会显著影响最终模型的性能，作者们会删除整个数据集；否则，作者们会删除与任何测试实例匹配的特定实例。</li>
+</ul>
+<h1 id="SFT"><a href="#SFT" class="headerlink" title="SFT"></a>SFT</h1><p>将预训练的基础模型调整为各种任务和用户请求通常依赖于监督微调 (SFT)，也称为指令微调。此过程中的一个关键挑战是平衡代表不同技能的混合训练数据集的比例。对于 TÜLU3，作者们进行了数据混合消融并探索了模型合并数据最初用于构建 Vicuna 模型，但确切的数据集尚未发布。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733904443024-d0833599-0580-4e15-80a4-5a698c63411a.png" alt="图 2：TÜLU3最终 SFT 混合了Prompts的来源和长度以及标记的完成情况（使用 Llama 3 标记器）。将此分布与图 24 中之前开源的 SFT 训练数据集进行比较。实例最多的数据集位于直方图的底部。"></p>
+<h2 id="SFT-数据"><a href="#SFT-数据" class="headerlink" title="SFT 数据"></a>SFT 数据</h2><h3 id="从Prompts到-SFT-数据"><a href="#从Prompts到-SFT-数据" class="headerlink" title="从Prompts到 SFT 数据"></a>从Prompts到 SFT 数据</h3><p>为了创建作者们的 SFT 组合，作者们通过两种方式收集或创建第 3 节中描述的Prompts的回答：过滤现有回答和创建新回答。</p>
+<p>对于有现有回答的Prompts，如果原始回答是由人类或前沿模型（如 GPT-4o）编写的，作者们通常会保留原始回答。对于包含来自前沿模型子集的大型数据集（例如 WildChat），作者们使用来自最佳模型的子集。作者们还会过滤空回答和包含有关模型或其开发人员的信息的回答。如果一组Prompts没有回答（例如作者们的 Persona Prompts），或者原始回答来自较弱的模型（例如 WildGuardMix），作者们会使用 GPT-4o 生成新回答。作者们还手写了对硬编码Prompts的回答。</p>
+<h3 id="TULU3-SFT-Mix"><a href="#TULU3-SFT-Mix" class="headerlink" title="TÜLU3 SFT Mix"></a>TÜLU3 SFT Mix</h3><p>为了开发作者们的 SFT 组合，作者们首先使用在 TÜLU2 上训练的 Llama3.1 作为基线，确定了落后于最先进模型的技能。针对每一项技能，作者们收集了高质量的公开数据集并创建了合成数据集（如第 3.1.2 节所述），同时删除了一些作者们的发现与其他较新的数据集相比，其质量相对较低的数据集。</p>
+<p>为了设计最终的 SFT 组合，作者们首先构建了特定技能的数据组合和模型，保留了在单个技能上表现最佳的混合数据，忽略了其他评估。这样做是为了根据作者们的设置估算出每个评估的上限。</p>
+<p>然后，作者们将这些mixtures组合起来，创建了作者们的初始 TÜLU3预览组合。然后，作者们继续通过添加或删除数据集来迭代mixtures，以提高滞后技能，并根据作者们的评估进行净化混合，以及作者们的中间和最终 TÜLU3SFT 混合。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733906122721-e758bc75-18ee-4266-a158-8e9c65bed95d.png" alt="图 3： 中间混合 1、2 和 3 是添加新数据集以提高性能的结果。中间混合 4 和 5 是运行多轮净化的结果，导致性能略有下降。"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733906304611-025db79c-ed3f-491b-8a17-608f6a524f18.png" alt="表 7 TÜLU3SFT 模型与可比基线的性能总结。作者们最终的 SFT mixtures表现出色，平均得分高于其他可比mixtures。所有模型（包括 TÜLU2 SFT）均在 Llama 3.0 或 3.1 上进行训练。作者们最终的 Tülu 3 70B 模型用于帮助格式化此表。"></p>
+<h2 id="关键数据实验"><a href="#关键数据实验" class="headerlink" title="关键数据实验"></a>关键数据实验</h2><p>在开发最终的 SFT mixtures之后，作者们还进行了一系列控制实验，以探索在数据混合和训练期间做出的不同决策的重要性。</p>
+<ul>
+<li><strong>多样化的聊天数据。</strong>在作者们的组合中，作者们还强调添加多样化的聊天数据，主要来自 WildChat。作者们在表9中展示了删除 WildChat 的影响，作者们发现大多数技能都出现了轻微但明显的退化，最明显的是 Alpaca Eval，这凸显了多样化现实世界数据的重要性。</li>
+<li><strong>安全性是正交的</strong>。作者们发现，作者们的安全性 SFT 数据通常与作者们的其他数据集正交。作者们在表9中报告了删除特定于安全性的数据集的效果，并且作者们看到，除了安全性平均值之外，大多数技能大致保持不变。作者们还发现，添加诸如 CoCoNot 中的那些构造性Prompts有助于防止作者们的模型过度拒绝安全Prompts。</li>
+<li><strong>新人物角色数据。</strong>作者们新的人物角色数据集是针对特定技能而构建的：数学、编码和遵循指令。在表9中，作者们显示删除人物角色数据集后，HumanEval(+)、GSM8K、MATH 和 IFEval 上的性能下降，显示了创建多样化、特定技能的 SFT 数据集的价值。针对特定技能。作者们还在表9 中展示了针对特定技能的影响，其中作者们展示了删除所有特定数学数据的效果。与作者们的最终组合相比，GSM8K 和 MATH 都显着下降，强调了在数据收集期间关注特定技能的积极影响。</li>
+<li><strong>针对特定技能。</strong>作者们很大一部分精力都集中在收集或创建针对特定能力的数据集上。以数学推理为例，作者们在表8中展示了数学特定数据对 GSM8K 和 MATH 的影响。作者们发现数学特定的 SFT 数据显著提高了 GSM8K 和 MATH，显示了最终组合中包含的数据的价值。</li>
+<li><strong>SFT 数据量。</strong>在图 4 中，作者们展示了对 SFT 组合进行分层子抽样的效果。作者们发现，随着更多 SFT 数据被纳入，作者们的模型平均水平继续提高，并且随着作者们将数据量增加到完整组合，作者们看到 GSM8K 等指标的巨大改进。有趣的是，随着组合中的数据量增加，TruthfulQA 性能实际上会下降。作者们不会将 SFT 数据大小增加到当前组合之外，因为作者们分配了其他Prompts以进行偏好优化。</li>
+</ul>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733907437046-5ad1e7b6-09a1-44ea-9572-b2de143786d7.png" alt="表 9 SFT 消融期间的性能，显示了单独删除安全、WildChat、Persona 和数学数据的效果。作者们发现：1) 多样化的聊天数据对大多数技能都有好处，最明显的是 Alpaca Eval，2) 安全性能通常与一般性能正交，3) 作者们的新 Persona 数据集改进了它们针对的所有技能，4) 使用数学作为测试用例，添加高质量的技能特定数据可显着提高技能特定性能。"></p>
+<h2 id="SFT-Recipe-and-Analyses"><a href="#SFT-Recipe-and-Analyses" class="headerlink" title="SFT  Recipe and Analyses"></a>SFT  Recipe and Analyses</h2><p>**训练设置 **为了训练作者们的 TÜLU 3 模型，作者们使用了 4 到 16 个 8xH100 节点，并进行了高速互连。作者们使用了 128 的batch size  和 4,096 个 token 的最大序列长度。作者们训练了两个时期，对于 8B 模型，作者们使用 5e-6 的学习率，对于 70B 模型，作者们使用 2e-6 的学习率，这是作者们在超参数搜索后发现的。作者们的超参数设置也总结在表 10 中。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733966749502-babedc02-8166-4694-b07d-6e74dede56b0.png" alt="表 10 超参数设置"></p>
+<h3 id="关键训练实验"><a href="#关键训练实验" class="headerlink" title="关键训练实验"></a>关键训练实验</h3><p><strong>基础模型的选择。</strong>作者们还使用完整的 SFT 组合测试了训练不同的基础预训练模型对数学性能的影响。在表 11 中，作者们展示了通过在 Llama 3.1 8B 和 70B 上进行训练来改变模型大小的影响，以及通过在 Qwen 2.5 7B和 Qwen 2.5 Math 7B 上进行训练来添加特定领域的预训练数据的影响。在这两种情况下，作者们都看到 GSM8K 和 MATH 都有了显著的提升，凸显了模型大小和预训练数据对于下游技能的重要性。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733911004668-595e675d-44ef-4ec5-878e-f775b861b2a3.png" alt="表 11 在作者们的混合模型上训练的不同基础模型的数学性能。作者们发现 1) 在更大的模型上训练可以获得更好的性能，2) 即使对于相同大小的模型，添加特定于技能的预训练数据也可以提高性能。"></p>
+<p><strong>聊天模板变化。</strong>在创建 TÜLU3 期间，作者们探索了更改用于指导生成微调模型的聊天模板。作者们对以前 TÜLU版本中使用的聊天模板做了一些小改动，具体来说是删除了模板末尾的新行（在模型回答之前）。表 12 显示了作者们 SFT 设置的早期版本中对聊天模板的不同更改之间的性能。作者们发现用 eos token替换助手消息末尾的换行符可以获得最佳性能，但作者们选择不使用它，以避免与后训练的pipeline中的后续步骤生成不一致。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733911394844-5798dad0-b5de-43d1-9a4f-7fc33dfe7a6d.png" alt="表 12  不同聊天模板对 SFT 模型性能的影响，使用 Llama 3.0 上的中间 SFT 混合进行训练。虽然替换换行符效果最好，但作者们选择简单地删除换行符以避免复杂性。"></p>
+<p><strong>随机seed和模型soups。</strong>作者们还探索了在 SFT 期间更改随机seed，然后使用这些模型创建模型soups。在表 13 中，作者们将使用多个不同seed训练的 8B 和 70B 模型与最佳模型soups进行了比较。作者们发现 SFT 性能因seed的不同而明显不同，这凸显了多次训练运行的重要性，并且最佳模型soups并不总是优于最佳单次训练运行。因此，作者们将每种模型大小（8B和70B）的最佳单次 SFT 训练运行用作最终的 SFT 模型。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733911575473-330bd2ab-2300-4906-b099-4c33b50a0915.png" alt="表13 使用随机seed的 8B 和 70B SFT 模型的平均性能，并与使用不同seed训练的模型的最佳模型soups进行了比较。作者们发现最佳随机seed与最佳模型soups相当，因此为了保持一致性，作者们使用最佳单次 SFT 运行作为最终的 SFT 模型。"></p>
+<h3 id="批量聚合"><a href="#批量聚合" class="headerlink" title="批量聚合"></a>批量聚合</h3><p>在训练 Tframework 和在其他设置（例如 TPU）上训练的模型的早期阶段。TÜLU 3 中，作者们注意到在作者们的 Open-Instruct 8上训练的 SFT 模型之间存在性能差距。作者们发现这个问题主要是由于Transformers 内部损失聚合问题造成的：在不考虑梯度累积或分布式训练设置的情况下对填充标记之间的损失进行平均。</p>
+<p>这里作者们用一个例子来说明这个问题。假设作者们在一个批次中有两个样本，其中有𝑛 1、𝑛 2 个 非填充标记和𝑚 1、 𝑚 2 个填充标记。如果作者们同时将两个样本传递到默认的 Transformers 前向传递中，作者们会得到：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733970400478-a3eb2b6c-72d3-4a6b-ba85-2ac7b389bddc.png"></p>
+<p>当两个样本同时通过Transformer模型的前向传播时，损失函数 L 是两个样本的损失值之和除以两个样本中非填充tokens的总数。这里的 l<sub>n1 </sub>和 l<sub>n2</sub>_ _分别是第一个和第二个样本的损失值，它们是根据各自样本中的非填充tokens计算得出的。</p>
+<p>然而，如果作者们应用梯度积累，分别输入两个样本，计算损失，然后除以损失就会这样计算：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733972383767-e5e737ce-5218-4da0-a268-e212672d124a.png"></p>
+<p>当使用梯度累积时，每个样本单独通过模型，分别计算损失，然后再将这两个损失值平均。在这种情况下，每个样本的损失值是按照其非填充tokens的数量来加权的。</p>
+<p>也就是说，在第二种情况下，作者们对每个示例赋予相同的权重，而在第一种情况下，作者们对每个标记赋予相同的权重。因此，改变梯度累积会对性能产生很大影响，因为实际上会改变样本权重。由于跨设备平均，分布式训练中也会出现类似的问题。</p>
+<p>为了解决这个问题，作者们通常选择在训练时使用总损失而不是平均损失。这只需从上述方程中删除分母即可消除问题，并需要调整学习率。这实际上对所有标记赋予了相同的权重（作者们发现这通常会使初始混合的性能更好）。作者们通过在 TÜLU2 SFT 混合上使用各种学习率、时期和损失类型对 Llama 3.0 进行微调来验证作者们设置的性能，如图 5 和图 6 所示。最终，作者们发现使用学习率为 5.00E-06 的总损失效果最好。令人惊讶的是，作者们还发现更长时间的训练并没有带来进一步的改进，因此使用了 2 个时期进行训练。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733972663158-921e0ddd-4d3d-4df0-a2b7-eec1772e7fee.png" alt="图 5 使用不同的损失类型和学习率在TÜLU2 mixture上微调 Llama3.0 时的平均性能。作者们发现 LR 为 5e-6 且带有总损失的效果最好。"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733972756530-41bc40f1-8a2e-4759-82e2-38ebd9f84c3d.png" alt="图 6 在 TÜLU2 mixture上使用 sum loss 和 LR 5e-6 进行Llama3.0微调的不同数量的 epoch 测试。作者们发现使用 2 个 epoch 效果最好。"></p>
+<h1 id="Preference-Finetuning"><a href="#Preference-Finetuning" class="headerlink" title="Preference Finetuning"></a>Preference Finetuning</h1><p>对于TÜLU3，作者们探索了许多偏好微调方法，目的是改进整个评估套件。作者们探索了多种训练算法，从直接偏好优化 (DPO) 及其衍生算法到强化学习算法，例如近端策略优化 (PPO)。在本节中，作者们详细介绍了从人类偏好和作者们的优化器中学习的问题表述。接下来，作者们将解释如何将他们的Prompts转换为来自在线策略（TÜLU3套件）和离线策略模型（其他指导模型）的合成偏好数据。作者们展示了如何为感兴趣的特定技能创建偏好数据，以及如何使用 DPO 稳健地改进他们的模型。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>先前的研究已将偏好数据训练确立为提高模拟人类或合成偏好的基准模型性能的关键步骤 。典型的程序是从人类或合成反馈中进行强化学习。</p>
+<h3 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h3><h4 id="偏好数据"><a href="#偏好数据" class="headerlink" title="偏好数据"></a>偏好数据</h4><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733987369332-8d729cfc-ac61-4b51-890c-08c77bae27ba.png" alt="图 7：偏好数据的pipeline。"></p>
+<p>图 7展示了<font style="background-color:#C1E77E;">偏好数据集制作的流程，主要分为三个阶段：**<font style="background-color:#C1E77E;">Prompt Selection（提示选择）**<font style="background-color:#C1E77E;">、**<font style="background-color:#C1E77E;">Response Generation（回答生成）**<font style="background-color:#C1E77E;"> 和 <strong><font style="background-color:#C1E77E;">Preference Annotation（偏好标注）</strong>在这个阶段，会从以下三类来源中选择提示（Prompts）：</p>
+<ul>
+<li>Prompts used in SFT（监督微调中使用的提示）：用于模型的<font style="background-color:#C1E77E;">监督微调训练的数据集中的提示。</li>
+<li>Prompts from datasets subsampled for SFT（从用于SFT的数据集中采样的提示）：从<font style="background-color:#C1E77E;">更大的训练数据集中挑选出一部分提示。</li>
+<li>New OOD prompts（超出分布的提示，例如Ultrafeedback和Persona）：设计<font style="background-color:#C1E77E;">新的、超出模型训练分布的提示，以测试模型在新领域上的表现。</li>
+</ul>
+<p><strong>Response Generation（回答生成）</strong>这里提到了一个模型池，包含22个不同的模型，其中回答生成的过程包括：</p>
+<ul>
+<li>Off-policy data（离策略数据）：由其他模型生成的回答（如Meta、Gemma、技术创新研究所等）。这些模型生成的回答可能会被标注为“较差”或“被拒绝”。</li>
+<li>On-policy data（策略内数据）：由Tülu 3（SFT 8B或SFT 70B）生成的回答，这些回答可能是高质量、符合偏好的答案。</li>
+</ul>
+<p><strong>Preference Annotation（偏好标注）</strong> <font style="background-color:#C1E77E;"> 在这个阶段，使用**<font style="background-color:#C1E77E;">GPT-4o**<font style="background-color:#C1E77E;">协助标注回答质量，具体操作包括：</p>
+<ul>
+<li>标注维度：对每个生成的回答，<font style="background-color:#C1E77E;">从以下四个方面进行评分（1到5分）：<ul>
+<li><font style="background-color:#C1E77E;">Helpfulness（有用性）：回答是否对用户有帮助。</li>
+<li><font style="background-color:#C1E77E;">Instruction Following（指令遵循性）：是否严格按照提示指令进行回答。</li>
+<li><font style="background-color:#C1E77E;">Truthfulness（真实性）：回答内容是否真实、准确。</li>
+<li><font style="background-color:#C1E77E;">Honesty（诚实性）：回答是否有误导性或隐瞒信息。</li>
+</ul>
+</li>
+<li>Binarize（二值化）：将评分结果转化为“Chosen（选择）”或“Rejected（拒绝）”：<ul>
+<li>Chosen：得分较高的回答。</li>
+<li>Rejected：得分较低的回答。</li>
+</ul>
+</li>
+</ul>
+<p><strong>GPT-4o 不直接生成回答，而是作为标注助手，为每个回答在不同维度上给出具体评分。</strong>除了判断“好”或“坏”，还可以提供更精细的质量维度（如有用性、指令遵循性等），以便后续更细粒度地优化模型。  </p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733984737378-80bae173-585a-4383-b69b-f00456fc771e.png" alt="图 8 Huggingface上公开的TÜLU3 偏好数据集"></p>
+<h4 id="奖励模型"><a href="#奖励模型" class="headerlink" title="奖励模型"></a>奖励模型</h4><p>给定偏好数据集，训练奖励模型 (RM) 𝑟<sub> 𝜙</sub>，目标如下：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1734075926463-03cc0b3f-b9f6-473b-847c-f87c6dc43276.png"></p>
+<ul>
+<li>数据集 $ \mathcal{D} $包含了一些提示（prompts） x 和两个候选回答 y和 y′。</li>
+<li>对于每个提示 x，一些评审者会从 y 和 y′ 中选择一个作为更好的回答 y<sub>c</sub>，另一个会被标记为被拒绝的回答 y<sub>r</sub>。</li>
+<li>$ r_{\phi}(x, y) $：奖励模型对于输入 x和回答 y的评分。</li>
+<li>$ \sigma(z)<br>$：激活函数 Sigmoid  ，$ \sigma(z)&#x3D;\frac{1}{1+e^{-z}} $ ，将分数差转化为一个概率值。</li>
+<li>$ (x,y_c,y_r)\sim D $：从偏好数据集中采样的一个三元组，其中y<sub>c</sub>是选择的回答， y<sub>r</sub>是被拒绝的回答。</li>
+<li>$ r_ϕ(x,y_c)−r_ϕ(x,y_r) $：表示奖励模型认为选择回答y<sub>c</sub>与被拒绝回答 y<sub>r</sub>的分数差。</li>
+<li>$ logσ(r_ϕ(x,y_c)−r_ϕ(x,y_r)) $：表示根据分数差的对数似然，描述了模型将 y<sub>c</sub> 视为选择回答的概率， 它越接近 0，意味着对应的原始概率$ σ(z) $越高。</li>
+</ul>
+<p><strong>优化目标</strong>：最大化这一对数似然，强化奖励模型对选择回答与被拒绝回答的区分能力。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733986047166-8b0b8cf6-dc2d-4d7e-9d65-032b09a1655c.png" alt="Sigmoid函数  𝜎 ( 𝑧 ) 的图像"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733986183839-46740210-40a0-4efd-9316-a44710befd6a.png" alt="对数似然函数"></p>
+<h3 id="5-1-2策略优化"><a href="#5-1-2策略优化" class="headerlink" title="5.1.2	策略优化"></a>5.1.2	策略优化</h3><h4 id="PPO"><a href="#PPO" class="headerlink" title="PPO"></a>PPO</h4><p>用 KL 散度作为正则化项，限制模型更新的步长。模型希望最大化奖励（生成更符合人类偏好的内容），但模型也需要受限于“不要偏离预训练模型太远”，以避免生成奇怪、不稳定的内容。<font style="background-color:#C1E77E;">KL 散度提供了一个度量工具，$ \beta $<font style="background-color:#C1E77E;">则决定了偏离的允许程度。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733987758189-f84ec593-4cf5-44e5-8585-1a2c050ae389.png"></p>
+<ul>
+<li>$ π_θ(y|x) $: <font style="background-color:#F1A2AB;">当前训练的语言模型的策略（生成 y 的概率分布）。</li>
+<li>$ π_{ref}(y|x) $: 初始参考策略（预训练模型的策略，用于保持生成结果的稳定性）。</li>
+<li>$ KL[π_θ(y|x)∥π_{ref}(y|x)] $: <font style="background-color:#F1A2AB;">Kullback-Leibler (KL) 散度，用来衡量当前策略$  \pi_\theta $<font style="background-color:#F1A2AB;">偏离参考策略 $ \pi_\text{ref} $<font style="background-color:#F1A2AB;">的程度。</li>
+<li>$ r_\phi(x, y) $: 奖励模型的输出，表示对输入 x和生成结果 y的质量评分。</li>
+<li>$ \beta $: 控制 KL 散度的权重，平衡模型对奖励最大化和与参考策略保持接近之间的取舍。</li>
+</ul>
+<p><strong>目标</strong>：</p>
+<ul>
+<li><font style="background-color:#F1A2AB;">目标是优化策略$ \pi_\theta $<font style="background-color:#F1A2AB;">，使得生成的结果 y 在给定 x 时能获得最高的奖励 R(x,y)。</li>
+<li>奖励 R(x,y) 被分为两部分：<ol>
+<li>$ r_\phi(x, y) $: 奖励模型给出的偏好评分。</li>
+<li>$ \beta \text{KL}[\pi_\theta | \pi_\text{ref}] $: 惩罚项，限制 $ \pi_\theta $偏离$ \pi_\text{ref} $ 太远。</li>
+</ol>
+</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li><strong>奖励最大化</strong>：通过$ r_\phi(x, y) $让策略生成更符合人类偏好的内容。</li>
+<li><strong>稳定性控制</strong>：通过 KL 散度，确保模型不会偏离初始策略太远，避免生成质量崩塌或出现极端行为。</li>
+<li>**权重 **$ \beta $：</li>
+<li>$ \beta $控制两部分的权衡：<ul>
+<li>如果 $ \beta $较大，模型更倾向于保持和参考策略接近。</li>
+<li>如果 $ \beta $较小，模型更倾向于追求奖励最大化，但可能会导致生成不稳定。</li>
+</ul>
+</li>
+</ul>
+<h4 id="DPO"><a href="#DPO" class="headerlink" title="DPO"></a>DPO</h4><p>直接用偏好数据优化策略，避免大幅偏离初始参考策略，其等效目标如下：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733987815637-9132e8ab-b14d-4a37-8a4e-adaa71196b14.png"></p>
+<p><strong>输入数据</strong>：</p>
+<ul>
+<li>数据集$ \mathcal{D} $包含一对偏好标注 $ (y_c, y_r) $：<ul>
+<li>$ y_c $：优选项（chosen）。</li>
+<li>$ y_r $：非优选项（rejected）。</li>
+</ul>
+</li>
+<li>$ x $是输入上下文。</li>
+</ul>
+<p><strong>目标函数的核心</strong>：</p>
+<ul>
+<li>分数差：<font style="background-color:#F1A2AB;">分数的计算基于模型 $ \pi_\theta $<font style="background-color:#F1A2AB;">和参考策略 $ \pi_\text{ref} $<font style="background-color:#F1A2AB;">的对数比值（即对数概率比）。优选项 $ y_c $ 和非优选项 $ y_r $的分数差定义为：<ul>
+<li>$ \Delta &#x3D; \beta \log \frac{\pi_\theta(y_c|x)}{\pi_\text{ref}(y_c|x)} - \beta \log \frac{\pi_\theta(y_r|x)}{\pi_\text{ref}(y_r|x)}. $</li>
+<li>$ \beta $是一个权重参数，用于调整策略和参考策略之间的偏离程度。</li>
+</ul>
+</li>
+</ul>
+<p>上面的$ \Delta  $可进一步简化，最终为：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733993906272-1fd6f914-badd-421b-8f35-8572a482754a.png"></p>
+<p>其中，假设 𝑦<sub>c </sub> 是由多个 token 组成的序列： 𝑦 &#x3D; ( 𝑦<sub>1</sub> , 𝑦<sub>2 </sub>, … , 𝑦<sub>𝑇 </sub>)，那么条件概率可以被分解为：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733994381498-0928e7aa-a9f8-4921-919e-7418c4b7b722.png"></p>
+<p>在生成第 t个 token y<sub>t </sub>时<font style="background-color:#F1A2AB;">，模型不仅参考输入 x，还参考之前已经生成的 token $ y1,…,y_{t−1} $。  </p>
+<p>在 DPO的过程中，希望模型学会对好的回答 y<sub>c</sub> 赋予 <strong>更高的概率</strong>，也就是 $ \pi_\theta(y_c|x) $<font style="color:#DF2A3F;">更大。   同时，对差的回答 y<sub>r </sub>赋予 <strong>更低的概率</strong>，也就是$ \pi_\theta(y_r|x) $<font style="color:#DF2A3F;">更小。   在优化模型参数$ 𝜃 $的过程中， 逐步学习从输入 x到优质输出 y的映射关系，即优化 $ \pi_\theta(y|x) $的分布，使其更贴合偏好数据  ，逐步让 <strong>优质回答的生成概率</strong>$ \pi_\theta(y_c|x) $超过劣质回答的生成概率$ \pi_\theta(y_r|x) $。</p>
+<h4 id="Length-Normalized-DPO"><a href="#Length-Normalized-DPO" class="headerlink" title="Length-Normalized DPO"></a>Length-Normalized DPO</h4><p>作者在上述DPO的基础上，进一步加入了归一化来消除，因回答的序列长度（对比来说很长的话）带来的概率偏好影响。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733987832023-fcaccdf2-3f2d-47b9-82ea-0313deae8697.png"></p>
+<p>其中，假设 𝑦<sub>c </sub> 是由多个 token 组成的序列： 𝑦 &#x3D; ( 𝑦<sub>1</sub> , 𝑦<sub>2 </sub>, … , 𝑦<sub>𝑇 </sub>) ，那么条件概率可以被分解为：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733994381498-0928e7aa-a9f8-4921-919e-7418c4b7b722.png"></p>
+<p>其对数概率为：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1733995424182-517e89a3-a0f5-429d-bd5c-b259989cd77e.png"></p>
+<ul>
+<li><font style="background-color:#F1A2AB;">较长的序列 y 会累积更多的概率项，即累积更多的对数值，即使单个词的概率较低，其整体对数概率可能仍然较高。因此，较长的序列可能会在优化目标中获得更大的得分，进而被模型优先选择。</li>
+</ul>
+<h4 id="DOP和Length-Normalized-DPO-的区别"><a href="#DOP和Length-Normalized-DPO-的区别" class="headerlink" title="DOP和Length-Normalized DPO 的区别"></a>DOP和Length-Normalized DPO 的区别</h4><p><strong>长度归一化</strong>：</p>
+<ul>
+<li>在分数计算中，加入了长度归一化项$ \frac{1}{|y|} $，分别对 y<sub>c</sub>和 y<sub>r</sub>的分数进行长度调整。</li>
+<li>直观理解：<font style="background-color:#F1A2AB;">较长的输出序列通常会累积更大的对数概率，从而可能产生长度偏差。长度归一化可以减轻这种偏差。</li>
+</ul>
+<p><strong>优化目标</strong>：</p>
+<ul>
+<li>在 DPO 的基础上，引入长度归一化，适配更广泛的人类偏好标注数据，特别是在输出长度差异较大的情况下。</li>
+</ul>
+<h4 id="DPO-和-Length-Normalized-DPO-的特点"><a href="#DPO-和-Length-Normalized-DPO-的特点" class="headerlink" title="DPO 和 Length-Normalized DPO 的特点"></a>DPO 和 Length-Normalized DPO 的特点</h4><p><strong>DPO</strong>：</p>
+<ul>
+<li>不需要显式利用训练奖励模型评分，直接优化策略 $ \pi_\theta $。</li>
+<li>通过分数差 $ \Delta $表达偏好关系。</li>
+<li>简洁高效，但可能受输出长度偏差影响。</li>
+</ul>
+<p><strong>Length-Normalized DPO</strong>：</p>
+<ul>
+<li><font style="background-color:#F1A2AB;">在 DPO 基础上加入长度归一化，减轻模型生成偏好较长输出的倾向。</li>
+<li>更加适配包含长度偏差的标注数据。</li>
+</ul>
+<h4 id="DPO和PPO对比"><a href="#DPO和PPO对比" class="headerlink" title="DPO和PPO对比"></a>DPO和PPO对比</h4><table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>DPO</th>
+<th>PPO</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>否需要奖励模型</td>
+<td>不需要（直接用偏好对）</td>
+<td>需要训练一个奖励模型</td>
+</tr>
+<tr>
+<td>训练复杂度</td>
+<td>较低（只优化策略模型）</td>
+<td>较高（需要优化策略、奖励、价值等多个组件）</td>
+</tr>
+<tr>
+<td>依赖强化学习</td>
+<td>不需要</td>
+<td>需要</td>
+</tr>
+<tr>
+<td>对人类偏好的利用</td>
+<td>更直接（通过概率对比）</td>
+<td>间接（通过奖励模型评估）</td>
+</tr>
+<tr>
+<td>实现难度</td>
+<td>实现简单</td>
+<td>实现复杂</td>
+</tr>
+<tr>
+<td>KL 控制</td>
+<td>内置在偏好对比中（更直观）</td>
+<td>需要显式控制 KL 惩罚项</td>
+</tr>
+</tbody></table>
+<h2 id="TULU3偏好数据"><a href="#TULU3偏好数据" class="headerlink" title="TÜLU3偏好数据"></a>TÜLU3偏好数据</h2><h3 id="从Prompts到偏好数据"><a href="#从Prompts到偏好数据" class="headerlink" title="从Prompts到偏好数据"></a>从Prompts到偏好数据</h3><p>根据 §3 中的Prompts，作者们通过调整和改进偏好数据的pipeline创建符合策略的偏好数据 ( 𝑥,𝑦,𝑦 ′,𝑙𝑎𝑏𝑒𝑙 ) 。作者们的早期实验表明，该流程在创建偏好数据方面具有优势，可以生成高质量的合成偏好数据集。作者们的数据创建流程（如图 7 所示）包括三个阶段：Prompts选择、从模型池生成回答以及使用 LLM-as-a-judge 进行偏好注释以创建（偏好、拒绝）对。</p>
+<ul>
+<li><strong>第 1 阶段：Prompts选择</strong>。准备数据集以进行偏好微调的第一步是选择Prompts或用户指令以生成回答并获取偏好。鉴于表 6 中的Prompts集，作者们精心挑选了作者们的选择，以包括 SFT 期间使用的Prompts，以及从相同来源抽样但未用于 SFT 的Prompts。作者们还包括来自其他来源的Prompts，例如没有 TruthfulQA 实例的 Ultrafeedback 版本，或者通过向Prompts添加新的 IF 约束。</li>
+<li><strong>第 2 阶段：回答生成。</strong>对于给定的Prompts，作者们从模型池中随机抽取四个模型来生成回答。作者们的模型选择受到 Ultrafeedback pipeline的启发，该pipeline由开源和专有模型组成，这些模型在参数大小和模型系列上有所不同。作者们通过使用某些模型的最新版本（Llama 2 → Llama 3.1）来更新 Ultrafeedback 的模型池，添加性能最佳的模型以增加池大小，并用开源替代方案替换当前无法访问的模型（例如 WizardLM）。最后，作者们还通过从 TÜLU SFT 模型中抽样完成来包含在线策略数据。作者们通过添加一系列Prompts来实现这一点，其中一个回答来自在线策略模型，另一个回答来自非策略模型。</li>
+<li><strong>第 3 阶段：偏好注释</strong>。在为每个Prompts生成四个回答后，作者们使用 LLM-as-a-judge，特别是 GPT-4o-2024-0806，从四个不同方面对每个回答从 1 到 5 进行评分：有帮助性、遵循指示、诚实和真实性。</li>
+</ul>
+<h3 id="TULU3偏好组合"><a href="#TULU3偏好组合" class="headerlink" title="TÜLU3偏好组合"></a>TÜLU3偏好组合</h3><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1734056115830-02fe37f0-af83-469e-838e-3c71315c0771.png" alt="表 14：作者们对 TÜLU3 8B DPO 和 TÜLU3 70B DPO的最佳偏好数据集组合的总结。IF 是“Instruction Following”的缩写。"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/26978393/1734056509663-f53c60ca-05af-40ee-8a98-8274b49a3a06.png" alt="表 15 显示了偏好数据集的包含或排除如何影响平均性能。"></p>
+<p>作者们为 8b 和 70b 模型选择了最终的偏好组合，这可以最大限度地提高开发评估的平均表现，同时在目标技能方面也表现出色。大多数偏好数据组合消融都是针对 8b 模型运行的，作者们从用于 SFT 的Prompts开始，生成在策略和离策略偏好数据，从而产生 96911 个（拒绝策略）和 19444 个（接受策略）偏好实例。根据这个偏好基础，作者们向组合中添加其他Prompts源，以及这些添加如何影响下游评估性能，特别是针对诸如精确指令遵循、数学和 alpacaeval 上的一般聊天表现等技能。总之，作者们的偏好组合来自不同的Prompts源，例如 SFT 数据、WildChat 和 Persona IF。它包括 SFT 训练期间看到的Prompts，也包括新的、未见过的Prompts。最后，它包含在线和离线策略完成的混合。</p>
+<h3 id="数据消融的主要发现"><a href="#数据消融的主要发现" class="headerlink" title="数据消融的主要发现"></a>数据消融的主要发现</h3><h3 id=""><a href="#" class="headerlink" title=""></a></h3></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2026/01/08/LLM/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/tulu3%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/">https://lyapunovxb.github.io/2026/01/08/LLM/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/tulu3%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lyapunovxb.github.io" target="_blank">Lyapunovxb's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/NVIDIA/">NVIDIA</a><a class="post-meta__tags" href="/tags/V100/">V100</a><a class="post-meta__tags" href="/tags/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/">论文解读</a><a class="post-meta__tags" href="/tags/tulu3/">tulu3</a></div><div class="post-share"><div class="social-share" data-image="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">ColossalAI训练框架解读</div></div><div class="info-2"><div class="info-item-1">框架特点Colossal-AI 框架中的 Gemini 是一种内存优化策略，旨在通过智能的内存管理和计算优化来减少显存占用，从而支持更大规模的模型训练。Gemini 的核心思想是通过 动态内存管理 和 计算优化 来最大化显存利用率，同时减少内存碎片和冗余计算。 以llama2为例的验证增加每部迭代打印以及tflops打印ColossalAI初始打印效果    脚本123456789101112131415161718192021222324252627282930313233343536373839404142434445#!/bin/bash# NCCL IB environment variablesexport NCCL_IB_HCA=mlx5_1:1,mlx5_2:1,mlx5_3:1,mlx5_4:1export NCCL_IB_DISABLE=0export NCCL_SOCKET_IFNAME=eth0export NCCL_IB_GID_INDEX=3export NCCL_IB_TIMEOUT=23export NCCL_IB_RETRY_CNT=7export...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ms-swift%E6%A1%86%E6%9E%B6/" title="ms-swift框架微调测试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">ms-swift框架微调测试</div></div><div class="info-2"><div class="info-item-1">ms-swift 框架微调环境搭建训练脚本基于政企类数据集的 qwen2.5-7B-Ins-lora 微调1234567891011121314151617181920212223242526# 22GBCUDA_VISIBLE_DEVICES=0,1,2,3 \swift sft \    --model /mnt/model/Qwen/Qwen2.5-7B-Instruct \    --train_type lora \    --dataset /mnt/ms-swift/data/train.jsonl \    --torch_dtype float16 \    --num_train_epochs 6 \    --per_device_train_batch_size 1 \    --per_device_eval_batch_size 1 \    --learning_rate 1e-4 \    --lora_rank 8 \    --lora_alpha 32 \    --target_modules all-linear \    --gradi...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/vllm+mindie%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="vllm+mindie推理实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">vllm+mindie推理实践</div></div><div class="info-2"><div class="info-item-1">vllm镜像123registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:vllm或registry.paas/library/ray-vllm-inference:v2.0  容器123456789docker run -it \--name vllm-wxb \--gpus all \--network host -p 8010:8010 \--shm-size 11g \-v /mnt/users/wangxiangbo/:/mnt \-v /usr/local/cuda-12.2:/usr/local/cuda-12.2 \-w /mnt \registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:vllm  DeepSeek-R1-Distill-Qwen-1.5B开启vllm推理服务为了探究所需的最低GPU显存占用，gpu-memory-utilization从0.1开始测试。 12345678pyt...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/xinference%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="xinference推理实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">xinference推理实践</div></div><div class="info-2"><div class="info-item-1">NV生态容器创建123docker run -d --restart=always --name=xinference_wxb \ -v /mnt/users/wangxiangbo/xinference:/opt/xinference -e XINFERENCE_HOME=/opt/xinference -e XINFERENCE_MODEL_SRC=modelscope \ -p 9998:9997 --gpus all registry.cn-hangzhou.aliyuncs.com/xprobe_xinference/xinference:latest xinference-local -H 0.0.0.0  123docker run -d --restart=always --name=xinference_wxb \ -v /mnt/users/wangxiangbo/xinference:/opt/xinference -e XINFERENCE_HOME=/opt/xinference -e XINFERENCE_MODEL_SRC=hf-mirror.com...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ms-swift%E6%A1%86%E6%9E%B6/" title="ms-swift框架微调测试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">ms-swift框架微调测试</div></div><div class="info-2"><div class="info-item-1">ms-swift 框架微调环境搭建训练脚本基于政企类数据集的 qwen2.5-7B-Ins-lora 微调1234567891011121314151617181920212223242526# 22GBCUDA_VISIBLE_DEVICES=0,1,2,3 \swift sft \    --model /mnt/model/Qwen/Qwen2.5-7B-Instruct \    --train_type lora \    --dataset /mnt/ms-swift/data/train.jsonl \    --torch_dtype float16 \    --num_train_epochs 6 \    --per_device_train_batch_size 1 \    --per_device_eval_batch_size 1 \    --learning_rate 1e-4 \    --lora_rank 8 \    --lora_alpha 32 \    --target_modules all-linear \    --gradi...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">ColossalAI训练框架解读</div></div><div class="info-2"><div class="info-item-1">框架特点Colossal-AI 框架中的 Gemini 是一种内存优化策略，旨在通过智能的内存管理和计算优化来减少显存占用，从而支持更大规模的模型训练。Gemini 的核心思想是通过 动态内存管理 和 计算优化 来最大化显存利用率，同时减少内存碎片和冗余计算。 以llama2为例的验证增加每部迭代打印以及tflops打印ColossalAI初始打印效果    脚本123456789101112131415161718192021222324252627282930313233343536373839404142434445#!/bin/bash# NCCL IB environment variablesexport NCCL_IB_HCA=mlx5_1:1,mlx5_2:1,mlx5_3:1,mlx5_4:1export NCCL_IB_DISABLE=0export NCCL_SOCKET_IFNAME=eth0export NCCL_IB_GID_INDEX=3export NCCL_IB_TIMEOUT=23export NCCL_IB_RETRY_CNT=7export...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/%E5%BE%AE%E8%B0%83%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90/" title="微调数据集处理全流程解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">微调数据集处理全流程解析</div></div><div class="info-2"><div class="info-item-1">行业模型微调流程图 大模型微调全流程解决方案  pdf数据提取处理政企类数据集.pdf  pdf数据提取采用mineru方式mineru环境安装https://github.com/opendatalab/MinerU 123conda create -n mineru python=3.10conda activate minerupip install -U &quot;magic-pdf[full]&quot; --extra-index-url https://wheels.myhloli.com -i https://mirrors.aliyun.com/pypi/simple    magic-pdf.json配置文件修改12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152&#123;    &quot;bucket_info&quot;: &#123;        &quot;bucket-name-1&quot;: [    ...</div></div></div></a><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.3%20Deepseek-7B%E6%9D%83%E9%87%8D%E8%BD%AC%E6%8D%A2/" title="2.3 Deepseek-7B权重转换"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">2.3 Deepseek-7B权重转换</div></div><div class="info-2"><div class="info-item-1">Hg-Core权重转换huggingface开源权重准备 权重转换脚本123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118#!/bin/bashexport CUDA_VISIBLE_DEVICES=0export CUDA_DEVICE_MAX_CONNECTIONS=1START_TIME=$SECONDSMASTER_ADDR=localhostMASTER_PORT=6666MODEL_SIZE=7BHG_CKPT_PATH=/mnt/model/deepseek-ai/deepseek-llm-7b-baseMEGATRON_PATCH_...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wangxiangbo</div><div class="author-info-description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">28</div></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TULU3-Overview"><span class="toc-number">2.</span> <span class="toc-text">TÜLU3  Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#TULU3-Data"><span class="toc-number">2.1.</span> <span class="toc-text">TÜLU3 Data</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TULU3-Evaluation"><span class="toc-number">2.2.</span> <span class="toc-text">TÜLU3  Evaluation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TULU3-Recipe"><span class="toc-number">2.3.</span> <span class="toc-text">TÜLU3  Recipe</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Evaluation-and-Results"><span class="toc-number">2.4.</span> <span class="toc-text">Evaluation and Results</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TULU3-Data-1"><span class="toc-number">3.</span> <span class="toc-text">TÜLU3 Data</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-%E6%8B%93%E5%B1%95"><span class="toc-number">3.1.</span> <span class="toc-text">Prompt 拓展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E5%85%AC%E5%85%B1%E6%95%B0%E6%8D%AE%E9%9B%86%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-number">3.1.1.</span> <span class="toc-text">从公共数据集获取数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%92%88%E5%AF%B9%E7%9B%AE%E6%A0%87%E6%8A%80%E8%83%BD%E8%BF%9B%E8%A1%8C%E5%90%88%E6%88%90"><span class="toc-number">3.1.2.</span> <span class="toc-text">针对目标技能进行合成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-%E6%B8%85%E6%B4%97"><span class="toc-number">3.2.</span> <span class="toc-text">Prompt  清洗</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SFT"><span class="toc-number">4.</span> <span class="toc-text">SFT</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SFT-%E6%95%B0%E6%8D%AE"><span class="toc-number">4.1.</span> <span class="toc-text">SFT 数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8EPrompts%E5%88%B0-SFT-%E6%95%B0%E6%8D%AE"><span class="toc-number">4.1.1.</span> <span class="toc-text">从Prompts到 SFT 数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TULU3-SFT-Mix"><span class="toc-number">4.1.2.</span> <span class="toc-text">TÜLU3 SFT Mix</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%95%B0%E6%8D%AE%E5%AE%9E%E9%AA%8C"><span class="toc-number">4.2.</span> <span class="toc-text">关键数据实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SFT-Recipe-and-Analyses"><span class="toc-number">4.3.</span> <span class="toc-text">SFT  Recipe and Analyses</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C"><span class="toc-number">4.3.1.</span> <span class="toc-text">关键训练实验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%B9%E9%87%8F%E8%81%9A%E5%90%88"><span class="toc-number">4.3.2.</span> <span class="toc-text">批量聚合</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Preference-Finetuning"><span class="toc-number">5.</span> <span class="toc-text">Preference Finetuning</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">5.1.</span> <span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE"><span class="toc-number">5.1.1.</span> <span class="toc-text">设置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%8F%E5%A5%BD%E6%95%B0%E6%8D%AE"><span class="toc-number">5.1.1.1.</span> <span class="toc-text">偏好数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B"><span class="toc-number">5.1.1.2.</span> <span class="toc-text">奖励模型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-2%E7%AD%96%E7%95%A5%E4%BC%98%E5%8C%96"><span class="toc-number">5.1.2.</span> <span class="toc-text">5.1.2	策略优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PPO"><span class="toc-number">5.1.2.1.</span> <span class="toc-text">PPO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DPO"><span class="toc-number">5.1.2.2.</span> <span class="toc-text">DPO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Length-Normalized-DPO"><span class="toc-number">5.1.2.3.</span> <span class="toc-text">Length-Normalized DPO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DOP%E5%92%8CLength-Normalized-DPO-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">5.1.2.4.</span> <span class="toc-text">DOP和Length-Normalized DPO 的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DPO-%E5%92%8C-Length-Normalized-DPO-%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">5.1.2.5.</span> <span class="toc-text">DPO 和 Length-Normalized DPO 的特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DPO%E5%92%8CPPO%E5%AF%B9%E6%AF%94"><span class="toc-number">5.1.2.6.</span> <span class="toc-text">DPO和PPO对比</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TULU3%E5%81%8F%E5%A5%BD%E6%95%B0%E6%8D%AE"><span class="toc-number">5.2.</span> <span class="toc-text">TÜLU3偏好数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8EPrompts%E5%88%B0%E5%81%8F%E5%A5%BD%E6%95%B0%E6%8D%AE"><span class="toc-number">5.2.1.</span> <span class="toc-text">从Prompts到偏好数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TULU3%E5%81%8F%E5%A5%BD%E7%BB%84%E5%90%88"><span class="toc-number">5.2.2.</span> <span class="toc-text">TÜLU3偏好组合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%B6%88%E8%9E%8D%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8F%91%E7%8E%B0"><span class="toc-number">5.2.3.</span> <span class="toc-text">数据消融的主要发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">5.2.4.</span> <span class="toc-text"></span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/vllm+mindie%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="vllm+mindie推理实践">vllm+mindie推理实践</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/xinference%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="xinference推理实践">xinference推理实践</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/08/LLM/%E5%AE%A2%E6%88%B7%E6%94%AF%E6%92%91/%E6%9F%90%E5%BE%8B%E6%89%80%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/llama-factory%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%98%87%E8%85%BE/" title="llama-factory环境搭建-昇腾">llama-factory环境搭建-昇腾</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By wangxiangbo</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><div id="global-aplayer"></div><script>
+  (function() {
+    var PLAYER_TAG = 'customGlobalAplayer';
+
+    function buildGlobalPlayer() {
+      if (!window.APlayer) return;
+
+      var container = document.getElementById('global-aplayer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'global-aplayer';
+        document.body.appendChild(container);
+      }
+      if (!container || typeof APlayer === 'undefined') return;
+
+      if (container.classList && !container.classList.contains('aplayer')) {
+        container.classList.add('aplayer');
+      }
+
+      if (window.customFixedAplayer) {
+        try {
+          window.customFixedAplayer.destroy();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      var ap = new APlayer({
+        container: container,
+        fixed: true,
+        autoplay: false,
+        mutex: true,
+        theme: '#ad7a86',
+        preload: 'auto',
+        lrcType: 3,
+        audio: [
+          {
+            name: '鼓楼',
+            artist: '赵雷',
+            url: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E9%BC%93%E6%A5%BC-%E8%B5%B5%E9%9B%B7.mp3',
+            cover: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E6%97%A0%E6%B3%95%E9%95%BF%E5%A4%A7.jpg',
+            lrc: '/music/鼓楼-赵雷.lrc'
+          },
+          {
+            name: '程艾影',
+            artist: '赵雷',
+            url: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E7%A8%8B%E8%89%BE%E5%BD%B1-%E8%B5%B5%E9%9B%B7.mp3',
+            cover: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E7%BD%B2%E5%89%8D%E8%A1%97%E5%B0%91%E5%B9%B4.jpg',
+            lrc: '/music/程艾影-赵雷.lrc'
+          }
+        ]
+      });
+
+      window.aplayers || (window.aplayers = []);
+      window.aplayers.push(ap);
+      window.customFixedAplayer = ap;
+    }
+
+    function initGlobalAplayer() {
+      if (!window.APlayer) {
+        setTimeout(initGlobalAplayer, 200);
+        return;
+      }
+      buildGlobalPlayer();
+    }
+
+    if (window.btf && typeof window.btf.addGlobalFn === 'function') {
+      window.btf.addGlobalFn('pjaxComplete', buildGlobalPlayer, PLAYER_TAG);
+    }
+
+    if (document.readyState === 'complete') {
+      initGlobalAplayer();
+    } else {
+      window.addEventListener('load', initGlobalAplayer, { once: true });
+    }
+  })();
+</script>
+<script>
+(function() {
+  // 存储键名
+  const STORAGE_KEY = 'aplayer_progress';
+  const STORAGE_PLAYING_KEY = 'aplayer_playing';
+  const STORAGE_URL_KEY = 'aplayer_url';
+  const STORAGE_INDEX_KEY = 'aplayer_index';
+  
+  // 获取播放器的音频 URL
+  function getAudioUrl(aplayer) {
+    if (!aplayer || !aplayer.audio) return null;
+    // 优先使用 audio.src
+    if (aplayer.audio.src) {
+      return aplayer.audio.src.split('?')[0]; // 移除查询参数以便比较
+    }
+    return null;
+  }
+  
+  // 保存播放进度（支持播放列表）
+  function saveProgress(aplayer) {
+    if (!aplayer || !aplayer.audio) return;
+    
+    const currentTime = aplayer.audio.currentTime;
+    const duration = aplayer.audio.duration;
+    const url = getAudioUrl(aplayer);
+    const isPlaying = !aplayer.audio.paused;
+    const currentIndex = aplayer.list && typeof aplayer.list.index === 'number'
+      ? aplayer.list.index
+      : 0;
+    
+    if (duration && duration > 0) {
+      localStorage.setItem(STORAGE_KEY, currentTime.toString());
+      localStorage.setItem(STORAGE_PLAYING_KEY, isPlaying.toString());
+      localStorage.setItem(STORAGE_INDEX_KEY, currentIndex.toString());
+      
+      // URL 仅用于调试或兼容旧数据
+      if (url) {
+        localStorage.setItem(STORAGE_URL_KEY, url);
+      }
+    }
+  }
+  
+  // 恢复播放进度（支持播放列表）
+  function restoreProgress(aplayer) {
+    if (!aplayer || !aplayer.audio) return;
+    
+    const savedProgress = parseFloat(localStorage.getItem(STORAGE_KEY) || '0');
+    const wasPlaying = localStorage.getItem(STORAGE_PLAYING_KEY) === 'true';
+    const savedIndex = parseInt(localStorage.getItem(STORAGE_INDEX_KEY) || '0', 10);
+    
+    if (!(savedProgress > 0)) return;
+    
+    // 如果有播放列表，先切换到之前的那一首
+    if (aplayer.list && typeof aplayer.list.switch === 'function' && !Number.isNaN(savedIndex)) {
+      try {
+        if (aplayer.list.index !== savedIndex) {
+          aplayer.list.switch(savedIndex);
+        }
+      } catch (e) {
+        // 切歌失败时忽略，继续按当前曲目恢复进度
+      }
+    }
+    
+    // 等待音频加载完成后恢复进度
+    const restore = () => {
+      if (aplayer.audio.duration > 0 && savedProgress < aplayer.audio.duration) {
+        aplayer.audio.currentTime = savedProgress;
+        // 如果之前是播放状态且当前是暂停状态，则继续播放
+        if (wasPlaying && aplayer.audio.paused) {
+          setTimeout(() => {
+            aplayer.play().catch(() => {
+              // 忽略自动播放被阻止的错误
+            });
+          }, 100);
+        }
+      }
+    };
+    
+    // 如果音频已经加载好，直接恢复
+    if (aplayer.audio.readyState >= 2) {
+      restore();
+    } else if (aplayer.audio.readyState >= 1) {
+      // 有元数据但可能还没加载完，等待 canplay
+      aplayer.audio.addEventListener('canplay', restore, { once: true });
+    } else {
+      // 还没加载，等待 loadedmetadata
+      aplayer.audio.addEventListener('loadedmetadata', function handler() {
+        if (aplayer.audio.readyState >= 2) {
+          restore();
+        } else {
+          aplayer.audio.addEventListener('canplay', restore, { once: true });
+        }
+        aplayer.audio.removeEventListener('loadedmetadata', handler);
+      }, { once: true });
+    }
+  }
+  
+  // 存储已初始化的播放器，避免重复绑定
+  let initializedPlayer = null;
+  let saveTimer = null;
+  
+  // 初始化 APlayer 进度保存功能
+  function initAplayerProgress() {
+    // 如果已经初始化过，先清理旧的事件监听器
+    if (initializedPlayer && initializedPlayer.audio) {
+      // 注意：由于我们使用了匿名函数，无法完全移除，但可以通过标记来避免重复执行
+      // 这里我们重新查找播放器，因为页面切换可能导致播放器重新创建
+    }
+    
+    // 等待 APlayer 初始化完成
+    const checkAplayer = setInterval(() => {
+      if (window.aplayers && window.aplayers.length > 0) {
+        clearInterval(checkAplayer);
+        
+        // 找到固定的播放器（通常是全局播放器）
+        const fixedPlayer = window.aplayers.find(ap => ap.options && ap.options.fixed);
+        if (fixedPlayer && fixedPlayer !== initializedPlayer) {
+          initializedPlayer = fixedPlayer;
+          
+          // 恢复播放进度（延迟一下确保音频已开始加载）
+          setTimeout(() => {
+            restoreProgress(fixedPlayer);
+          }, 300);
+          
+          // 监听时间更新，定期保存进度
+          fixedPlayer.audio.addEventListener('timeupdate', () => {
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+              saveProgress(fixedPlayer);
+            }, 1000); // 每秒保存一次
+          });
+          
+          // 监听播放/暂停状态变化
+          fixedPlayer.audio.addEventListener('play', () => {
+            saveProgress(fixedPlayer);
+          });
+          
+          fixedPlayer.audio.addEventListener('pause', () => {
+            saveProgress(fixedPlayer);
+          });
+          
+          // 监听音频结束，清除保存的进度
+          fixedPlayer.audio.addEventListener('ended', () => {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_URL_KEY);
+            localStorage.removeItem(STORAGE_PLAYING_KEY);
+          });
+        }
+      }
+    }, 100);
+    
+    // 10秒后停止检查，避免无限循环
+    setTimeout(() => clearInterval(checkAplayer), 10000);
+  }
+  
+  // 页面卸载前保存进度
+  window.addEventListener('beforeunload', () => {
+    if (initializedPlayer) {
+      saveProgress(initializedPlayer);
+    }
+  });
+  
+  // 页面隐藏时保存进度（移动端切换应用时）
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && initializedPlayer) {
+      saveProgress(initializedPlayer);
+    }
+  });
+  
+  // 页面加载完成后初始化进度保存功能
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAplayerProgress);
+  } else {
+    initAplayerProgress();
+  }
+  
+  // 如果使用 pjax，在页面切换后重新初始化
+  if (window.btf && window.btf.addGlobalFn) {
+    window.btf.addGlobalFn('pjaxComplete', initAplayerProgress, 'aplayerProgress');
+  }
+})();
+</script>
+- <script src="/js/layout7-gradient.js"></script>
+- <div id="sakana-widget"></div>
+- |
+  <script>
+    (function() {
+      var sakanaWidgetInstance = null;
+      
+      function loadSakanaScript() {
+        // 检查脚本是否已经加载
+        if (document.querySelector('script[src*="sakana-widget"]')) {
+          initSakanaWidget();
+          return;
+        }
+        
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://cdn.jsdelivr.net/npm/sakana-widget@2.7.1/lib/sakana.min.js';
+        script.onload = function() {
+          initSakanaWidget();
+        };
+        script.onerror = function() {
+          console.error('Failed to load sakana-widget script');
+        };
+        document.head.appendChild(script);
+      }
+      
+      function applyCharacterDamping() {
+        if (typeof SakanaWidget === 'undefined') return;
+        ['chisato', 'takina'].forEach(function(name) {
+          try {
+            var base = SakanaWidget.getCharacter(name);
+            if (!base) return;
+            base.initialState = Object.assign({}, base.initialState || {}, {
+              i: 0.04,
+              s: 0.08,
+              d: 0.95
+            });
+            SakanaWidget.registerCharacter(name, base);
+          } catch (err) {
+            console.warn('Failed to adjust character damping', name, err);
+          }
+        });
+      }
+      
+      function registerCustomCharacter() {
+        // 检查 SakanaWidget 是否可用
+        if (typeof SakanaWidget === 'undefined') {
+          return false;
+        }
+        
+        try {
+          applyCharacterDamping();
+          var baseChar = SakanaWidget.getCharacter('chisato');
+          if (!baseChar) return false;
+          
+          function createCharacter(options) {
+            var charConfig = Object.assign({}, baseChar);
+            charConfig.image = options.image;
+            charConfig.initialState = Object.assign({}, baseChar.initialState || {}, {
+              i: 0.04,
+              s: 0.08,
+              d: 0.95
+            });
+            SakanaWidget.registerCharacter(options.name, charConfig);
+          }
+          
+          createCharacter({
+            name: 'custom',
+            image: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/xiaozujian/rayan.png'
+          });
+          
+          createCharacter({
+            name: 'custom2',
+            image: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/xiaozujian/boy.png'
+          });
+          
+          console.log('Custom character registered successfully');
+          return true;
+        } catch (e) {
+          console.error('Error registering custom character:', e);
+          return false;
+        }
+      }
+      
+      function initSakanaWidget() {
+        var container = document.getElementById('sakana-widget');
+        if (!container) {
+          console.warn('sakana-widget container not found');
+          return;
+        }
+        
+        // 如果已经初始化过，先销毁
+        if (sakanaWidgetInstance) {
+          try {
+            if (sakanaWidgetInstance.destroy) {
+              sakanaWidgetInstance.destroy();
+            }
+          } catch (e) {
+            console.warn('Error destroying sakana widget:', e);
+          }
+          sakanaWidgetInstance = null;
+          // 清空容器
+          container.innerHTML = '';
+        }
+        
+        // 检查 SakanaWidget 是否可用
+        if (typeof SakanaWidget === 'undefined') {
+          console.warn('SakanaWidget is not defined, retrying...');
+          setTimeout(loadSakanaScript, 100);
+          return;
+        }
+        
+        // 注册自定义角色
+        registerCustomCharacter();
+        
+        try {
+          // 使用自定义角色初始化，如果想使用默认角色，可以改为 new SakanaWidget()
+          // 或者使用其他内置角色，如: new SakanaWidget({ character: 'chisato' })
+          sakanaWidgetInstance = new SakanaWidget({
+            character: 'custom',
+            rod: false,
+            controls: true,
+          }).mount('#sakana-widget');
+          console.log('Sakana widget initialized successfully with custom character');
+        } catch (e) {
+          console.error('Error initializing sakana widget:', e);
+          // 如果自定义角色失败，尝试使用默认角色
+          try {
+            sakanaWidgetInstance = new SakanaWidget().mount('#sakana-widget');
+            console.log('Sakana widget initialized with default character');
+          } catch (e2) {
+            console.error('Error initializing sakana widget with default character:', e2);
+          }
+        }
+      }
+      
+      // 初始化函数
+      function init() {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadSakanaScript);
+        } else {
+          loadSakanaScript();
+        }
+      }
+      
+      // 支持 pjax
+      if (window.btf && typeof window.btf.addGlobalFn === 'function') {
+        window.btf.addGlobalFn('pjaxComplete', function() {
+          initSakanaWidget();
+        }, 'sakanaWidget');
+      }
+      
+      // 初始加载
+      init();
+    })();
+  </script>
+<script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>
