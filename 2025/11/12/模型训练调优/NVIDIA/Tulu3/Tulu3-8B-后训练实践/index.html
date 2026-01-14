@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Tulu3-8B-后训练实践 | Lyapunovxb's Blog</title><meta name="author" content="wangxiangbo"><meta name="copyright" content="wangxiangbo"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="训练环境镜像1registry.cn-shanghai.aliyuncs.com&#x2F;aliyun_repository_wxb&#x2F;repository_wxb:tulu3  镜像中已包含tulu3后训练所需要的所有依赖环境。 代码结构1&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;model&#x2F;tulu3&#x2F;open-instruct-main   data包含了sft、dpo、rlvr所需的数据集  e">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Tulu3-8B-后训练实践 | Lyapunovxb's Blog</title><meta name="author" content="wangxiangbo"><meta name="copyright" content="wangxiangbo"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="训练环境 镜像 1registry.cn-shanghai.aliyuncs.com&#x2F;aliyun_repository_wxb&#x2F;repository_wxb:tulu3 镜像中已包含tulu3后训练所需要的所有依赖环境。 代码结构 1&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;model&#x2F;tulu3&#x2F;open-instruct-main  data 包含了sft、dpo、rlvr所需的数据集">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tulu3-8B-后训练实践">
 <meta property="og:url" content="https://lyapunovxb.github.io/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/index.html">
 <meta property="og:site_name" content="Lyapunovxb&#39;s Blog">
-<meta property="og:description" content="训练环境镜像1registry.cn-shanghai.aliyuncs.com&#x2F;aliyun_repository_wxb&#x2F;repository_wxb:tulu3  镜像中已包含tulu3后训练所需要的所有依赖环境。 代码结构1&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;model&#x2F;tulu3&#x2F;open-instruct-main   data包含了sft、dpo、rlvr所需的数据集  e">
+<meta property="og:description" content="训练环境 镜像 1registry.cn-shanghai.aliyuncs.com&#x2F;aliyun_repository_wxb&#x2F;repository_wxb:tulu3 镜像中已包含tulu3后训练所需要的所有依赖环境。 代码结构 1&#x2F;mnt&#x2F;users&#x2F;wangxiangbo&#x2F;model&#x2F;tulu3&#x2F;open-instruct-main  data 包含了sft、dpo、rlvr所需的数据集">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg">
 <meta property="article:published_time" content="2025-11-12T01:00:00.000Z">
@@ -150,7 +150,7 @@
     buttonText: '加载更多'
   },
   isPhotoFigcaption: false,
-  islazyloadPlugin: false,
+  islazyloadPlugin: true,
   isAnchor: false,
   percent: {
     toc: true,
@@ -162,498 +162,523 @@
   isHighlightShrink: false,
   isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="/self/dark.css"><link rel="stylesheet" href="/self/layout7-gradient.css"><style>#footer { background-color: transparent !important; } [data-theme="dark"] #footer:before { background-color: transparent !important; }</style><style>#nav #menus { position: absolute; left: 50%; transform: translateX(-50%); } #nav #blog-info { flex: 0 0 auto; }</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakana-widget@2.7.1/lib/sakana.min.css"><style>#sakana-widget { position: fixed; bottom: 50px; right: 50px; z-index: 9999; } #sakana-widget .sakana-widget-app { overflow: visible !important; } #sakana-widget .sakana-widget-img { height: 200px !important; background-size: contain !important; }</style><style>#page-header.full_page::before { background: linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.25) 100%) !important; }</style><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">28</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/bg3.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lyapunovxb's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Tulu3-8B-后训练实践</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Tulu3-8B-后训练实践</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-12T01:00:00.000Z" title="发表于 2025-11-12 09:00:00">2025-11-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-07T09:52:46.546Z" title="更新于 2026-01-07 17:52:46">2026-01-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/">模型训练调优</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/">NVIDIA</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="训练环境"><a href="#训练环境" class="headerlink" title="训练环境"></a>训练环境</h1><h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:tulu3<br></code></pre></td></tr></table></figure>
-
+}</script><link rel="stylesheet" href="/self/dark.css"><link rel="stylesheet" href="/self/layout7-gradient.css"><style>#footer { background-color: transparent !important; } [data-theme="dark"] #footer:before { background-color: transparent !important; }</style><style>#nav #menus { position: absolute; left: 50%; transform: translateX(-50%); } #nav #blog-info { flex: 0 0 auto; }</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakana-widget@2.7.1/lib/sakana.min.css"><style>#sakana-widget { position: fixed; bottom: 50px; right: 50px; z-index: 9999; } #sakana-widget .sakana-widget-app { overflow: visible !important; } #sakana-widget .sakana-widget-img { height: 200px !important; background-size: contain !important; }</style><style>#page-header.full_page::before { background: linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.25) 100%) !important; }</style><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">28</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/bg3.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lyapunovxb's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Tulu3-8B-后训练实践</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 目录</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 我的</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 自言自语</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Tulu3-8B-后训练实践</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-12T01:00:00.000Z" title="发表于 2025-11-12 09:00:00">2025-11-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-07T09:52:46.546Z" title="更新于 2026-01-07 17:52:46">2026-01-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/">模型训练调优</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/">NVIDIA</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>训练环境</h1>
+<h2 id="镜像">镜像</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">registry.cn-shanghai.aliyuncs.com/aliyun_repository_wxb/repository_wxb:tulu3<br></code></pre></td></tr></table></figure>
 <p>镜像中已包含tulu3后训练所需要的所有依赖环境。</p>
-<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/mnt/users/wangxiangbo/model/tulu3/open-instruct-main<br></code></pre></td></tr></table></figure>
-
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image1.png"></p>
-<h3 id="data"><a href="#data" class="headerlink" title="data"></a>data</h3><p>包含了<code>sft</code>、<code>dpo</code>、<code>rlvr</code>所需的数据集</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image2.png"></p>
+<h2 id="代码结构">代码结构</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/mnt/users/wangxiangbo/model/tulu3/open-instruct-main<br></code></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image1.png" alt=""></p>
+<h3 id="data">data</h3>
+<p>包含了<code>sft</code>、<code>dpo</code>、<code>rlvr</code>所需的数据集</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image2.png" alt=""></p>
 <p><code>eval</code>相关</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image3.png"></p>
-<h3 id="scripts-x2F-configs"><a href="#scripts-x2F-configs" class="headerlink" title="scripts&#x2F;configs"></a>scripts&#x2F;configs</h3><p>训练脚本</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image4.png"></p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image5.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image3.png" alt=""></p>
+<h3 id="scripts-configs">scripts/configs</h3>
+<p>训练脚本</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image4.png" alt=""></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image5.png" alt=""></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">tulu3_sft.sh <span class="hljs-comment">#tulu3 sft单机脚本</span><br></code></pre></td></tr></table></figure>
-
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image6.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image6.png" alt=""></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">hostfile<br>hostfile-12<br>setRank.sh<br>tulu3_dpo.sh <span class="hljs-comment">#多机dpo脚本</span><br>tulu3_dpo_single.sh <span class="hljs-comment">#单机4卡dpo脚本</span><br>tulu3_dpo.yaml <span class="hljs-comment">#多机yaml</span><br>tulu3_sft.sh <span class="hljs-comment">#多机sft脚本</span><br></code></pre></td></tr></table></figure>
-
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image7.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image7.png" alt=""></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">tulu3_rlvr_single.sh <span class="hljs-comment">#tulu3 rlvr单机脚本</span><br></code></pre></td></tr></table></figure>
-
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image8.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image8.png" alt=""></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">loss_plot.py <span class="hljs-comment">#loss曲线绘图脚本</span><br></code></pre></td></tr></table></figure>
-
-<h3 id="open-instruct"><a href="#open-instruct" class="headerlink" title="open_instruct"></a>open_instruct</h3><p>sft、dpo、rlvr相关训练代码</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image9.png"></p>
-<h2 id="sft实践"><a href="#sft实践" class="headerlink" title="sft实践"></a>sft实践</h2><h3 id="单机4卡测试"><a href="#单机4卡测试" class="headerlink" title="单机4卡测试"></a>单机4卡测试</h3><h4 id="sft数据集"><a href="#sft数据集" class="headerlink" title="sft数据集"></a>sft数据集</h4><p>sft数据集采用tulu3官网提供的数据集</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image10.png"></p>
+<h3 id="open-instruct">open_instruct</h3>
+<p>sft、dpo、rlvr相关训练代码</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image9.png" alt=""></p>
+<h2 id="sft实践">sft实践</h2>
+<h3 id="单机4卡测试">单机4卡测试</h3>
+<h4 id="sft数据集">sft数据集</h4>
+<p>sft数据集采用tulu3官网提供的数据集</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image10.png" alt=""></p>
 <p>sft数据集样例：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;oasst1_2644&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;messages&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;有缓解社交恐惧症的实用方法吗？&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;以下是一些实用的方法，可能有助于缓解社交恐惧症：\n\n1.  寻求专业帮助：寻求心理医生或心理治疗师的帮助是缓解社交恐惧症的最佳方法之一。专业的治疗师可以帮助你识别和处理恐惧的源头，并提供有效的治疗方案。\n\n2. 练习深呼吸和放松技巧：当你感到焦虑和紧张时，尝试通过深呼吸和放松技巧来帮助你冷静下来。深呼吸可以帮助你减轻身体上的压力和紧张感，从而使你更放松和镇定。\n\n3. 学习积极思考：避免消极的自我对话，例如“我会失败”、“我不行”等等。改变自己的思考方式，尝试以积极、自信的态度面对社交场合。\n\n4.  採取柔性方法：為了對抗焦慮症狀，建議使用一些方法來提醒你的身體是安全的，例如：  \n\n＊ 呼吸訓練（用鼻子深深的吸一口氣再用嘴巴將氣慢慢地吐出，當你專注在吐氣時，你就會被帶出抵抗或逃避的情緒中。） \n\n ＊ 專注於現在（這麼做讓你能夠專注於自己所經歷的每分每秒。試著說出你現在能看見、聞到、碰觸到並聽得到的東西，或是坐在椅子上並感受自己的腳觸碰地面的感覺，或身體正被支撐著的感覺。）\n\n5. 給自己一點從容：在過渡時期練習自我同情，並提醒自己感到不確定與不安是很正常的。\n\n这些方法可以帮助你缓解社交恐惧症，但不同的人可能需要不同的方法和治疗方案。如果你感到严重的焦虑和恐惧，请及时寻求专业帮助。&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;assistant&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;好吧，可是我要去哪裡尋求專業幫助？&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;您可以先參考美國精神疾病診斷標準 **DSM-5** 中的6點標準，或者進行一些專業的心理測試。如果您符合這些標准或測試結果顯示您有社交恐懼症，您應儘早尋求專業的幫助。\n\n尋求專業幫助的途徑有以下幾種：\n\n- **諮詢醫生或心理健康專家**。他們可以為您提供診斷，藥物治療，心理治療等服務。\n- **參加心理諮詢或治療機構**。這些機構通常有專業的心理諮詢師或治療師，可以為您提供個人或團體的心理諮詢或治療服務。\n- **加入互助小組或社區**。這些小組或社區通常由有相同或類似問題的人組成，可以為您提供支持，鼓勵，交流和分享的平台。\n\n以上是我為您搜索到的一些信息，希望對您有所幫助。如果您還有其他問題，歡迎繼續提問。&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;assistant&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;ai2-adapt-dev\/oasst1_converted&quot;</span><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
-
 <p>由于是.parquet格式数据，转成json后一共有93w条数据。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image11.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image11.png" alt=""></p>
 <p>由于机器数量有限，训练其完整数据集需要较长时间，故将.parquet转为json后将数据集缩减至5k条，并再次转回.parquet格式数据。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image12.png"></p>
-<h4 id="单机脚本配置"><a href="#单机脚本配置" class="headerlink" title="单机脚本配置"></a>单机脚本配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> CUDA_VISIBLE_DEVICES=0,1,2,3<br><span class="hljs-built_in">export</span> WANDB_MODE=disabled<br>current_time=$(<span class="hljs-built_in">date</span> <span class="hljs-string">&quot;+%Y.%m.%d-%H.%M.%S&quot;</span>)<br>LOG_SAVE=<span class="hljs-string">&quot;/mnt/open-instruct-main/output/sft/<span class="hljs-variable">$&#123;current_time&#125;</span>-tulu3-sft.log&quot;</span><br>MODEL_SIZE=8B<br>NUM_GPUS=4<br>BATCH_SIZE_PER_GPU=2<br>TOTAL_BATCH_SIZE=8<br>GRADIENT_ACC_STEPS=$((<span class="hljs-variable">$TOTAL_BATCH_SIZE</span>/(<span class="hljs-variable">$NUM_GPUS</span> * <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span>)))<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Training llama model <span class="hljs-variable">$&#123;MODEL_SIZE&#125;</span> using <span class="hljs-variable">$NUM_GPUS</span> GPUs, <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span> batch size per GPU, <span class="hljs-variable">$GRADIENT_ACC_STEPS</span> gradient accumulation steps&quot;</span><br><br>accelerate launch \<br>    --mixed_precision fp16 \<br>    --num_machines 1 \<br>    --num_processes <span class="hljs-variable">$NUM_GPUS</span> \<br>    --use_deepspeed \<br>    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \<br>    /mnt/open-instruct-main/open_instruct/finetune.py \<br>    --model_name_or_path /mnt/LLM-Research/Meta-Llama-31-8B \<br>    --tokenizer_name /mnt/LLM-Research/Meta-Llama-31-8B \<br>    --use_slow_tokenizer \<br>    --train_file /mnt/open-instruct-main/data/sft_data_json/sft_dataset_5k.json \<br>    --max_seq_length 4096 \<br>    --preprocessing_num_workers 4 \<br>    --per_device_train_batch_size <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span> \<br>    --gradient_accumulation_steps <span class="hljs-variable">$GRADIENT_ACC_STEPS</span> \<br>    --learning_rate 2e-5 \<br>    --lr_scheduler_type linear \<br>    --warmup_ratio 0.03 \<br>    --weight_decay 0. \<br>    --num_train_epochs 1 \<br>    --output_dir /mnt/open-instruct-main/output/sft \<br>    --gradient_checkpointing <span class="hljs-literal">true</span> \<br>    --report_to none \<br>    --use_flash_attn <span class="hljs-literal">false</span> 2&gt;&amp;1 | <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;<span class="hljs-variable">$LOG_SAVE</span>&quot;</span><br></code></pre></td></tr></table></figure>
-
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image12.png" alt=""></p>
+<h4 id="单机脚本配置">单机脚本配置</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> CUDA_VISIBLE_DEVICES=0,1,2,3<br><span class="hljs-built_in">export</span> WANDB_MODE=disabled<br>current_time=$(<span class="hljs-built_in">date</span> <span class="hljs-string">&quot;+%Y.%m.%d-%H.%M.%S&quot;</span>)<br>LOG_SAVE=<span class="hljs-string">&quot;/mnt/open-instruct-main/output/sft/<span class="hljs-variable">$&#123;current_time&#125;</span>-tulu3-sft.log&quot;</span><br>MODEL_SIZE=8B<br>NUM_GPUS=4<br>BATCH_SIZE_PER_GPU=2<br>TOTAL_BATCH_SIZE=8<br>GRADIENT_ACC_STEPS=$((<span class="hljs-variable">$TOTAL_BATCH_SIZE</span>/(<span class="hljs-variable">$NUM_GPUS</span> * <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span>)))<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Training llama model <span class="hljs-variable">$&#123;MODEL_SIZE&#125;</span> using <span class="hljs-variable">$NUM_GPUS</span> GPUs, <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span> batch size per GPU, <span class="hljs-variable">$GRADIENT_ACC_STEPS</span> gradient accumulation steps&quot;</span><br><br>accelerate launch \<br>    --mixed_precision fp16 \<br>    --num_machines 1 \<br>    --num_processes <span class="hljs-variable">$NUM_GPUS</span> \<br>    --use_deepspeed \<br>    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \<br>    /mnt/open-instruct-main/open_instruct/finetune.py \<br>    --model_name_or_path /mnt/LLM-Research/Meta-Llama-31-8B \<br>    --tokenizer_name /mnt/LLM-Research/Meta-Llama-31-8B \<br>    --use_slow_tokenizer \<br>    --train_file /mnt/open-instruct-main/data/sft_data_json/sft_dataset_5k.json \<br>    --max_seq_length 4096 \<br>    --preprocessing_num_workers 4 \<br>    --per_device_train_batch_size <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span> \<br>    --gradient_accumulation_steps <span class="hljs-variable">$GRADIENT_ACC_STEPS</span> \<br>    --learning_rate 2e-5 \<br>    --lr_scheduler_type linear \<br>    --warmup_ratio 0.03 \<br>    --weight_decay 0. \<br>    --num_train_epochs 1 \<br>    --output_dir /mnt/open-instruct-main/output/sft \<br>    --gradient_checkpointing <span class="hljs-literal">true</span> \<br>    --report_to none \<br>    --use_flash_attn <span class="hljs-literal">false</span> 2&gt;&amp;1 | <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;<span class="hljs-variable">$LOG_SAVE</span>&quot;</span><br></code></pre></td></tr></table></figure>
 <p>为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。</p>
 <p><code>--max_seq_length 4096</code></p>
 <p><code>--learning_rate 2e-5</code></p>
 <p><code>--lr_scheduler_type linear</code></p>
 <p><code>--warmup_ratio 0.03</code></p>
 <p>其中的模型权重利用llama3.1-8B-base模型。</p>
-<h4 id="训练测试"><a href="#训练测试" class="headerlink" title="训练测试"></a>训练测试</h4><h5 id="训练结束"><a href="#训练结束" class="headerlink" title="训练结束"></a>训练结束</h5><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image13.png"></p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image14.png"></p>
+<h4 id="训练测试">训练测试</h4>
+<h5 id="训练结束">训练结束</h5>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image13.png" alt=""></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image14.png" alt=""></p>
 <table>
 <thead>
 <tr>
-<th align="center">资源类型</th>
-<th align="center">利用率</th>
-<th align="center">内存&#x2F;显存占用量</th>
+<th style="text-align:center">资源类型</th>
+<th style="text-align:center">利用率</th>
+<th style="text-align:center">内存/显存占用量</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">CPU</td>
-<td align="center">53.2%</td>
-<td align="center">80.7%</td>
+<tbody>
+<tr>
+<td style="text-align:center">CPU</td>
+<td style="text-align:center">53.2%</td>
+<td style="text-align:center">80.7%</td>
 </tr>
 <tr>
-<td align="center">GPU</td>
-<td align="center">85.5%</td>
-<td align="center">66.4%</td>
+<td style="text-align:center">GPU</td>
+<td style="text-align:center">85.5%</td>
+<td style="text-align:center">66.4%</td>
 </tr>
-</tbody></table>
-<h5 id="loss曲线"><a href="#loss曲线" class="headerlink" title="loss曲线"></a>loss曲线</h5><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image15.png"></p>
-<h5 id="eval"><a href="#eval" class="headerlink" title="eval"></a>eval</h5><p>llama3.1-8B通过tulu3提供的sft数据集（删减至5k条）后，得到的tulu3_sft权重</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image16.png"></p>
+</tbody>
+</table>
+<h5 id="loss曲线">loss曲线</h5>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image15.png" alt=""></p>
+<h5 id="eval">eval</h5>
+<p>llama3.1-8B通过tulu3提供的sft数据集（删减至5k条）后，得到的tulu3_sft权重</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image16.png" alt=""></p>
 <table>
 <thead>
 <tr>
-<th align="center">类别</th>
-<th align="center">Llama-31-8B</th>
-<th align="center">tulu3-sft-weight</th>
-<th align="center">Llama-31-Tulu-3-8B-SFT</th>
+<th style="text-align:center">类别</th>
+<th style="text-align:center">Llama-31-8B</th>
+<th style="text-align:center">tulu3-sft-weight</th>
+<th style="text-align:center">Llama-31-Tulu-3-8B-SFT</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">平均准确率</td>
-<td align="center">0.6014</td>
-<td align="center">0.5729</td>
-<td align="center"><strong><font style="color:#DF2A3F;">0.6356</font></strong></td>
+<tbody>
+<tr>
+<td style="text-align:center">平均准确率</td>
+<td style="text-align:center">0.6014</td>
+<td style="text-align:center">0.5729</td>
+<td style="text-align:center"><strong><font style="color:#DF2A3F;">0.6356</font></strong></td>
 </tr>
 <tr>
-<td align="center">子类别准确率</td>
-<td align="center">-</td>
-<td align="center">-</td>
-<td align="center"><strong><font style="color:#000000;">-</font></strong></td>
+<td style="text-align:center">子类别准确率</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"><strong><font style="color:#000000;">-</font></strong></td>
 </tr>
 <tr>
-<td align="center">数学</td>
-<td align="center">0.4098</td>
-<td align="center">0.3778</td>
-<td align="center"><strong>0.4192</strong></td>
+<td style="text-align:center">数学</td>
+<td style="text-align:center">0.4098</td>
+<td style="text-align:center">0.3778</td>
+<td style="text-align:center"><strong>0.4192</strong></td>
 </tr>
 <tr>
-<td align="center">健康</td>
-<td align="center">0.6561</td>
-<td align="center">0.6183</td>
-<td align="center"><strong>0.6720</strong></td>
+<td style="text-align:center">健康</td>
+<td style="text-align:center">0.6561</td>
+<td style="text-align:center">0.6183</td>
+<td style="text-align:center"><strong>0.6720</strong></td>
 </tr>
 <tr>
-<td align="center">物理</td>
-<td align="center">0.5063</td>
-<td align="center">0.4891</td>
-<td align="center"><strong>0.5328</strong></td>
+<td style="text-align:center">物理</td>
+<td style="text-align:center">0.5063</td>
+<td style="text-align:center">0.4891</td>
+<td style="text-align:center"><strong>0.5328</strong></td>
 </tr>
 <tr>
-<td align="center">商业</td>
-<td align="center">0.7643</td>
-<td align="center">0.7346</td>
-<td align="center"><strong>0.8101</strong></td>
+<td style="text-align:center">商业</td>
+<td style="text-align:center">0.7643</td>
+<td style="text-align:center">0.7346</td>
+<td style="text-align:center"><strong>0.8101</strong></td>
 </tr>
 <tr>
-<td align="center">生物</td>
-<td align="center">0.7555</td>
-<td align="center">0.6982</td>
-<td align="center"><strong>0.7775</strong></td>
+<td style="text-align:center">生物</td>
+<td style="text-align:center">0.7555</td>
+<td style="text-align:center">0.6982</td>
+<td style="text-align:center"><strong>0.7775</strong></td>
 </tr>
 <tr>
-<td align="center">化学</td>
-<td align="center">0.4851</td>
-<td align="center">0.4851</td>
-<td align="center"><strong>0.5186</strong></td>
+<td style="text-align:center">化学</td>
+<td style="text-align:center">0.4851</td>
+<td style="text-align:center">0.4851</td>
+<td style="text-align:center"><strong>0.5186</strong></td>
 </tr>
 <tr>
-<td align="center">计算机科学</td>
-<td align="center">0.5752</td>
-<td align="center">0.5194</td>
-<td align="center"><strong>0.6092</strong></td>
+<td style="text-align:center">计算机科学</td>
+<td style="text-align:center">0.5752</td>
+<td style="text-align:center">0.5194</td>
+<td style="text-align:center"><strong>0.6092</strong></td>
 </tr>
 <tr>
-<td align="center">经济</td>
-<td align="center">0.5930</td>
-<td align="center">0.5809</td>
-<td align="center"><strong>0.6213</strong></td>
+<td style="text-align:center">经济</td>
+<td style="text-align:center">0.5930</td>
+<td style="text-align:center">0.5809</td>
+<td style="text-align:center"><strong>0.6213</strong></td>
 </tr>
 <tr>
-<td align="center">工程</td>
-<td align="center">0.5517</td>
-<td align="center">0.5172</td>
-<td align="center"><strong>0.5517</strong></td>
+<td style="text-align:center">工程</td>
+<td style="text-align:center">0.5517</td>
+<td style="text-align:center">0.5172</td>
+<td style="text-align:center"><strong>0.5517</strong></td>
 </tr>
 <tr>
-<td align="center">哲学</td>
-<td align="center">0.4881</td>
-<td align="center">0.4627</td>
-<td align="center"><strong>0.5775</strong></td>
+<td style="text-align:center">哲学</td>
+<td style="text-align:center">0.4881</td>
+<td style="text-align:center">0.4627</td>
+<td style="text-align:center"><strong>0.5775</strong></td>
 </tr>
 <tr>
-<td align="center">其他</td>
-<td align="center">0.6524</td>
-<td align="center">0.6532<font style="color:#000000;">⬆</font></td>
-<td align="center"><strong>0.7090</strong></td>
+<td style="text-align:center">其他</td>
+<td style="text-align:center">0.6524</td>
+<td style="text-align:center">0.6532<font style="color:#000000;">⬆</font></td>
+<td style="text-align:center"><strong>0.7090</strong></td>
 </tr>
 <tr>
-<td align="center">历史</td>
-<td align="center">0.7452</td>
-<td align="center">0.7172</td>
-<td align="center"><strong>0.7774</strong></td>
+<td style="text-align:center">历史</td>
+<td style="text-align:center">0.7452</td>
+<td style="text-align:center">0.7172</td>
+<td style="text-align:center"><strong>0.7774</strong></td>
 </tr>
 <tr>
-<td align="center">地理</td>
-<td align="center">0.7323</td>
-<td align="center">0.7273</td>
-<td align="center"><strong>0.7677</strong></td>
+<td style="text-align:center">地理</td>
+<td style="text-align:center">0.7323</td>
+<td style="text-align:center">0.7273</td>
+<td style="text-align:center"><strong>0.7677</strong></td>
 </tr>
 <tr>
-<td align="center">政治</td>
-<td align="center">0.7546</td>
-<td align="center">0.7099</td>
-<td align="center"><strong>0.7762</strong></td>
+<td style="text-align:center">政治</td>
+<td style="text-align:center">0.7546</td>
+<td style="text-align:center">0.7099</td>
+<td style="text-align:center"><strong>0.7762</strong></td>
 </tr>
 <tr>
-<td align="center">心理学</td>
-<td align="center">0.7174</td>
-<td align="center">0.6845</td>
-<td align="center"><strong>0.7485</strong></td>
+<td style="text-align:center">心理学</td>
+<td style="text-align:center">0.7174</td>
+<td style="text-align:center">0.6845</td>
+<td style="text-align:center"><strong>0.7485</strong></td>
 </tr>
 <tr>
-<td align="center">文化</td>
-<td align="center"><strong>0.8102</strong></td>
-<td align="center">0.7440</td>
-<td align="center">0.7922</td>
+<td style="text-align:center">文化</td>
+<td style="text-align:center"><strong>0.8102</strong></td>
+<td style="text-align:center">0.7440</td>
+<td style="text-align:center">0.7922</td>
 </tr>
 <tr>
-<td align="center">法律</td>
-<td align="center">0.4878</td>
-<td align="center">0.4589</td>
-<td align="center"><strong>0.5020</strong></td>
+<td style="text-align:center">法律</td>
+<td style="text-align:center">0.4878</td>
+<td style="text-align:center">0.4589</td>
+<td style="text-align:center"><strong>0.5020</strong></td>
 </tr>
 <tr>
-<td align="center">类别准确率</td>
-<td align="center">-</td>
-<td align="center">-</td>
-<td align="center">-</td>
+<td style="text-align:center">类别准确率</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
 </tr>
 <tr>
-<td align="center">STEM</td>
-<td align="center">0.5192</td>
-<td align="center">0.4864</td>
-<td align="center"><strong>0.5394</strong></td>
+<td style="text-align:center">STEM</td>
+<td style="text-align:center">0.5192</td>
+<td style="text-align:center">0.4864</td>
+<td style="text-align:center"><strong>0.5394</strong></td>
 </tr>
 <tr>
-<td align="center">人文学科</td>
-<td align="center">0.5388</td>
-<td align="center">0.5116</td>
-<td align="center"><strong>0.5887</strong></td>
+<td style="text-align:center">人文学科</td>
+<td style="text-align:center">0.5388</td>
+<td style="text-align:center">0.5116</td>
+<td style="text-align:center"><strong>0.5887</strong></td>
 </tr>
 <tr>
-<td align="center">社会科学</td>
-<td align="center">0.7062</td>
-<td align="center">0.6740</td>
-<td align="center"><strong>0.7296</strong></td>
+<td style="text-align:center">社会科学</td>
+<td style="text-align:center">0.7062</td>
+<td style="text-align:center">0.6740</td>
+<td style="text-align:center"><strong>0.7296</strong></td>
 </tr>
 <tr>
-<td align="center">其他（商业、健康等）</td>
-<td align="center">0.6693</td>
-<td align="center">0.6465</td>
-<td align="center"><strong>0.7039</strong></td>
+<td style="text-align:center">其他（商业、健康等）</td>
+<td style="text-align:center">0.6693</td>
+<td style="text-align:center">0.6465</td>
+<td style="text-align:center"><strong>0.7039</strong></td>
 </tr>
-</tbody></table>
-<h5 id="eval结果分析"><a href="#eval结果分析" class="headerlink" title="eval结果分析"></a>eval结果分析</h5><ul>
+</tbody>
+</table>
+<h5 id="eval结果分析">eval结果分析</h5>
+<ul>
 <li>SFT后权重的平均准确率: 0.5729</li>
 <li>SFT前权重的平均准确率: 0.6014</li>
 </ul>
 <p>整体平均准确率下降了 ~2.85%。</p>
 <p>原因：本次实验（由于机器环境限制）将原始的tulu3 SFT数据集（93w）删减到5k条，导致模型未能充分学习各个领域的知识和任务特性，泛化能力下降。</p>
-<h2 id="dpo实践"><a href="#dpo实践" class="headerlink" title="dpo实践"></a>dpo实践</h2><h3 id="单机4卡测试-1"><a href="#单机4卡测试-1" class="headerlink" title="单机4卡测试"></a>单机4卡测试</h3><h4 id="偏好数据集"><a href="#偏好数据集" class="headerlink" title="偏好数据集"></a>偏好数据集</h4><p>偏好数据集采用tulu3官网提供的数据集。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image17.png"></p>
+<h2 id="dpo实践">dpo实践</h2>
+<h3 id="单机4卡测试-v2">单机4卡测试</h3>
+<h4 id="偏好数据集">偏好数据集</h4>
+<p>偏好数据集采用tulu3官网提供的数据集。</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image17.png" alt=""></p>
 <p>偏好数据集样例：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;allenai\/tulu-3-sft-reused-off-policy_0&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;prompt&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;chosen&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Here&#x27;s how to solve this problem:\n\n**Understanding the Information**\n\n* **Each rabbit has 3 or 7 neighbors:** This means there must be a pattern in how the rabbits are distributed within the cages.\n* **At least one rabbit in each cage:**  We can&#x27;t have cages without any rabbits.\n\n**Reasoning**\n\n* **Corner Cages:**  Rabbits in the corner cages (cages 1 and 5) can only have 3 neighbors (two adjacent cages and one within their own cage).\n* **Middle Cages:** Rabbits in the middle cages (cages 2, 3, and 4) must have 7 neighbors to balance out the setup. \n\n**The Solution**\n\nSince rabbits in the middle cages need 7 neighbors, and there&#x27;s at least one rabbit in each cage, the central cage (cage 3) must have **4 rabbits**. \n\n\n\nLet me know if you&#x27;d like to explore other logic puzzles! \n&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;assistant&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;rejected&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Peter has 5 cages with rabbits (the cages are arranged in a row). It is known that there is at least one rabbit in each cage. We will call two rabbits neighbors if they are either in the same cage or in adjacent cages. It turned out that each rabbit has either 3 or 7 neighbors. How many rabbits are in the central cage?&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;The central cage has the same number of rabbits as any other cage, so it also has either 3 or 7 neighbors.\nThere are (at most) 7 rabbits in the central cage and (at most) 3 rabbits in any cage on either side. Hence, there are (at most) 7 rabbits in each of those cages. The total number of rabbits in the 5 cages is (at most) 5 * 7 + 1 = 36 + 1 = 37.\nOne cage must have exactly the right number of neighbors, but two cages cannot have the right number.\nIf each cage has exactly 3 neighbors, the total number of rabbits in all 5 cages is 1 + 5 * 3 = 16\nIf each cage has exactly 7 neighbors, the total number of rabbits in all 5 cages is 1 + 5 * 7 = 32\nNow that we know there are at most 36 rabbits, we can safely conclude that there is 1 rabbit in the central cage, that there are 5 cages with 3 rabbits each and one cage with 7 rabbits and that the central cage has 3 neighbors.\nThe central cage has exactly 3 rabbits and 3 neighbors.\nIn the other 4 cages, there are (at most) 5 * 3 = 15 rabbits.\nIn the other 5 cages, there are (at least) 32 – 16 = 16 rabbits.&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;assistant&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;allenai\/tulu-3-sft-reused-off-policy&quot;</span><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
-
 <p>由于是.parquet格式数据，转成json后一共有67w条数据。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image18.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image18.png" alt=""></p>
 <p>由于机器数量有限，训练其完整数据集需要较长时间，故将.parquet转为json后将数据集缩减至5k条，并再次转回.parquet格式数据。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image19.png"></p>
-<h4 id="单机脚本配置-1"><a href="#单机脚本配置-1" class="headerlink" title="单机脚本配置"></a>单机脚本配置</h4><p>单机脚本，部分配置OOM，采用deepseed中zero3以及cpu_offloading，开启梯度累积。</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image19.png" alt=""></p>
+<h4 id="单机脚本配置-v2">单机脚本配置</h4>
+<p>单机脚本，部分配置OOM，采用deepseed中zero3以及cpu_offloading，开启梯度累积。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># you need 8 GPUs for full finetuning</span><br><span class="hljs-built_in">export</span> CUDA_VISIBLE_DEVICES=0,1,2,3<br><span class="hljs-built_in">export</span> WANDB_MODE=disabled<br><br>NUM_GPUS=4<br>BATCH_SIZE_PER_GPU=1<br>TOTAL_BATCH_SIZE=8<br>GRADIENT_ACC_STEPS=$((<span class="hljs-variable">$TOTAL_BATCH_SIZE</span>/<span class="hljs-variable">$NUM_GPUS</span>/<span class="hljs-variable">$BATCH_SIZE_PER_GPU</span>))<br>current_time=$(<span class="hljs-built_in">date</span> <span class="hljs-string">&quot;+%Y.%m.%d-%H.%M.%S&quot;</span>)<br>LOG_SAVE=<span class="hljs-string">&quot;/mnt/open-instruct-main/output/dpo/<span class="hljs-variable">$&#123;current_time&#125;</span>-tulu3-dpo.log&quot;</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Training model using <span class="hljs-variable">$NUM_GPUS</span> GPUs, <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span> batch size per GPU, <span class="hljs-variable">$GRADIENT_ACC_STEPS</span> gradient accumulation steps&quot;</span><br><br><span class="hljs-comment">#stage3_no_offloading_accelerate.conf</span><br>accelerate launch \<br>    --mixed_precision fp16 \<br>    --num_machines 1 \<br>    --num_processes <span class="hljs-variable">$NUM_GPUS</span> \<br>    --use_deepspeed \<br>    --deepspeed_config_file /mnt/open-instruct-main/configs/ds_configs/stage3_offloading_accelerate.conf \<br>    /mnt/open-instruct-main/open_instruct/dpo_tune.py \<br>    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-SFT \<br>    --use_flash_attn  <span class="hljs-literal">false</span>\<br>    --gradient_checkpointing \<br>    --tokenizer_name /mnt/LLM-Research/Llama-31-Tulu-3-8B-SFT \<br>    --use_slow_tokenizer \<br>    --dataset_name /mnt/open-instruct-main/data/dpo_data_5k \<br>    --max_seq_length 2048 \<br>    --preprocessing_num_workers 4 \<br>    --per_device_train_batch_size <span class="hljs-variable">$BATCH_SIZE_PER_GPU</span> \<br>    --gradient_accumulation_steps <span class="hljs-variable">$GRADIENT_ACC_STEPS</span> \<br>    --learning_rate 5e-7 \<br>    --lr_scheduler_type linear \<br>    --warmup_ratio 0.1 \<br>    --weight_decay 0. \<br>    --num_train_epochs 1 \<br>    --output_dir /mnt/open-instruct-main/output/dpo \<br>    --with_tracking False \<br>    --logging_steps 1 2&gt;&amp;1 | <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;<span class="hljs-variable">$LOG_SAVE</span>&quot;</span><br></code></pre></td></tr></table></figure>
-
 <p>为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。</p>
 <p><code>--max_seq_length 2048</code></p>
 <p><code>--learning_rate 5e-7</code></p>
 <p><code>--lr_scheduler_type linear</code></p>
 <p><code>--warmup_ratio 0.1</code></p>
 <p>其中的模型权重利用tulu3开源的经过llama3.1-8B sft得到的权重。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image20.png"></p>
-<h4 id="训练测试-1"><a href="#训练测试-1" class="headerlink" title="训练测试"></a>训练测试</h4><h5 id="关闭cpu-offloading"><a href="#关闭cpu-offloading" class="headerlink" title="关闭cpu_offloading"></a>关闭cpu_offloading</h5><p>注：关闭cpu_offloading之后，迭代10步左右会OOM</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image21.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image20.png" alt=""></p>
+<h4 id="训练测试-v2">训练测试</h4>
+<h5 id="关闭cpu-offloading">关闭cpu_offloading</h5>
+<p>注：关闭cpu_offloading之后，迭代10步左右会OOM</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image21.png" alt=""></p>
 <table>
 <thead>
 <tr>
-<th align="center">资源类型</th>
-<th align="center">利用率</th>
-<th align="center">内存&#x2F;显存占用量</th>
+<th style="text-align:center">资源类型</th>
+<th style="text-align:center">利用率</th>
+<th style="text-align:center">内存/显存占用量</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">CPU</td>
-<td align="center">16.5%</td>
-<td align="center">12.1%</td>
+<tbody>
+<tr>
+<td style="text-align:center">CPU</td>
+<td style="text-align:center">16.5%</td>
+<td style="text-align:center">12.1%</td>
 </tr>
 <tr>
-<td align="center">GPU</td>
-<td align="center">100%</td>
-<td align="center">93.6%</td>
+<td style="text-align:center">GPU</td>
+<td style="text-align:center">100%</td>
+<td style="text-align:center">93.6%</td>
 </tr>
-</tbody></table>
-<h5 id="开启cpu-offloading"><a href="#开启cpu-offloading" class="headerlink" title="开启cpu_offloading"></a>开启cpu_offloading</h5><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image22.png"></p>
+</tbody>
+</table>
+<h5 id="开启cpu-offloading">开启cpu_offloading</h5>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image22.png" alt=""></p>
 <table>
 <thead>
 <tr>
-<th align="center">资源类型</th>
-<th align="center">利用率</th>
-<th align="center">内存&#x2F;显存占用量</th>
+<th style="text-align:center">资源类型</th>
+<th style="text-align:center">利用率</th>
+<th style="text-align:center">内存/显存占用量</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">CPU</td>
-<td align="center">55.0%</td>
-<td align="center">58.2%</td>
+<tbody>
+<tr>
+<td style="text-align:center">CPU</td>
+<td style="text-align:center">55.0%</td>
+<td style="text-align:center">58.2%</td>
 </tr>
 <tr>
-<td align="center">GPU</td>
-<td align="center">85.8%</td>
-<td align="center">68.7%</td>
+<td style="text-align:center">GPU</td>
+<td style="text-align:center">85.8%</td>
+<td style="text-align:center">68.7%</td>
 </tr>
-</tbody></table>
-<h5 id="训练完成"><a href="#训练完成" class="headerlink" title="训练完成"></a>训练完成</h5><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image23.png"></p>
+</tbody>
+</table>
+<h5 id="训练完成">训练完成</h5>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image23.png" alt=""></p>
 <p>得到的dpo权重</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image24.png"></p>
-<h5 id="loss曲线-1"><a href="#loss曲线-1" class="headerlink" title="loss曲线"></a>loss曲线</h5><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image25.png"></p>
-<h5 id="eval-1"><a href="#eval-1" class="headerlink" title="eval"></a>eval</h5><p>评测数据集采用MMLU，一个包含来自各个知识领域的多项选择题的巨大多任务测试。 测试涵盖了人文学科、社会科学、自然科学以及其他对某些人来说重要的学习领域。 数据集中的问题是由研究生和本科生从在线免费资源中手动收集的。这包括研究生入学考试和美国医学执照考试等考试的练习题。还包括为本科生课程设计的题目，以及为牛津大学出版社书籍读者设计的题目。 一些任务涵盖一个主题，如心理学，但难度级别特定，例如“初阶”、“高中”、“大学”或“专业”。 例如，“专业心理学”任务借鉴了心理学专业实践考试的免费练习题中的问题，而“高中心理学”任务则包含类似高级 Placement 心理学考试中的问题。</p>
-<p>:::tips<br>MMLU数据集样例如下，摘自MMLU论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.03300">https://arxiv.org/abs/2009.03300</a></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image24.png" alt=""></p>
+<h5 id="loss曲线-v2">loss曲线</h5>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image25.png" alt=""></p>
+<h5 id="eval-v2">eval</h5>
+<p>评测数据集采用MMLU，一个包含来自各个知识领域的多项选择题的巨大多任务测试。 测试涵盖了人文学科、社会科学、自然科学以及其他对某些人来说重要的学习领域。 数据集中的问题是由研究生和本科生从在线免费资源中手动收集的。这包括研究生入学考试和美国医学执照考试等考试的练习题。还包括为本科生课程设计的题目，以及为牛津大学出版社书籍读者设计的题目。 一些任务涵盖一个主题，如心理学，但难度级别特定，例如“初阶”、“高中”、“大学”或“专业”。 例如，“专业心理学”任务借鉴了心理学专业实践考试的免费练习题中的问题，而“高中心理学”任务则包含类似高级 Placement 心理学考试中的问题。</p>
+<p>:::tips<br>
+MMLU数据集样例如下，摘自MMLU论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.03300">https://arxiv.org/abs/2009.03300</a></p>
 <p>:::</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image26.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image26.png" alt=""></p>
 <p>eg：以下是MMLU上<font style="color:rgb(0,0,0);">College Biology类问题及答案</font>：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plain">&quot;Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to&quot;,<br>maintain the population at a point corresponding to the midpoint of its logistic curve,<br>opt for zero population control once the K value of the curve has been reached,<br>reduce the carrying capacity cif the environment to lower the K value,<br>increase the mortality rate,<br>C<br></code></pre></td></tr></table></figure>
-
 <p>eg：以下是<code>dpo_weight</code>在MMLU上<font style="color:rgb(0,0,0);">College Biology类问题的回答</font>：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs plain">0,1,2,3,4,5,correct,choiceA_probs,choiceB_probs,choiceC_probs,choiceD_probs<br>&quot;Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to&quot;,<br>maintain the population at a point corresponding to the midpoint of its logistic curve,<br>opt for zero population control once the K value of the curve has been reached,<br>reduce the carrying capacity cif the environment to lower the K value,<br>increase the mortality rate,<br>C,<br>True,<br>0.07324660569429398,<br>0.0071399579755961895,<br>0.6528399586677551,<br>0.1929791122674942<br></code></pre></td></tr></table></figure>
-
-
-
 <p>本次dpo后得到的权重<code>dpo_weight</code>对比tulu3开源的sft权重<code>Llama-31-Tulu-3-8B-SFT</code>。</p>
 <p><code>Llama-31-Tulu-3-8B-SFT</code>在MMLU上的表现：</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image27.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image27.png" alt=""></p>
 <p><code>dpo_weight</code>在MMLU上的表现：</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image28.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image28.png" alt=""></p>
 <table>
 <thead>
 <tr>
-<th align="center">类别</th>
-<th align="center">Llama-31-8B</th>
-<th align="center">Llama-31-Tulu-3-8B-SFT</th>
-<th align="center">dpo_weight</th>
-<th align="center">Llama-31-Tulu-3-8B-DPO</th>
+<th style="text-align:center">类别</th>
+<th style="text-align:center">Llama-31-8B</th>
+<th style="text-align:center">Llama-31-Tulu-3-8B-SFT</th>
+<th style="text-align:center">dpo_weight</th>
+<th style="text-align:center">Llama-31-Tulu-3-8B-DPO</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">平均准确率</td>
-<td align="center">0.6014</td>
-<td align="center">0.6356</td>
-<td align="center">**<font style="color:#DF2A3F;">0.6377</font>**⬆</td>
-<td align="center">0.6352</td>
+<tbody>
+<tr>
+<td style="text-align:center">平均准确率</td>
+<td style="text-align:center">0.6014</td>
+<td style="text-align:center">0.6356</td>
+<td style="text-align:center">**<font style="color:#DF2A3F;">0.6377</font>**⬆</td>
+<td style="text-align:center">0.6352</td>
 </tr>
 <tr>
-<td align="center">子类别准确率</td>
-<td align="center">-</td>
-<td align="center"><strong><font style="color:#000000;">-</font></strong></td>
-<td align="center"><strong><font style="color:#000000;">-</font></strong></td>
-<td align="center">-</td>
+<td style="text-align:center">子类别准确率</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"><strong><font style="color:#000000;">-</font></strong></td>
+<td style="text-align:center"><strong><font style="color:#000000;">-</font></strong></td>
+<td style="text-align:center">-</td>
 </tr>
 <tr>
-<td align="center">数学</td>
-<td align="center">0.4098</td>
-<td align="center">0.4192</td>
-<td align="center"><strong>0.4352</strong>⬆</td>
-<td align="center">0.4258</td>
+<td style="text-align:center">数学</td>
+<td style="text-align:center">0.4098</td>
+<td style="text-align:center">0.4192</td>
+<td style="text-align:center"><strong>0.4352</strong>⬆</td>
+<td style="text-align:center">0.4258</td>
 </tr>
 <tr>
-<td align="center">健康</td>
-<td align="center">0.6561</td>
-<td align="center">0.6720</td>
-<td align="center">0.6726⬆</td>
-<td align="center"><strong>0.6915</strong></td>
+<td style="text-align:center">健康</td>
+<td style="text-align:center">0.6561</td>
+<td style="text-align:center">0.6720</td>
+<td style="text-align:center">0.6726⬆</td>
+<td style="text-align:center"><strong>0.6915</strong></td>
 </tr>
 <tr>
-<td align="center">物理</td>
-<td align="center">0.5063</td>
-<td align="center">0.5328</td>
-<td align="center"><strong>0.5500</strong>⬆</td>
-<td align="center">0.5391</td>
+<td style="text-align:center">物理</td>
+<td style="text-align:center">0.5063</td>
+<td style="text-align:center">0.5328</td>
+<td style="text-align:center"><strong>0.5500</strong>⬆</td>
+<td style="text-align:center">0.5391</td>
 </tr>
 <tr>
-<td align="center">商业</td>
-<td align="center">0.7643</td>
-<td align="center"><strong>0.8101</strong></td>
-<td align="center">0.7941</td>
-<td align="center">0.7849</td>
+<td style="text-align:center">商业</td>
+<td style="text-align:center">0.7643</td>
+<td style="text-align:center"><strong>0.8101</strong></td>
+<td style="text-align:center">0.7941</td>
+<td style="text-align:center">0.7849</td>
 </tr>
 <tr>
-<td align="center">生物</td>
-<td align="center">0.7555</td>
-<td align="center">0.7775</td>
-<td align="center"><strong>0.7775</strong>⬆</td>
-<td align="center">0.7731</td>
+<td style="text-align:center">生物</td>
+<td style="text-align:center">0.7555</td>
+<td style="text-align:center">0.7775</td>
+<td style="text-align:center"><strong>0.7775</strong>⬆</td>
+<td style="text-align:center">0.7731</td>
 </tr>
 <tr>
-<td align="center">化学</td>
-<td align="center">0.4851</td>
-<td align="center">0.5186</td>
-<td align="center">0.5182</td>
-<td align="center"><strong>0.5248</strong></td>
+<td style="text-align:center">化学</td>
+<td style="text-align:center">0.4851</td>
+<td style="text-align:center">0.5186</td>
+<td style="text-align:center">0.5182</td>
+<td style="text-align:center"><strong>0.5248</strong></td>
 </tr>
 <tr>
-<td align="center">计算机科学</td>
-<td align="center">0.5752</td>
-<td align="center">0.6092</td>
-<td align="center"><strong>0.6189</strong>⬆</td>
-<td align="center">0.6117</td>
+<td style="text-align:center">计算机科学</td>
+<td style="text-align:center">0.5752</td>
+<td style="text-align:center">0.6092</td>
+<td style="text-align:center"><strong>0.6189</strong>⬆</td>
+<td style="text-align:center">0.6117</td>
 </tr>
 <tr>
-<td align="center">经济</td>
-<td align="center">0.5930</td>
-<td align="center">0.6213</td>
-<td align="center">0.6173</td>
-<td align="center"><strong>0.6429</strong></td>
+<td style="text-align:center">经济</td>
+<td style="text-align:center">0.5930</td>
+<td style="text-align:center">0.6213</td>
+<td style="text-align:center">0.6173</td>
+<td style="text-align:center"><strong>0.6429</strong></td>
 </tr>
 <tr>
-<td align="center">工程</td>
-<td align="center">0.5517</td>
-<td align="center">0.5517</td>
-<td align="center"><strong>0.5655</strong>⬆</td>
-<td align="center">0.5586</td>
+<td style="text-align:center">工程</td>
+<td style="text-align:center">0.5517</td>
+<td style="text-align:center">0.5517</td>
+<td style="text-align:center"><strong>0.5655</strong>⬆</td>
+<td style="text-align:center">0.5586</td>
 </tr>
 <tr>
-<td align="center">哲学</td>
-<td align="center">0.4881</td>
-<td align="center"><strong>0.5775</strong></td>
-<td align="center">0.5626</td>
-<td align="center">0.5388</td>
+<td style="text-align:center">哲学</td>
+<td style="text-align:center">0.4881</td>
+<td style="text-align:center"><strong>0.5775</strong></td>
+<td style="text-align:center">0.5626</td>
+<td style="text-align:center">0.5388</td>
 </tr>
 <tr>
-<td align="center">其他</td>
-<td align="center">0.6524</td>
-<td align="center">0.7090</td>
-<td align="center"><strong>0.7107</strong>⬆</td>
-<td align="center">0.7082</td>
+<td style="text-align:center">其他</td>
+<td style="text-align:center">0.6524</td>
+<td style="text-align:center">0.7090</td>
+<td style="text-align:center"><strong>0.7107</strong>⬆</td>
+<td style="text-align:center">0.7082</td>
 </tr>
 <tr>
-<td align="center">历史</td>
-<td align="center">0.7452</td>
-<td align="center">0.7774</td>
-<td align="center"><strong>0.7828</strong>⬆</td>
-<td align="center">0.7720</td>
+<td style="text-align:center">历史</td>
+<td style="text-align:center">0.7452</td>
+<td style="text-align:center">0.7774</td>
+<td style="text-align:center"><strong>0.7828</strong>⬆</td>
+<td style="text-align:center">0.7720</td>
 </tr>
 <tr>
-<td align="center">地理</td>
-<td align="center">0.7323</td>
-<td align="center">0.7677</td>
-<td align="center">0.7778⬆</td>
-<td align="center"><strong>0.7778</strong></td>
+<td style="text-align:center">地理</td>
+<td style="text-align:center">0.7323</td>
+<td style="text-align:center">0.7677</td>
+<td style="text-align:center">0.7778⬆</td>
+<td style="text-align:center"><strong>0.7778</strong></td>
 </tr>
 <tr>
-<td align="center">政治</td>
-<td align="center">0.7546</td>
-<td align="center">0.7762</td>
-<td align="center"><strong>0.7793</strong>⬆</td>
-<td align="center">0.7762</td>
+<td style="text-align:center">政治</td>
+<td style="text-align:center">0.7546</td>
+<td style="text-align:center">0.7762</td>
+<td style="text-align:center"><strong>0.7793</strong>⬆</td>
+<td style="text-align:center">0.7762</td>
 </tr>
 <tr>
-<td align="center">心理学</td>
-<td align="center">0.7174</td>
-<td align="center">0.7485</td>
-<td align="center"><strong>0.7519</strong>⬆</td>
-<td align="center">0.7476</td>
+<td style="text-align:center">心理学</td>
+<td style="text-align:center">0.7174</td>
+<td style="text-align:center">0.7485</td>
+<td style="text-align:center"><strong>0.7519</strong>⬆</td>
+<td style="text-align:center">0.7476</td>
 </tr>
 <tr>
-<td align="center">文化</td>
-<td align="center"><strong>0.8102</strong></td>
-<td align="center">0.7922</td>
-<td align="center">0.7892</td>
-<td align="center">0.8042</td>
+<td style="text-align:center">文化</td>
+<td style="text-align:center"><strong>0.8102</strong></td>
+<td style="text-align:center">0.7922</td>
+<td style="text-align:center">0.7892</td>
+<td style="text-align:center">0.8042</td>
 </tr>
 <tr>
-<td align="center">法律</td>
-<td align="center">0.4878</td>
-<td align="center">0.5020</td>
-<td align="center"><strong>0.5133</strong>⬆</td>
-<td align="center">0.5156</td>
+<td style="text-align:center">法律</td>
+<td style="text-align:center">0.4878</td>
+<td style="text-align:center">0.5020</td>
+<td style="text-align:center"><strong>0.5133</strong>⬆</td>
+<td style="text-align:center">0.5156</td>
 </tr>
 <tr>
-<td align="center">父类别准确率</td>
-<td align="center">-</td>
-<td align="center">-</td>
-<td align="center"><strong>-</strong></td>
-<td align="center">-</td>
+<td style="text-align:center">父类别准确率</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"><strong>-</strong></td>
+<td style="text-align:center">-</td>
 </tr>
 <tr>
-<td align="center">STEM</td>
-<td align="center">0.5192</td>
-<td align="center">0.5394</td>
-<td align="center"><strong>0.5507</strong>⬆</td>
-<td align="center">0.5437</td>
+<td style="text-align:center">STEM</td>
+<td style="text-align:center">0.5192</td>
+<td style="text-align:center">0.5394</td>
+<td style="text-align:center"><strong>0.5507</strong>⬆</td>
+<td style="text-align:center">0.5437</td>
 </tr>
 <tr>
-<td align="center">人文学科</td>
-<td align="center">0.5388</td>
-<td align="center"><strong>0.5887</strong></td>
-<td align="center">0.5877</td>
-<td align="center">0.5762</td>
+<td style="text-align:center">人文学科</td>
+<td style="text-align:center">0.5388</td>
+<td style="text-align:center"><strong>0.5887</strong></td>
+<td style="text-align:center">0.5877</td>
+<td style="text-align:center">0.5762</td>
 </tr>
 <tr>
-<td align="center">社会科学</td>
-<td align="center">0.7062</td>
-<td align="center">0.7296</td>
-<td align="center">0.7309⬆</td>
-<td align="center"><strong>0.7364</strong></td>
+<td style="text-align:center">社会科学</td>
+<td style="text-align:center">0.7062</td>
+<td style="text-align:center">0.7296</td>
+<td style="text-align:center">0.7309⬆</td>
+<td style="text-align:center"><strong>0.7364</strong></td>
 </tr>
 <tr>
-<td align="center">其他（商业、健康、杂项）</td>
-<td align="center">0.6693</td>
-<td align="center">0.7039</td>
-<td align="center">0.7027</td>
-<td align="center"><strong>0.7101</strong></td>
+<td style="text-align:center">其他（商业、健康、杂项）</td>
+<td style="text-align:center">0.6693</td>
+<td style="text-align:center">0.7039</td>
+<td style="text-align:center">0.7027</td>
+<td style="text-align:center"><strong>0.7101</strong></td>
 </tr>
-</tbody></table>
-<h3 id="dpo代码实现分析"><a href="#dpo代码实现分析" class="headerlink" title="dpo代码实现分析"></a>dpo代码实现分析</h3><h4 id="Length-Normalized-DPO-的实现"><a href="#Length-Normalized-DPO-的实现" class="headerlink" title="Length-Normalized DPO 的实现"></a>Length-Normalized DPO 的实现</h4><h5 id="get-batch-logps-函数"><a href="#get-batch-logps-函数" class="headerlink" title="_get_batch_logps 函数"></a><code>_get_batch_logps</code> 函数</h5><p>tulu3论文中说明了，tulu3-8B的dpo使用了长度归一化的DPO（Length-Normalized DPO），以此来消除<font style="color:#000000;background-color:#F1A2AB;">因回答的序列长度（对比来说很长的话）带来的概率偏好影响。</font> 当 <code>average_log_prob=True</code> 时，会将每个 token 的 log 概率进行平均处理，实现序列长度归一化。 如果<code>average_log_prob=False</code>，则是直接求和。</p>
+</tbody>
+</table>
+<h3 id="dpo代码实现分析">dpo代码实现分析</h3>
+<h4 id="Length-Normalized-DPO-的实现">Length-Normalized DPO 的实现</h4>
+<h5 id="get-batch-logps-函数"><code>_get_batch_logps</code> 函数</h5>
+<p>tulu3论文中说明了，tulu3-8B的dpo使用了长度归一化的DPO（Length-Normalized DPO），以此来消除<font style="color:#000000;background-color:#F1A2AB;">因回答的序列长度（对比来说很长的话）带来的概率偏好影响。</font> 当 <code>average_log_prob=True</code> 时，会将每个 token 的 log 概率进行平均处理，实现序列长度归一化。 如果<code>average_log_prob=False</code>，则是直接求和。</p>
 <p>代码具体实现如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_batch_logps</span>(<span class="hljs-params"></span><br><span class="hljs-params">    logits: torch.FloatTensor, labels: torch.LongTensor, average_log_prob: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span></span><br><span class="hljs-params"></span>) -&gt; torch.FloatTensor:<br>    <span class="hljs-comment"># 确保logits和labels的形状在除了最后一个维度外是相同的。</span><br>    <span class="hljs-keyword">assert</span> logits.shape[:-<span class="hljs-number">1</span>] == labels.shape<br>    <span class="hljs-comment"># 两行代码分别对labels和logits进行切片操作，去掉了每个序列的第一个和最后一个元素。</span><br>    labels = labels[:, <span class="hljs-number">1</span>:].clone()<br>    logits = logits[:, :-<span class="hljs-number">1</span>, :]<br>    <span class="hljs-comment"># 这行代码创建了一个掩码loss_mask，用于标识哪些标签不是-100（即不是要被忽略的标签）。</span><br>    loss_mask = labels != -<span class="hljs-number">100</span><br><br>    <span class="hljs-comment"># 这行代码将labels中值为-100的元素替换为0，因为在PyTorch中，0可以作为无效索引。</span><br>    labels[labels == -<span class="hljs-number">100</span>] = <span class="hljs-number">0</span><br><br>    <span class="hljs-comment"># 计算每个token的对数概率。首先对logits应用log_softmax函数，然后在最后一个维度上使用torch.gather根据labels索引来选择对应的对数概率。</span><br>    per_token_logps = torch.gather(logits.log_softmax(-<span class="hljs-number">1</span>), dim=<span class="hljs-number">2</span>, index=labels.unsqueeze(<span class="hljs-number">2</span>)).squeeze(<span class="hljs-number">2</span>)<br><br>    <span class="hljs-comment"># 根据average_log_prob的值决定返回值。如果average_log_prob为True，则返回每个样本的平均对数概率；否则，返回每个样本的对数概率之和</span><br>    <span class="hljs-keyword">if</span> average_log_prob:<br>        <span class="hljs-keyword">return</span> (per_token_logps * loss_mask).<span class="hljs-built_in">sum</span>(-<span class="hljs-number">1</span>) / loss_mask.<span class="hljs-built_in">sum</span>(-<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-keyword">return</span> (per_token_logps * loss_mask).<span class="hljs-built_in">sum</span>(-<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
-
-<p>:::tips<br><font style="color:rgba(0, 0, 0, 0.85);">函数_get_batch_logps用于计算给定标签（labels）在给定的模型输出（logits）下的对数概率（log probabilities）。</font></p>
+<p>:::tips<br>
+<font style="color:rgba(0, 0, 0, 0.85);">函数_get_batch_logps用于计算给定标签（labels）在给定的模型输出（logits）下的对数概率（log probabilities）。</font></p>
 <p><font style="color:rgba(0, 0, 0, 0.85);">参数说明：</font></p>
 <ul>
 <li><font style="color:rgba(0, 0, 0, 0.85);">logits</font><font style="color:rgba(0, 0, 0, 0.85);">：模型的输出（未归一化的）。形状为</font><font style="color:rgba(0, 0, 0, 0.85);">(batch_size, sequence_length, vocab_size)</font><font style="color:rgba(0, 0, 0, 0.85);">，其中</font><font style="color:rgba(0, 0, 0, 0.85);">batch_size</font><font style="color:rgba(0, 0, 0, 0.85);">是批次大小，</font><font style="color:rgba(0, 0, 0, 0.85);">sequence_length</font><font style="color:rgba(0, 0, 0, 0.85);">是序列长度，</font><font style="color:rgba(0, 0, 0, 0.85);">vocab_size</font><font style="color:rgba(0, 0, 0, 0.85);">是词汇表的大小。</font></li>
@@ -666,40 +691,43 @@
 </ul>
 <p><font style="color:rgba(0, 0, 0, 0.85);">该函数是用来计算模型预测的概率，并根据标签来确定哪些预测是有效的（即标签值不为-100）。如果average_log_prob参数为True，则函数返回的是平均对数概率；如果为False，则返回的是总和。</font></p>
 <p>:::</p>
-<h5 id="concatenated-forward-函数"><a href="#concatenated-forward-函数" class="headerlink" title="concatenated_forward 函数"></a><code>concatenated_forward</code> 函数</h5><p> 在训练中，<code>concatenated_forward</code> 负责对模型的 <code>logps</code> 进行计算：  </p>
+<h5 id="concatenated-forward-函数"><code>concatenated_forward</code> 函数</h5>
+<p>在训练中，<code>concatenated_forward</code> 负责对模型的 <code>logps</code> 进行计算：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">concatenated_forward</span>(<span class="hljs-params"></span><br><span class="hljs-params">    model: nn.Module,</span><br><span class="hljs-params">    batch: <span class="hljs-type">Dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Union</span>[<span class="hljs-type">List</span>, torch.LongTensor]],</span><br><span class="hljs-params">    average_log_prob: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span>,</span><br><span class="hljs-params">    output_router_logits: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span>,</span><br><span class="hljs-params"></span>) -&gt; <span class="hljs-type">Tuple</span>[torch.FloatTensor, torch.FloatTensor]:<br>    concatenated_batch = concatenated_inputs(batch)<br>    <span class="hljs-keyword">if</span> output_router_logits:<br>        outputs = model(<br>            input_ids=concatenated_batch[<span class="hljs-string">&quot;concatenated_input_ids&quot;</span>],<br>            attention_mask=concatenated_batch[<span class="hljs-string">&quot;concatenated_attention_mask&quot;</span>],<br>            output_router_logits=<span class="hljs-literal">True</span>,<br>        )<br>        logits = outputs.logits.to(torch.float32)<br>        aux_loss = outputs.aux_loss<br>    <span class="hljs-keyword">else</span>:<br>        logits = model(<br>            input_ids=concatenated_batch[<span class="hljs-string">&quot;concatenated_input_ids&quot;</span>],<br>            attention_mask=concatenated_batch[<span class="hljs-string">&quot;concatenated_attention_mask&quot;</span>],<br>        ).logits.to(torch.float32)<br>        aux_loss = <span class="hljs-literal">None</span><br>    all_logps = _get_batch_logps(logits, concatenated_batch[<span class="hljs-string">&quot;concatenated_labels&quot;</span>], average_log_prob=average_log_prob)<br>    chosen_logps = all_logps[: batch[<span class="hljs-string">&quot;chosen_input_ids&quot;</span>].shape[<span class="hljs-number">0</span>]]<br>    rejected_logps = all_logps[batch[<span class="hljs-string">&quot;chosen_input_ids&quot;</span>].shape[<span class="hljs-number">0</span>] :]<br>    <span class="hljs-keyword">return</span> chosen_logps, rejected_logps, aux_loss<br></code></pre></td></tr></table></figure>
-
-<p> 参数 <code>average_log_prob</code> 是从主脚本<code>dpo_tune.py</code>中传递的，当设置为 <code>True</code> 时，启用长度归一化。  </p>
-<h5 id="dpo-loss-函数"><a href="#dpo-loss-函数" class="headerlink" title="dpo_loss 函数"></a><code>dpo_loss</code> 函数</h5><p><code>dpo_loss</code> 中计算 logits 的差值：  </p>
+<p>参数 <code>average_log_prob</code> 是从主脚本<code>dpo_tune.py</code>中传递的，当设置为 <code>True</code> 时，启用长度归一化。</p>
+<h5 id="dpo-loss-函数"><code>dpo_loss</code> 函数</h5>
+<p><code>dpo_loss</code> 中计算 logits 的差值：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">pi_logratios = policy_chosen_logps - policy_rejected_logps<br>ref_logratios = reference_chosen_logps - reference_rejected_logps<br>logits = pi_logratios - ref_logratios<br></code></pre></td></tr></table></figure>
-
-<p> 如果 <code>average_log_prob=True</code>，则 <code>policy_chosen_logps</code> 和 <code>policy_rejected_logps</code> 都是归一化的值，从而影响最终的 logits 和损失计算。  </p>
-<h5 id="控制参数"><a href="#控制参数" class="headerlink" title="控制参数"></a>控制参数</h5><p> 在主脚本dpo_tune.py中，通过以下代码控制是否启用长度归一化：  </p>
+<p>如果 <code>average_log_prob=True</code>，则 <code>policy_chosen_logps</code> 和 <code>policy_rejected_logps</code> 都是归一化的值，从而影响最终的 logits 和损失计算。</p>
+<h5 id="控制参数">控制参数</h5>
+<p>在主脚本dpo_tune.py中，通过以下代码控制是否启用长度归一化：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">average_log_prob_loss_types = [<span class="hljs-string">&quot;simpo&quot;</span>, <span class="hljs-string">&quot;dpo_norm&quot;</span>]<br>average_log_prob = args.dpo_loss_type <span class="hljs-keyword">in</span> average_log_prob_loss_types<br></code></pre></td></tr></table></figure>
-
-<p> 当 <code>dpo_loss_type</code> 设置为 <code>&quot;dpo_norm&quot;</code> 时，<code>average_log_prob</code>归一化被启用，进而在 <code>_get_batch_logps</code> 和 <code>concatenated_forward</code> 中触发长度归一化逻辑。  </p>
-<h2 id="rlvr实践"><a href="#rlvr实践" class="headerlink" title="rlvr实践"></a>rlvr实践</h2><h3 id="单机4卡测试-2"><a href="#单机4卡测试-2" class="headerlink" title="单机4卡测试"></a>单机4卡测试</h3><h4 id="训练数据集"><a href="#训练数据集" class="headerlink" title="训练数据集"></a>训练数据集</h4><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image29.png"></p>
+<p>当 <code>dpo_loss_type</code> 设置为 <code>&quot;dpo_norm&quot;</code> 时，<code>average_log_prob</code>归一化被启用，进而在 <code>_get_batch_logps</code> 和 <code>concatenated_forward</code> 中触发长度归一化逻辑。</p>
+<h2 id="rlvr实践">rlvr实践</h2>
+<h3 id="单机4卡测试-v3">单机4卡测试</h3>
+<h4 id="训练数据集">训练数据集</h4>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image29.png" alt=""></p>
 <p>.parquet转为json后的数据集样例：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;messages&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Question: Find the domain of the expression $\\frac&#123;\\sqrt&#123;x-2&#125;&#125;&#123;\\sqrt&#123;5-x&#125;&#125;$.&#125;\nAnswer:The expressions inside each square root must be non-negative.\nTherefore, $x-2 \\ge 0$, so $x\\ge2$, and $5 - x \\ge 0$, so $x \\le 5$.\nAlso, the denominator cannot be equal to zero, so $5-x&gt;0$, which gives $x&lt;5$.\nTherefore, the domain of the expression is $\\boxed&#123;[2,5)&#125;$.\n\nQuestion: If $\\det \\mathbf&#123;A&#125; = 2$ and $\\det \\mathbf&#123;B&#125; = 12,$ then find $\\det (\\mathbf&#123;A&#125; \\mathbf&#123;B&#125;).$\nAnswer:We have that $\\det (\\mathbf&#123;A&#125; \\mathbf&#123;B&#125;) = (\\det \\mathbf&#123;A&#125;)(\\det \\mathbf&#123;B&#125;) = (2)(12) = \\boxed&#123;24&#125;.$\n\nQuestion: Terrell usually lifts two 20-pound weights 12 times. If he uses two 15-pound weights instead, how many times must Terrell lift them in order to lift the same total weight?\nAnswer:If Terrell lifts two 20-pound weights 12 times, he lifts a total of $2\\cdot 12\\cdot20=480$ pounds of weight.  If he lifts two 15-pound weights instead for $n$ times, he will lift a total of $2\\cdot15\\cdot n=30n$ pounds of weight.  Equating this to 480 pounds, we can solve for $n$: \\begin&#123;align*&#125;\n30n&amp;=480\\\\\n\\Rightarrow\\qquad n&amp;=480\/30=\\boxed&#123;16&#125;\n\\end&#123;align*&#125;\n\nQuestion: If the system of equations\n\n\\begin&#123;align*&#125;\n6x-4y&amp;=a,\\\\\n6y-9x &amp;=b.\n\\end&#123;align*&#125;has a solution $(x, y)$ where $x$ and $y$ are both nonzero, find $\\frac&#123;a&#125;&#123;b&#125;,$ assuming $b$ is nonzero.\nAnswer:If we multiply the first equation by $-\\frac&#123;3&#125;&#123;2&#125;$, we obtain\n\n$$6y-9x=-\\frac&#123;3&#125;&#123;2&#125;a.$$Since we also know that $6y-9x=b$, we have\n\n$$-\\frac&#123;3&#125;&#123;2&#125;a=b\\Rightarrow\\frac&#123;a&#125;&#123;b&#125;=\\boxed&#123;-\\frac&#123;2&#125;&#123;3&#125;&#125;.$$\n\nQuestion: What is the modulo $13$ residue of $247+5 \\cdot 39 + 7 \\cdot 143 +4 \\cdot 15?$&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;ground_truth&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;8&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;dataset&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;MATH&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;constraint_type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-literal"><span class="hljs-keyword">null</span></span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;constraint&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-literal"><span class="hljs-keyword">null</span></span><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
-
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image30.png"></p>
-<h4 id="验证数据集"><a href="#验证数据集" class="headerlink" title="验证数据集"></a>验证数据集</h4><p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image31.png"></p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image30.png" alt=""></p>
+<h4 id="验证数据集">验证数据集</h4>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image31.png" alt=""></p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;messages&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Question: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\nAnswer:There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. So the answer is 6.\n\nQuestion: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?\nAnswer:There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. So the answer is 5.\n\nQuestion: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?\nAnswer:Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. So the answer is 39.\n\nQuestion: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?\nAnswer:Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. So the answer is 8.\n\nQuestion: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?\nAnswer:Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. So the answer is 9.\n\nQuestion: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?\nAnswer:There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. So the answer is 29.\n\nQuestion: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?\nAnswer:Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. So the answer is 33.\n\nQuestion: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?\nAnswer:Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. So the answer is 8.\n\nQuestion: A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;ground_truth&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;3&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;dataset&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;gsm8k&quot;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;messages&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Question: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\nAnswer:There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. So the answer is 6.\n\nQuestion: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?\nAnswer:There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. So the answer is 5.\n\nQuestion: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?\nAnswer:Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. So the answer is 39.\n\nQuestion: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?\nAnswer:Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. So the answer is 8.\n\nQuestion: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?\nAnswer:Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. So the answer is 9.\n\nQuestion: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?\nAnswer:There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. So the answer is 29.\n\nQuestion: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?\nAnswer:Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. So the answer is 33.\n\nQuestion: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?\nAnswer:Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. So the answer is 8.\n\nQuestion: Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;ground_truth&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;70000&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;dataset&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;gsm8k&quot;</span><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
-
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image32.png"></p>
-<h4 id="单机脚本配置-2"><a href="#单机脚本配置-2" class="headerlink" title="单机脚本配置"></a>单机脚本配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> WANDB_MODE=disabled<br><span class="hljs-built_in">export</span> PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True<br><br>current_time=$(<span class="hljs-built_in">date</span> <span class="hljs-string">&quot;+%Y.%m.%d-%H.%M.%S&quot;</span>)<br>LOG_SAVE=<span class="hljs-string">&quot;/mnt/open-instruct-main/output/rlvr/<span class="hljs-variable">$&#123;current_time&#125;</span>-tulu3-rlvr.log&quot;</span><br><br>python /mnt/open-instruct-main/open_instruct/ppo_vllm_thread_ray_gtrl.py \<br>    --dataset_mixer <span class="hljs-string">&#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth_mixed&quot;: 1.0&#125;&#x27;</span> \<br>    --dataset_train_splits train \<br>    --dataset_eval_mixer <span class="hljs-string">&#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth&quot;: 1.0&#125;&#x27;</span> \<br>    --dataset_eval_splits <span class="hljs-built_in">test</span> \<br>    --max_token_length 2048 \<br>    --max_prompt_token_length 2048 \<br>    --response_length 2048 \<br>    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-DPO \<br>    --reward_model_path /mnt/LLM-Research/LLama-31-Tulu3-8B-RM \<br>    --non_stop_penalty \<br>    --stop_token eos \<br>    --temperature 1.0 \<br>    --ground_truths_key ground_truth \<br>    --chat_template tulu \<br>    --sft_messages_key messages \<br>    --learning_rate 3e-7 \<br>    --total_episodes 10000000 \<br>    --penalty_reward_value -10.0 \<br>    --deepspeed_stage 3 \<br>    --per_device_train_batch_size 1 \<br>    --local_rollout_forward_batch_size 1 \<br>    --local_mini_batch_size 16 \<br>    --local_rollout_batch_size 16 \<br>    --actor_num_gpus_per_node 3 \<br>    --vllm_tensor_parallel_size 2 \<br>    --beta 0.05 \<br>    --apply_verifiable_reward <span class="hljs-literal">true</span> \<br>    --output_dir /mnt/open-instruct-main/output/rlvr \<br>    --seed 3 \<br>    --num_evals 3 \<br>    --save_freq 100 \<br>    --reward_model_multiplier 0.0 \<br>    --gradient_checkpointing \<br>    --with_tracking False 2&gt;&amp;1 | <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;<span class="hljs-variable">$LOG_SAVE</span>&quot;</span><br></code></pre></td></tr></table></figure>
-
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image32.png" alt=""></p>
+<h4 id="单机脚本配置-v3">单机脚本配置</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> WANDB_MODE=disabled<br><span class="hljs-built_in">export</span> PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True<br><br>current_time=$(<span class="hljs-built_in">date</span> <span class="hljs-string">&quot;+%Y.%m.%d-%H.%M.%S&quot;</span>)<br>LOG_SAVE=<span class="hljs-string">&quot;/mnt/open-instruct-main/output/rlvr/<span class="hljs-variable">$&#123;current_time&#125;</span>-tulu3-rlvr.log&quot;</span><br><br>python /mnt/open-instruct-main/open_instruct/ppo_vllm_thread_ray_gtrl.py \<br>    --dataset_mixer <span class="hljs-string">&#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth_mixed&quot;: 1.0&#125;&#x27;</span> \<br>    --dataset_train_splits train \<br>    --dataset_eval_mixer <span class="hljs-string">&#x27;&#123;&quot;/mnt/open-instruct-main/data/gsm8k_math_ground_truth&quot;: 1.0&#125;&#x27;</span> \<br>    --dataset_eval_splits <span class="hljs-built_in">test</span> \<br>    --max_token_length 2048 \<br>    --max_prompt_token_length 2048 \<br>    --response_length 2048 \<br>    --model_name_or_path /mnt/LLM-Research/Llama-31-Tulu-3-8B-DPO \<br>    --reward_model_path /mnt/LLM-Research/LLama-31-Tulu3-8B-RM \<br>    --non_stop_penalty \<br>    --stop_token eos \<br>    --temperature 1.0 \<br>    --ground_truths_key ground_truth \<br>    --chat_template tulu \<br>    --sft_messages_key messages \<br>    --learning_rate 3e-7 \<br>    --total_episodes 10000000 \<br>    --penalty_reward_value -10.0 \<br>    --deepspeed_stage 3 \<br>    --per_device_train_batch_size 1 \<br>    --local_rollout_forward_batch_size 1 \<br>    --local_mini_batch_size 16 \<br>    --local_rollout_batch_size 16 \<br>    --actor_num_gpus_per_node 3 \<br>    --vllm_tensor_parallel_size 2 \<br>    --beta 0.05 \<br>    --apply_verifiable_reward <span class="hljs-literal">true</span> \<br>    --output_dir /mnt/open-instruct-main/output/rlvr \<br>    --seed 3 \<br>    --num_evals 3 \<br>    --save_freq 100 \<br>    --reward_model_multiplier 0.0 \<br>    --gradient_checkpointing \<br>    --with_tracking False 2&gt;&amp;1 | <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;<span class="hljs-variable">$LOG_SAVE</span>&quot;</span><br></code></pre></td></tr></table></figure>
 <p>为了尽可能地还原tulu3原论文的实验结果，其中部分超参与论文中最优保持一致。</p>
 <p><code>--max_token_length 2048</code></p>
-<p><code>--max_prompt_token_length 2048</code> </p>
+<p><code>--max_prompt_token_length 2048</code></p>
 <p><code>--response_length 2048</code></p>
 <p><code>--learning_rate 3e-7</code></p>
 <p><code>--penalty_reward_value -10.0</code></p>
 <p><code>--reward_model_multiplier 0.0</code></p>
 <p>其中的模型权重利用tulu3开源的经过tulu3-sft dpo得到的Llama-31-Tulu-3-8B-DPO权重，奖励模型采用tulu3开源的LLama-31-Tulu3-8B-RM。</p>
-<h4 id="训练测试-2"><a href="#训练测试-2" class="headerlink" title="训练测试"></a>训练测试</h4><p>加载ckpt时一直卡住不动，尚未解决。</p>
-<p><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image33.png"></p>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/">https://lyapunovxb.github.io/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lyapunovxb.github.io" target="_blank">Lyapunovxb's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/V100/">V100</a><a class="post-meta__tags" href="/tags/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/">模型训练调优</a><a class="post-meta__tags" href="/tags/Nvidia/">Nvidia</a><a class="post-meta__tags" href="/tags/Tulu3/">Tulu3</a></div><div class="post-share"><div class="social-share" data-image="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.1%20Deepseek-7B%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86/" title="2.1 数据集处理"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">2.1 数据集处理</div></div><div class="info-2"><div class="info-item-1">下载初始数据集 下载WuDaoCorpora2.0开源数据集到&#x2F;mnt&#x2F;workspace&#x2F;llama3-datasets工作目录下  12wget https://atp-modelzoo.oss-cn-hangzhou.aliyuncs.com/release/datasets/WuDaoCorpus2.0_base_sample.tgztar zxvf WuDaoCorpus2.0_base_sample.tgz   Megatron-LM预训练数据清洗mmap数据是一种预先执行tokenize处理的数据格式，可以极大减少训练微调过程中等待数据读入的时间，当数据量极大时，优势显著。 123456789101112131415161718#! /bin/bashset -ex# 请在此处设置原始数据所在路径data_dir=/mnt/users/wangxiangbo/dataset/WuDaoCorpus2.0_base_sample#开始数据清洗流程dataset_dir=$(dirname $data_dir)mkdir -p $&#123...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.5-Qwen%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%B0%83%E4%BC%98/" title="1.5-Qwen多机多卡调优"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">1.5-Qwen多机多卡调优</div></div><div class="info-2"><div class="info-item-1">1. lora1.1 per_device_train_batch_size测试，最优为16   per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops    2 1 512 8 true 8.37   4 1 512 8 true 9.07   8 1 512 8 true 9.88   16 1 512 8 true 10.32   32 1 512 8 true OOM   单个GPU批次大小增加时，需要的内存也会增加，GPU内存不足以支持更大的批次，可能会导致溢出或效率降低。 1.2 per_device_eval_batch_size测试，最优为2   per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops    16 1 512 8 tr...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.4-%E5%9F%BA%E4%BA%8Ek8s%E6%8B%89%E8%B5%B7Qwen%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E5%BE%AE%E8%B0%83/" title="1.4-基于k8s拉起Qwen模型的多机多卡微调"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.4-基于k8s拉起Qwen模型的多机多卡微调</div></div><div class="info-2"><div class="info-item-1">一、镜像准备 1. 查看镜像docker images 2. 修改镜像标签docker tag ec99659d9677 registry.paas/library/qwen:v3.0 3. 将镜像推至仓库docker push registry.paas/library/qwen:v3.0 4. 如果出现签名认证失败，需要修改docker守护进程配置文件vim /etc/docker/daemon.json增加如下配置： 123&#123;&quot;insecure-registries&quot;:[&quot;registry.paas&quot;]&#125; 重启dockersystemctl daemon-reload &amp;&amp; systemctl restart docker 5. 重新push至registry.paas&#x2F;library&#x2F;xxx:tags仓库二、修改配置文件 1. qwentest.yaml123456789101112131415161718192021222324252627282930313233343536...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.3-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84Qwen%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1.3-基于docker的Qwen单机单卡_多卡训练"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.3-基于docker的Qwen单机单卡_多卡训练</div></div><div class="info-2"><div class="info-item-1">1. 查看容器docker ps 2. exec进入容器docker exec -it containerid bash 3. 进入qwen目录并修改finetune_lora_single_gpu.sh参数1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.# ...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/" title="1.2-Qwen模型镜像制作"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.2-Qwen模型镜像制作</div></div><div class="info-2"><div class="info-item-1">由于新机器挂载文件存储速度非常慢，通过dockerfile文件来直接生成镜像非常慢，所以本镜像在自己的V100云主机中进行打包。 1. 首先docker pull拉取一个ubuntu基础环境https://hub.docker.com/r/nvidia/cuda/tags?page=11&page_size&#x3D;&amp;name&#x3D;&amp;ordering&#x3D;docker pull nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 2. 安装nvidia-container-toolkit，使docker可以调用宿主机gpu资源2.1 下载nvidia-container-toolkit distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1.1-Qwen模型本地部署与单机单卡&#x2F;多卡训练"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.1-Qwen模型本地部署与单机单卡&#x2F;多卡训练</div></div><div class="info-2"><div class="info-item-1">一、V100环境部署  项目地址： https://github.com/QwenLM/Qwen  下载到本地git clone  https://github.com/QwenLM/Qwen.git   基础环境搭建conda create -n qwen python=3.10conda activate qwen  安装pytorchconda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia  安装依赖环境pip install -r requirements.txt   7B模型下载git clone [https://www.modelscope.cn/qwen/Qwen-7B-Chat.git](https://www.modelscope.cn/qwen/Qwen-7B-Chat.git)在使用sdk的python脚本下载权重时，需要pip安装modelscopepip install modelscope使用git clone发现权重未下载成功，使用mode...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.5-Qwen%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%B0%83%E4%BC%98/" title="1.5-Qwen多机多卡调优"><img class="cover" src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.5-Qwen多机多卡调优</div></div><div class="info-2"><div class="info-item-1">1. lora1.1 per_device_train_batch_size测试，最优为16   per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops    2 1 512 8 true 8.37   4 1 512 8 true 9.07   8 1 512 8 true 9.88   16 1 512 8 true 10.32   32 1 512 8 true OOM   单个GPU批次大小增加时，需要的内存也会增加，GPU内存不足以支持更大的批次，可能会导致溢出或效率降低。 1.2 per_device_eval_batch_size测试，最优为2   per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops    16 1 512 8 tr...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">ColossalAI训练框架解读</div></div><div class="info-2"><div class="info-item-1">框架特点Colossal-AI 框架中的 Gemini 是一种内存优化策略，旨在通过智能的内存管理和计算优化来减少显存占用，从而支持更大规模的模型训练。Gemini 的核心思想是通过 动态内存管理 和 计算优化 来最大化显存利用率，同时减少内存碎片和冗余计算。 以llama2为例的验证增加每部迭代打印以及tflops打印ColossalAI初始打印效果    脚本123456789101112131415161718192021222324252627282930313233343536373839404142434445#!/bin/bash# NCCL IB environment variablesexport NCCL_IB_HCA=mlx5_1:1,mlx5_2:1,mlx5_3:1,mlx5_4:1export NCCL_IB_DISABLE=0export NCCL_SOCKET_IFNAME=eth0export NCCL_IB_GID_INDEX=3export NCCL_IB_TIMEOUT=23export NCCL_IB_RETRY_CNT=7export...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wangxiangbo</div><div class="author-info-description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">28</div></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">训练环境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%9C%E5%83%8F"><span class="toc-number">1.1.</span> <span class="toc-text">镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">代码结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data"><span class="toc-number">1.2.1.</span> <span class="toc-text">data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scripts-x2F-configs"><span class="toc-number">1.2.2.</span> <span class="toc-text">scripts&#x2F;configs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#open-instruct"><span class="toc-number">1.2.3.</span> <span class="toc-text">open_instruct</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sft%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.3.</span> <span class="toc-text">sft实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA4%E5%8D%A1%E6%B5%8B%E8%AF%95"><span class="toc-number">1.3.1.</span> <span class="toc-text">单机4卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#sft%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">sft数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">单机脚本配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%8B%E8%AF%95"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">训练测试</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9D%9F"><span class="toc-number">1.3.1.3.1.</span> <span class="toc-text">训练结束</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#loss%E6%9B%B2%E7%BA%BF"><span class="toc-number">1.3.1.3.2.</span> <span class="toc-text">loss曲线</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#eval"><span class="toc-number">1.3.1.3.3.</span> <span class="toc-text">eval</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#eval%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="toc-number">1.3.1.3.4.</span> <span class="toc-text">eval结果分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dpo%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.4.</span> <span class="toc-text">dpo实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA4%E5%8D%A1%E6%B5%8B%E8%AF%95-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">单机4卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%8F%E5%A5%BD%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">偏好数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AE-1"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">单机脚本配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%8B%E8%AF%95-1"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">训练测试</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B3%E9%97%ADcpu-offloading"><span class="toc-number">1.4.1.3.1.</span> <span class="toc-text">关闭cpu_offloading</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%80%E5%90%AFcpu-offloading"><span class="toc-number">1.4.1.3.2.</span> <span class="toc-text">开启cpu_offloading</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%AE%8C%E6%88%90"><span class="toc-number">1.4.1.3.3.</span> <span class="toc-text">训练完成</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#loss%E6%9B%B2%E7%BA%BF-1"><span class="toc-number">1.4.1.3.4.</span> <span class="toc-text">loss曲线</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#eval-1"><span class="toc-number">1.4.1.3.5.</span> <span class="toc-text">eval</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dpo%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-number">1.4.2.</span> <span class="toc-text">dpo代码实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Length-Normalized-DPO-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">Length-Normalized DPO 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#get-batch-logps-%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.1.1.</span> <span class="toc-text">_get_batch_logps 函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#concatenated-forward-%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.1.2.</span> <span class="toc-text">concatenated_forward 函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#dpo-loss-%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.1.3.</span> <span class="toc-text">dpo_loss 函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.2.1.4.</span> <span class="toc-text">控制参数</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rlvr%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.5.</span> <span class="toc-text">rlvr实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA4%E5%8D%A1%E6%B5%8B%E8%AF%95-2"><span class="toc-number">1.5.1.</span> <span class="toc-text">单机4卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">训练数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">验证数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AE-2"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">单机脚本配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%8B%E8%AF%95-2"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">训练测试</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/vllm+mindie%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="vllm+mindie推理实践">vllm+mindie推理实践</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读">ColossalAI训练框架解读</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/xinference%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="xinference推理实践">xinference推理实践</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By wangxiangbo</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><div id="global-aplayer"></div><script>
+<h4 id="训练测试-v3">训练测试</h4>
+<p>加载ckpt时一直卡住不动，尚未解决。</p>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/categories/model/Tulu3/image33.png" alt=""></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io">wangxiangbo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lyapunovxb.github.io/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/">https://lyapunovxb.github.io/2025/11/12/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Tulu3/Tulu3-8B-%E5%90%8E%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lyapunovxb.github.io" target="_blank">Lyapunovxb's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/V100/">V100</a><a class="post-meta__tags" href="/tags/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/">模型训练调优</a><a class="post-meta__tags" href="/tags/Nvidia/">Nvidia</a><a class="post-meta__tags" href="/tags/Tulu3/">Tulu3</a></div><div class="post-share"><div class="social-share" data-image="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/13/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Deepseek-R1-Distill-Qwen-7b/2.1%20Deepseek-7B%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86/" title="2.1 数据集处理"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">2.1 数据集处理</div></div><div class="info-2"><div class="info-item-1">下载初始数据集  下载WuDaoCorpora2.0开源数据集到/mnt/workspace/llama3-datasets工作目录下  12wget https://atp-modelzoo.oss-cn-hangzhou.aliyuncs.com/release/datasets/WuDaoCorpus2.0_base_sample.tgztar zxvf WuDaoCorpus2.0_base_sample.tgz  Megatron-LM预训练数据清洗 mmap数据是一种预先执行tokenize处理的数据格式，可以极大减少训练微调过程中等待数据读入的时间，当数据量极大时，优势显著。 123456789101112131415161718#! /bin/bashset -ex# 请在此处设置原始数据所在路径data_dir=/mnt/users/wangxiangbo/dataset/WuDaoCorpus2.0_base_sample#开始数据清洗流程dataset_dir=$(dirname $data_dir)mkdir -p $&#123;dataset_dir&#...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.5-Qwen%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%B0%83%E4%BC%98/" title="1.5-Qwen多机多卡调优"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">1.5-Qwen多机多卡调优</div></div><div class="info-2"><div class="info-item-1">1. lora 1.1 per_device_train_batch_size测试，最优为16    per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops     2 1 512 8 true 8.37   4 1 512 8 true 9.07   8 1 512 8 true 9.88   16 1 512 8 true 10.32   32 1 512 8 true OOM    单个GPU批次大小增加时，需要的内存也会增加，GPU内存不足以支持更大的批次，可能会导致溢出或效率降低。 1.2 per_device_eval_batch_size测试，最优为2    per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops     16 1 51...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.1-Qwen%E6%A8%A1%E5%9E%8B%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1.1-Qwen模型本地部署与单机单卡&#x2F;多卡训练"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.1-Qwen模型本地部署与单机单卡&#x2F;多卡训练</div></div><div class="info-2"><div class="info-item-1">一、V100环境部署  项目地址： https://github.com/QwenLM/Qwen 下载到本地 git clone  https://github.com/QwenLM/Qwen.git  基础环境搭建 conda create -n qwen python=3.10 conda activate qwen 安装pytorch conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia 安装依赖环境 pip install -r requirements.txt  7B模型下载 git clone [https://www.modelscope.cn/qwen/Qwen-7B-Chat.git](https://www.modelscope.cn/qwen/Qwen-7B-Chat.git) 在使用sdk的python脚本下载权重时，需要pip安装modelscope pip install modelscope 使用git clone发现权重未下载成功，使用...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.2-Qwen%E6%A8%A1%E5%9E%8B%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/" title="1.2-Qwen模型镜像制作"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.2-Qwen模型镜像制作</div></div><div class="info-2"><div class="info-item-1">由于新机器挂载文件存储速度非常慢，通过dockerfile文件来直接生成镜像非常慢，所以本镜像在自己的V100云主机中进行打包。 1. 首先docker pull拉取一个ubuntu基础环境 https://hub.docker.com/r/nvidia/cuda/tags?page=11&amp;page_size=&amp;name=&amp;ordering= docker pull nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04 2. 安装nvidia-container-toolkit，使docker可以调用宿主机gpu资源 2.1 下载nvidia-container-toolkit distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-containe...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.3-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84Qwen%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1_%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83/" title="1.3-基于docker的Qwen单机单卡_多卡训练"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.3-基于docker的Qwen单机单卡_多卡训练</div></div><div class="info-2"><div class="info-item-1">1. 查看容器 docker ps 2. exec进入容器 docker exec -it containerid bash 3. 进入qwen目录并修改finetune_lora_single_gpu.sh参数 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465#!/bin/bashexport CUDA_DEVICE_MAX_CONNECTIONS=1MODEL=&quot;/qwen/Qwen-7B-Chat&quot; # Set the path if you do not want to load from huggingface directly# ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.4-%E5%9F%BA%E4%BA%8Ek8s%E6%8B%89%E8%B5%B7Qwen%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E5%BE%AE%E8%B0%83/" title="1.4-基于k8s拉起Qwen模型的多机多卡微调"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.4-基于k8s拉起Qwen模型的多机多卡微调</div></div><div class="info-2"><div class="info-item-1">一、镜像准备 1. 查看镜像 docker images  2. 修改镜像标签 docker tag ec99659d9677 registry.paas/library/qwen:v3.0 3. 将镜像推至仓库 docker push registry.paas/library/qwen:v3.0 4. 如果出现签名认证失败，需要修改docker守护进程配置文件 vim /etc/docker/daemon.json 增加如下配置： 123&#123;&quot;insecure-registries&quot;:[&quot;registry.paas&quot;]&#125; 重启docker systemctl daemon-reload &amp;&amp; systemctl restart docker 5. 重新push至registry.paas/library/xxx:tags仓库 二、修改配置文件 1. qwentest.yaml 1234567891011121314151617181920212223242526272829303132333435363...</div></div></div></a><a class="pagination-related" href="/2025/11/06/%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%B0%83%E4%BC%98/NVIDIA/Qwen/1.5-Qwen%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%B0%83%E4%BC%98/" title="1.5-Qwen多机多卡调优"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/LLM.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">1.5-Qwen多机多卡调优</div></div><div class="info-2"><div class="info-item-1">1. lora 1.1 per_device_train_batch_size测试，最优为16    per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops     2 1 512 8 true 8.37   4 1 512 8 true 9.07   8 1 512 8 true 9.88   16 1 512 8 true 10.32   32 1 512 8 true OOM    单个GPU批次大小增加时，需要的内存也会增加，GPU内存不足以支持更大的批次，可能会导致溢出或效率降低。 1.2 per_device_eval_batch_size测试，最优为2    per_device_train_batch_size per_device_eval_batch_size model_max_length gradient_accumulation_steps bf16 tflops     16 1 51...</div></div></div></a><a class="pagination-related" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/colossalai.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">ColossalAI训练框架解读</div></div><div class="info-2"><div class="info-item-1">框架特点 Colossal-AI 框架中的 Gemini 是一种内存优化策略，旨在通过智能的内存管理和计算优化来减少显存占用，从而支持更大规模的模型训练。Gemini 的核心思想是通过 动态内存管理 和 计算优化 来最大化显存利用率，同时减少内存碎片和冗余计算。 以llama2为例的验证 增加每部迭代打印以及tflops打印 ColossalAI初始打印效果       脚本 123456789101112131415161718192021222324252627282930313233343536373839404142434445#!/bin/bash# NCCL IB environment variablesexport NCCL_IB_HCA=mlx5_1:1,mlx5_2:1,mlx5_3:1,mlx5_4:1export NCCL_IB_DISABLE=0export NCCL_SOCKET_IFNAME=eth0export NCCL_IB_GID_INDEX=3export NCCL_IB_TIMEOUT=23export NCCL_IB_RETRY_CNT=...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/zhuye/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wangxiangbo</div><div class="author-info-description">欢迎来到我的博客，这里记录了我学习和生活中的点点滴滴。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">28</div></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">训练环境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%9C%E5%83%8F"><span class="toc-number">1.1.</span> <span class="toc-text">镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">代码结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data"><span class="toc-number">1.2.1.</span> <span class="toc-text">data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scripts-configs"><span class="toc-number">1.2.2.</span> <span class="toc-text">scripts&#x2F;configs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#open-instruct"><span class="toc-number">1.2.3.</span> <span class="toc-text">open_instruct</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sft%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.3.</span> <span class="toc-text">sft实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA4%E5%8D%A1%E6%B5%8B%E8%AF%95"><span class="toc-number">1.3.1.</span> <span class="toc-text">单机4卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#sft%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">sft数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">单机脚本配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%8B%E8%AF%95"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">训练测试</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9D%9F"><span class="toc-number">1.3.1.3.1.</span> <span class="toc-text">训练结束</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#loss%E6%9B%B2%E7%BA%BF"><span class="toc-number">1.3.1.3.2.</span> <span class="toc-text">loss曲线</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#eval"><span class="toc-number">1.3.1.3.3.</span> <span class="toc-text">eval</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#eval%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="toc-number">1.3.1.3.4.</span> <span class="toc-text">eval结果分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dpo%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.4.</span> <span class="toc-text">dpo实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA4%E5%8D%A1%E6%B5%8B%E8%AF%95-v2"><span class="toc-number">1.4.1.</span> <span class="toc-text">单机4卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%8F%E5%A5%BD%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">偏好数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AE-v2"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">单机脚本配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%8B%E8%AF%95-v2"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">训练测试</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B3%E9%97%ADcpu-offloading"><span class="toc-number">1.4.1.3.1.</span> <span class="toc-text">关闭cpu_offloading</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%80%E5%90%AFcpu-offloading"><span class="toc-number">1.4.1.3.2.</span> <span class="toc-text">开启cpu_offloading</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%AE%8C%E6%88%90"><span class="toc-number">1.4.1.3.3.</span> <span class="toc-text">训练完成</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#loss%E6%9B%B2%E7%BA%BF-v2"><span class="toc-number">1.4.1.3.4.</span> <span class="toc-text">loss曲线</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#eval-v2"><span class="toc-number">1.4.1.3.5.</span> <span class="toc-text">eval</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dpo%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-number">1.4.2.</span> <span class="toc-text">dpo代码实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Length-Normalized-DPO-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">Length-Normalized DPO 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#get-batch-logps-%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.1.1.</span> <span class="toc-text">_get_batch_logps 函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#concatenated-forward-%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.1.2.</span> <span class="toc-text">concatenated_forward 函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#dpo-loss-%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.1.3.</span> <span class="toc-text">dpo_loss 函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.2.1.4.</span> <span class="toc-text">控制参数</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rlvr%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.5.</span> <span class="toc-text">rlvr实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA4%E5%8D%A1%E6%B5%8B%E8%AF%95-v3"><span class="toc-number">1.5.1.</span> <span class="toc-text">单机4卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">训练数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">验证数据集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AE-v3"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">单机脚本配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%8B%E8%AF%95-v3"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">训练测试</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/01/08/LLM/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/%E5%BE%AE%E8%B0%83%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90/" title="微调数据集处理全流程解析"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/llm/data/datajuicer/paint.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="微调数据集处理全流程解析"/></a><div class="content"><a class="title" href="/2026/01/08/LLM/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/%E5%BE%AE%E8%B0%83%E6%95%B0%E6%8D%AE%E9%9B%86%E5%A4%84%E7%90%86%E5%85%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90/" title="微调数据集处理全流程解析">微调数据集处理全流程解析</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/colossalai.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ColossalAI训练框架解读"/></a><div class="content"><a class="title" href="/2026/01/08/LLM/%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/ColossalAI/" title="ColossalAI训练框架解读">ColossalAI训练框架解读</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/xinference%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="xinference推理实践"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/img/background/xinference.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xinference推理实践"/></a><div class="content"><a class="title" href="/2026/01/08/LLM/%E6%8E%A8%E7%90%86/xinference%E6%8E%A8%E7%90%86%E5%AE%9E%E8%B7%B5/" title="xinference推理实践">xinference推理实践</a><time datetime="2026-01-08T01:00:00.000Z" title="发表于 2026-01-08 09:00:00">2026-01-08</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By wangxiangbo</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><div id="global-aplayer"></div><script>
   (function() {
     var PLAYER_TAG = 'customGlobalAplayer';
 
