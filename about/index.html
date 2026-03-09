@@ -104,7 +104,7 @@
   </script><script>const GLOBAL_CONFIG = {
   root: '/',
   algolia: undefined,
-  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
   translate: undefined,
   highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
   copy: {
@@ -605,6 +605,13 @@
         preload: 'auto',
         lrcType: 3,
         audio: [
+          {
+            name: '把回忆拼好给你',
+            artist: '王贰浪',
+            url: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E6%8A%8A%E5%9B%9E%E5%BF%86%E6%8B%BC%E5%A5%BD%E7%BB%99%E4%BD%A0-%E7%8E%8B%E8%B4%B0%E6%B5%AA.mp3',
+            cover: 'https://lyapunov-1312469874.cos.ap-shanghai.myqcloud.com/%E6%8A%8A%E5%9B%9E%E5%BF%86%E6%8B%BC%E5%A5%BD%E7%BB%99%E4%BD%A0.jpg',
+            lrc: '/music/把回忆拼好给你-王贰浪.lrc'
+          },
           {
             name: '鼓楼',
             artist: '赵雷',
