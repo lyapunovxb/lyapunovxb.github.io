@@ -3322,14 +3322,6 @@ blockquote > :last-child {
     transform: translateY(-1px) scale(1.03);
   }
 }
-#article-container .shuoshuo-footer .shuoshuo-comment-btn {
-  padding: 2px;
-  color: #90a4ae;
-  cursor: pointer;
-}
-#article-container .shuoshuo-footer .shuoshuo-comment-btn:hover {
-  color: #49b1f5;
-}
 #article-container .shuoshuo-comment {
   padding-top: 10px;
 }
